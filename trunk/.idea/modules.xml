@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-app/kaitou-ppp-app.iml" filepath="$PROJECT_DIR$/kaitou-ppp-app/kaitou-ppp-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-common/kaitou-ppp-common.iml" filepath="$PROJECT_DIR$/kaitou-ppp-common/kaitou-ppp-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-dao/kaitou-ppp-dao.iml" filepath="$PROJECT_DIR$/kaitou-ppp-dao/kaitou-ppp-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-domain/kaitou-ppp-domain.iml" filepath="$PROJECT_DIR$/kaitou-ppp-domain/kaitou-ppp-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-manager/kaitou-ppp-manager.iml" filepath="$PROJECT_DIR$/kaitou-ppp-manager/kaitou-ppp-manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-service/kaitou-ppp-service.iml" filepath="$PROJECT_DIR$/kaitou-ppp-service/kaitou-ppp-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk.iml" filepath="$PROJECT_DIR$/trunk.iml" />
+    </modules>
+  </component>
+</project>
+

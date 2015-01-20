@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+       default-lazy-init="false">
+
+    <bean id="mockEngineerDao" class="kaitou.ppp.manager.mock.MockEngineerDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+    </bean>
+
+    <bean id="mockEngineerManager" class="kaitou.ppp.manager.mock.MockEngineerManagerImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+        <property name="engineerDao" ref="mockEngineerDao"/>
+    </bean>
+
+</beans>

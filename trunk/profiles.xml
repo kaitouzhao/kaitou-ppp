@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profilesXml xmlns="http://maven.apache.org/PROFILES/1.0.0"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://maven.apache.org/PROFILES/1.0.0 http://maven.apache.org/xsd/profiles-1.0.0.xsd">
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <db.file.dir>d://temp//ppp//db</db.file.dir>
+                <log.dir>d://temp//ppp//log</log.dir>
+                <fail.log.path>D://kaitou-ppp-fail.log</fail.log.path>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>pro</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <db.file.dir>d://ppp//db</db.file.dir>
+                <log.dir>d://ppp//log</log.dir>
+                <fail.log.path>D://kaitou-ppp-fail.log</fail.log.path>
+            </properties>
+        </profile>
+    </profiles>
+</profilesXml>
