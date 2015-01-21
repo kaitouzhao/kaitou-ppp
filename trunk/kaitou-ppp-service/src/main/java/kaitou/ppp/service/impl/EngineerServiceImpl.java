@@ -31,7 +31,8 @@ public class EngineerServiceImpl implements EngineerService {
 
     private String dbDir;
 
-    private static final String[] EXCEL_HEADER = new String[]{"区域", "在职状态", "认定店名称", "认定店等级", "认定年限", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间"};
+    private static final String[] EXCEL_ENGINEER_HEADER = new String[]{"区域", "在职状态", "认定店名称", "认定店等级", "认定年限", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间"};
+    private static final String[] EXCEL_TRAINING_HEADER = new String[]{"区域", "产品线", "在职状态", "认定店名称", "认定店等级", "认定年限", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "培训师", "培训类型", "培训时间", "培训机型"};
     private static final String[] ENGINEER_COLUMN = {"saleRegion", "status", "companyName", "companyLevel", "numberOfYear", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture"};
     private static final String[] TRAINING_COLUMN = {"saleRegion", "productLine", "status", "companyName", "companyLevel", "numberOfYear", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "trainer", "trainingType", "dateOfTraining", "trainingModel"};
 
@@ -77,29 +78,28 @@ public class EngineerServiceImpl implements EngineerService {
         if (targetFile == null) {
             return;
         }
-        File dbDirFile = new File(dbDir);
-        File[] dbFiles = dbDirFile.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith("_Engineer.kdb");
-            }
-        });
         List<Object[]> datas = new ArrayList<Object[]>();
         Workbook wb;
-        if (CollectionUtil.isEmpty(dbFiles)) {
-            wb = write2Excel("sheet1", EXCEL_HEADER, datas, ExcelUtil.ExcelVersion.V2007);
+        String basicSheet = "基础";
+        List<Engineer> engineers = getAllEngineers();
+        if (CollectionUtil.isEmpty(engineers)) {
+            wb = write2Excel(basicSheet, EXCEL_ENGINEER_HEADER, datas, ExcelUtil.ExcelVersion.V2007);
         } else {
-            List<Engineer> engineers = new ArrayList<Engineer>();
-            for (File dbFile : dbFiles) {
-                String dbFileName = dbFile.getName();
-                String companyName = dbFileName.substring(dbFileName.indexOf('_', 1) + 1, dbFileName.lastIndexOf('_'));
-                engineers.addAll(engineerManager.query(companyName));
-            }
             for (Engineer engineer : engineers) {
                 datas.add(engineer.export2Array(ENGINEER_COLUMN));
             }
-            wb = write2Excel("sheet1", EXCEL_HEADER, datas, ExcelUtil.ExcelVersion.V2007);
+            wb = write2Excel(basicSheet, EXCEL_ENGINEER_HEADER, datas, ExcelUtil.ExcelVersion.V2007);
         }
+        writeExcelFile(targetFile, wb);
+    }
+
+    /**
+     * 写excel文件
+     *
+     * @param targetFile 目标文件
+     * @param wb         活动工作簿
+     */
+    private void writeExcelFile(File targetFile, Workbook wb) {
         OutputStream os = null;
         try {
             os = new FileOutputStream(targetFile);
@@ -118,6 +118,28 @@ public class EngineerServiceImpl implements EngineerService {
                 }
             }
         }
+    }
+
+    /**
+     * 获取全部工程师列表
+     *
+     * @return 工程师列表
+     */
+    private List<Engineer> getAllEngineers() {
+        File dbDirFile = new File(dbDir);
+        File[] dbFiles = dbDirFile.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith("_Engineer.kdb");
+            }
+        });
+        List<Engineer> engineers = new ArrayList<Engineer>();
+        for (File dbFile : dbFiles) {
+            String dbFileName = dbFile.getName();
+            String companyName = dbFileName.substring(dbFileName.indexOf('_', 1) + 1, dbFileName.lastIndexOf('_'));
+            engineers.addAll(engineerManager.query(companyName));
+        }
+        return engineers;
     }
 
     @Override
@@ -148,5 +170,31 @@ public class EngineerServiceImpl implements EngineerService {
         }
         engineerManager.importEngineerTrainings(trainings);
         log.info("成功导入培训信息数：" + trainings.size());
+    }
+
+    @Override
+    public void exportTrainings(File targetFile) {
+        if (targetFile == null) {
+            return;
+        }
+        List<Object[]> datas = new ArrayList<Object[]>();
+        Workbook wb;
+        String developmentSheet = "发展";
+        List<Engineer> engineers = getAllEngineers();
+        if (CollectionUtil.isEmpty(engineers)) {
+            wb = write2Excel(developmentSheet, EXCEL_TRAINING_HEADER, datas, ExcelUtil.ExcelVersion.V2007);
+        } else {
+            for (Engineer engineer : engineers) {
+                List<EngineerTraining> trainings = engineer.getEngineerTrainings();
+                if (CollectionUtil.isEmpty(trainings)) {
+                    continue;
+                }
+                for (EngineerTraining training : trainings) {
+                    datas.add(training.export2Array(TRAINING_COLUMN));
+                }
+            }
+            wb = write2Excel(developmentSheet, EXCEL_TRAINING_HEADER, datas, ExcelUtil.ExcelVersion.V2007);
+        }
+        writeExcelFile(targetFile, wb);
     }
 }

@@ -1,6 +1,7 @@
 package kaitou.ppp.app;
 
-import kaitou.ppp.common.utils.PropertyUtil;
+import com.womai.bsp.tool.utils.PropertyUtil;
+import kaitou.ppp.service.DbService;
 import kaitou.ppp.service.EngineerService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,14 +31,22 @@ public class Application {
 
     private static ApplicationContext ctx;
     private static EngineerService engineerService;
+    private static DbService dbService;
     private static Button importEngineersBtn;
     private static Button importTrainingsBtn;
     private static Button exportEngineersBtn;
+    private static Button exportTrainingsBtn;
     private static Frame mainFrame;
     private static Dialog dialog;
 
+    /**
+     * 主程序入口
+     *
+     * @param args 参数
+     */
     public static void main(String[] args) {
         initApplicationContext();
+        backDbFile();
         initFrame();
     }
 
@@ -51,6 +60,14 @@ public class Application {
                 }
         );
         engineerService = ctx.getBean(EngineerService.class);
+        dbService = ctx.getBean(DbService.class);
+    }
+
+    /**
+     * 自动备份最新的数据文件
+     */
+    private static void backDbFile() {
+        dbService.backupDbFile();
     }
 
     /**
@@ -69,6 +86,9 @@ public class Application {
 
         exportEngineersBtn = new Button("export all engineers");
         mainFrame.add(exportEngineersBtn);
+
+        exportTrainingsBtn = new Button("export all trainings");
+        mainFrame.add(exportTrainingsBtn);
 
         dialog = new Dialog(mainFrame, "操作提示", true);
         dialog.setBounds(400, 200, 350, 150);
@@ -126,6 +146,20 @@ public class Application {
                 }
             }
         });
+        exportTrainingsBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    File targetFile = chooseExportFile();
+                    if (targetFile == null) return;
+                    engineerService.exportTrainings(targetFile);
+                    showMessage(true);
+                } catch (Exception e1) {
+                    logFail(e1);
+                    showMessage(false);
+                }
+            }
+        });
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -162,7 +196,7 @@ public class Application {
     private static void logFail(Exception e) {
         PrintStream ps = null;
         try {
-            String fileName = PropertyUtil.getValue("fail.log");
+            String fileName = PropertyUtil.getValue("config.properties", "fail.log");
             ps = new PrintStream(fileName);
             e.printStackTrace(ps);
             ps.flush();

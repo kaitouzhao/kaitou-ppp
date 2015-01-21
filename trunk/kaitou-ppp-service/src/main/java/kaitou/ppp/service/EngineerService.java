@@ -29,4 +29,11 @@ public interface EngineerService {
      * @param srcFile 源文件
      */
     public void importEngineerTrainings(File srcFile);
+
+    /**
+     * 导出工程师全部培训信息
+     *
+     * @param targetFile 目标文件
+     */
+    public void exportTrainings(File targetFile);
 }

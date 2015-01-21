@@ -12,4 +12,9 @@
         <property name="engineerManager" ref="engineerManager"/>
     </bean>
 
+    <bean id="dbService" class="kaitou.ppp.service.impl.DbServiceImpl">
+        <property name="dbDir" value="d://ppp//db"/>
+        <property name="backDbFile" value="d://ppp//db_back.zip"/>
+    </bean>
+
 </beans>

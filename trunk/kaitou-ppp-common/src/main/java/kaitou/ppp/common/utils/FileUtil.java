@@ -60,7 +60,7 @@ public abstract class FileUtil {
      * @param filePath 文件路径
      * @return 是否成功
      */
-    private static boolean createFile(String filePath) {
+    public static boolean createFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
             return true;
