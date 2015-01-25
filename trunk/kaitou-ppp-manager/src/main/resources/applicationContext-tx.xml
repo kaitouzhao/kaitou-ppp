@@ -11,7 +11,8 @@
     <aop:config>
         <aop:aspect id="FileDaoTransaction" ref="fileDaoTransaction">
             <aop:pointcut id="fileDaoService"
-                          expression="execution(* kaitou.ppp.manager.*.*Impl.*(..))"/>
+                          expression="execution(* kaitou.ppp.manager.*.*.*Impl.*(..))"/>
+            <aop:before method="doBefore" pointcut-ref="fileDaoService"/>
             <aop:after method="doAfter" pointcut-ref="fileDaoService"/>
             <aop:after-throwing method="doThrowing" pointcut-ref="fileDaoService" throwing="ex"/>
         </aop:aspect>

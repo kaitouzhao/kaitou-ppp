@@ -3,9 +3,29 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
        default-lazy-init="false">
 
-    <bean id="engineerManager" class="kaitou.ppp.manager.impl.EngineerManagerImpl">
+    <bean id="engineerManager" class="kaitou.ppp.manager.engineer.impl.EngineerManagerImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="engineerDao" ref="engineerDao"/>
+    </bean>
+
+    <bean id="engineerTrainingManager" class="kaitou.ppp.manager.engineer.impl.EngineerTrainingManagerImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="engineerTrainingDao" ref="engineerTrainingDao"/>
+    </bean>
+
+    <bean id="shopManager" class="kaitou.ppp.manager.shop.impl.ShopManagerImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="shopDao" ref="shopDao"/>
+    </bean>
+
+    <bean id="shopDetailManager" class="kaitou.ppp.manager.shop.impl.ShopDetailManagerImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="shopDetailDao" ref="shopDetailDao"/>
+    </bean>
+
+    <bean id="systemSettingsManager" class="kaitou.ppp.manager.system.impl.SystemSettingsManagerImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="systemSettingsDao" ref="systemSettingsDao"/>
     </bean>
 
 </beans>

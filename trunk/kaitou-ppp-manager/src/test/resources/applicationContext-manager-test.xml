@@ -3,13 +3,49 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
        default-lazy-init="false">
 
-    <bean id="mockEngineerDao" class="kaitou.ppp.manager.mock.MockEngineerDaoImpl">
+    <bean id="mockEngineerDao" class="kaitou.ppp.manager.mock.dao.MockEngineerDaoImpl">
         <property name="dbDir" value="D:\temp\ppp\test"/>
     </bean>
 
-    <bean id="mockEngineerManager" class="kaitou.ppp.manager.mock.MockEngineerManagerImpl">
+    <bean id="mockEngineerManager" class="kaitou.ppp.manager.mock.manager.MockEngineerManagerImpl">
         <property name="dbDir" value="D:\temp\ppp\test"/>
         <property name="engineerDao" ref="mockEngineerDao"/>
+    </bean>
+
+    <bean id="mockEngineerTrainingDao" class="kaitou.ppp.manager.mock.dao.MockEngineerTrainingDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+    </bean>
+
+    <bean id="mockEngineerTrainingManager" class="kaitou.ppp.manager.mock.manager.MockEngineerTrainingManagerImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+        <property name="engineerTrainingDao" ref="mockEngineerTrainingDao"/>
+    </bean>
+
+    <bean id="mockShopDao" class="kaitou.ppp.manager.mock.dao.MockShopDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+    </bean>
+
+    <bean id="mockShopManager" class="kaitou.ppp.manager.mock.manager.MockShopManagerImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+        <property name="shopDao" ref="mockShopDao"/>
+    </bean>
+
+    <bean id="mockShopDetailDao" class="kaitou.ppp.manager.mock.dao.MockShopDetailDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+    </bean>
+
+    <bean id="mockShopDetailManager" class="kaitou.ppp.manager.mock.manager.MockShopDetailManagerImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+        <property name="shopDetailDao" ref="mockShopDetailDao"/>
+    </bean>
+
+    <bean id="mockSystemSettingsDao" class="kaitou.ppp.manager.mock.dao.MockSystemSettingsDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+    </bean>
+
+    <bean id="mockSystemSettingsManager" class="kaitou.ppp.manager.mock.manager.MockSystemSettingsManagerImpl">
+        <property name="dbDir" value="D:\temp\ppp\test"/>
+        <property name="systemSettingsDao" ref="mockSystemSettingsDao"/>
     </bean>
 
 </beans>

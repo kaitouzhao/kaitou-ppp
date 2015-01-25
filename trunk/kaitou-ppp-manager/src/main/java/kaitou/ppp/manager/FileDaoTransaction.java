@@ -18,13 +18,23 @@ import static kaitou.ppp.common.utils.FileUtil.delete;
 public class FileDaoTransaction {
 
     /**
+     * 开启事务
+     *
+     * @param joinPoint
+     */
+    public void doBefore(JoinPoint joinPoint) {
+        FileDaoManager daoManager = (FileDaoManager) joinPoint.getTarget();
+        daoManager.openTransaction();
+    }
+
+    /**
      * 提交事务
      *
      * @param joinPoint 切点
      */
     public void doAfter(JoinPoint joinPoint) {
         FileDaoManager daoManager = (FileDaoManager) joinPoint.getTarget();
-        commit(daoManager.getDbDir(), daoManager.getEntityName());
+        commit(daoManager);
     }
 
     /**
@@ -35,7 +45,7 @@ public class FileDaoTransaction {
      */
     public void doThrowing(JoinPoint joinPoint, Throwable ex) {
         FileDaoManager daoManager = (FileDaoManager) joinPoint.getTarget();
-        rollback(daoManager.getDbDir(), daoManager.getEntityName());
+        rollback(daoManager);
         throw new RuntimeException(ex);
     }
 
@@ -46,11 +56,11 @@ public class FileDaoTransaction {
      * <li>删除备份文件</li>
      * </ul>
      *
-     * @param dbDir      db文件目录
-     * @param entityName 实体名
+     * @param daoManager DB文件事务管理层
      */
-    public void commit(String dbDir, final String entityName) {
-        File[] backFiles = getBackFile(dbDir, entityName);
+    public void commit(FileDaoManager daoManager) {
+        String dbDir = daoManager.getDbDir();
+        File[] backFiles = getBackFile(dbDir, daoManager.getEntityName());
         if (CollectionUtil.isEmpty(backFiles)) {
             return;
         }
@@ -62,6 +72,7 @@ public class FileDaoTransaction {
             copy(backFilePath, dbDir + '\\' + dbFileName);
             delete(backFilePath);
         }
+        daoManager.closeTransaction();
     }
 
     /**
@@ -76,7 +87,8 @@ public class FileDaoTransaction {
         return dirFile.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith("_" + entityName + ".kdb.back");
+                String suffix = ".kdb.back";
+                return name.endsWith("_" + entityName + suffix) || name.endsWith(entityName + suffix);
             }
         });
     }
@@ -87,16 +99,16 @@ public class FileDaoTransaction {
      * 删除备份文件
      * </p>
      *
-     * @param dbDir      db文件目录
-     * @param entityName 实体名
+     * @param daoManager DB文件事务管理层
      */
-    public void rollback(String dbDir, final String entityName) {
-        File[] backFiles = getBackFile(dbDir, entityName);
+    public void rollback(FileDaoManager daoManager) {
+        File[] backFiles = getBackFile(daoManager.getDbDir(), daoManager.getEntityName());
         if (CollectionUtil.isEmpty(backFiles)) {
             return;
         }
         for (int i = 0; i < backFiles.length; i++) {
             delete(backFiles[i].getPath());
         }
+        daoManager.closeTransaction();
     }
 }

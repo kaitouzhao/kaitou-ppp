@@ -8,13 +8,23 @@
     <import resource="applicationContext-tx.xml"/>
 
     <bean id="engineerService" class="kaitou.ppp.service.impl.EngineerServiceImpl">
-        <property name="dbDir" value="${db.file.dir}"/>
         <property name="engineerManager" ref="engineerManager"/>
+        <property name="engineerTrainingManager" ref="engineerTrainingManager"/>
+    </bean>
+
+    <bean id="shopService" class="kaitou.ppp.service.impl.ShopServiceImpl">
+        <property name="shopManager" ref="shopManager"/>
+        <property name="shopDetailManager" ref="shopDetailManager"/>
+    </bean>
+
+    <bean id="systemSettingsService" class="kaitou.ppp.service.impl.SystemSettingsServiceImpl">
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
     <bean id="dbService" class="kaitou.ppp.service.impl.DbServiceImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="backDbFile" value="${db.file.back}"/>
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
 </beans>

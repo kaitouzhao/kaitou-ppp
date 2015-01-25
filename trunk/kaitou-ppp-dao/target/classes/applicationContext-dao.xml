@@ -3,7 +3,23 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="engineerDao" class="kaitou.ppp.dao.impl.EngineerDaoImpl">
+    <bean id="engineerDao" class="kaitou.ppp.dao.engineer.impl.EngineerDaoImpl">
+        <property name="dbDir" value="d://ppp//db"/>
+    </bean>
+
+    <bean id="engineerTrainingDao" class="kaitou.ppp.dao.engineer.impl.EngineerTrainingDaoImpl">
+        <property name="dbDir" value="d://ppp//db"/>
+    </bean>
+
+    <bean id="shopDao" class="kaitou.ppp.dao.shop.impl.ShopDaoImpl">
+        <property name="dbDir" value="d://ppp//db"/>
+    </bean>
+
+    <bean id="shopDetailDao" class="kaitou.ppp.dao.shop.impl.ShopDetailDaoImpl">
+        <property name="dbDir" value="d://ppp//db"/>
+    </bean>
+
+    <bean id="systemSettingsDao" class="kaitou.ppp.dao.system.impl.SystemSettingsDaoImpl">
         <property name="dbDir" value="d://ppp//db"/>
     </bean>
 

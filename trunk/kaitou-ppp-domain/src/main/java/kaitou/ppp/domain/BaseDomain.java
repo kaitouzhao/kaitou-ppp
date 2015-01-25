@@ -13,6 +13,22 @@ import java.util.List;
  * Time: 10:36
  */
 public abstract class BaseDomain {
+
+    /**
+     * 自定义校验是否相等
+     *
+     * @param o 待校验对象
+     * @return 是为真
+     */
+    public abstract boolean equals(Object o);
+
+    /**
+     * 自定义计算hashCode
+     *
+     * @return hashCode
+     */
+    public abstract int hashCode();
+
     /**
      * 输出对象数据
      *
@@ -25,6 +41,30 @@ public abstract class BaseDomain {
      */
     public abstract void check();
 
+    /**
+     * 生成数据文件名
+     *
+     * @return 文件名
+     */
+    public abstract String dbFileName();
+
+    /**
+     * 获取DB文件后缀
+     *
+     * @return DB文件后缀
+     */
+    public abstract String dbFileSuffix();
+
+    /**
+     * 生成数据文件备份名
+     *
+     * @return 备份名
+     */
+    public String backDbFileName() {
+        StringBuilder backDbFileName = new StringBuilder(dbFileName());
+        backDbFileName.append(".back");
+        return backDbFileName.toString();
+    }
 
     /**
      * 从数组中导入数据

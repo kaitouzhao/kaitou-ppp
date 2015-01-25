@@ -1,14 +1,15 @@
 package kaitou.ppp.service;
 
 /**
- * 数据业务层.
+ * DB文件业务处理层.
  * User: 赵立伟
- * Date: 2015/1/21
- * Time: 10:36
+ * Date: 2015/1/22
+ * Time: 15:45
  */
 public interface DbService {
+
     /**
-     * 备份数据文件
+     * 备份DB文件
      */
-    public void backupDbFile();
+    public void backupDB();
 }

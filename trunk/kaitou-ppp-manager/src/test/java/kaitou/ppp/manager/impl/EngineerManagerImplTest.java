@@ -1,24 +1,15 @@
 package kaitou.ppp.manager.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
-import kaitou.ppp.domain.Engineer;
-import kaitou.ppp.domain.EngineerTraining;
-import kaitou.ppp.domain.SysCode;
-import kaitou.ppp.manager.EngineerManager;
-import kaitou.ppp.manager.mock.MockEngineer;
-import kaitou.ppp.manager.mock.MockEngineerManagerImpl;
-import kaitou.ppp.manager.mock.MockEngineerTraining;
-import org.junit.After;
-import org.junit.Before;
+import kaitou.ppp.domain.engineer.Engineer;
+import kaitou.ppp.domain.system.SysCode;
+import kaitou.ppp.manager.engineer.EngineerManager;
+import kaitou.ppp.manager.mock.domain.MockEngineer;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kaitou.ppp.common.utils.FileUtil.delete;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -28,63 +19,46 @@ import static org.junit.Assert.assertFalse;
  * Date: 2015/1/17
  * Time: 20:06
  */
-public class EngineerManagerImplTest {
-
-    private static ApplicationContext ctx;
+public class EngineerManagerImplTest extends AbstractManagerTest {
 
     private EngineerManager mockEngineerManager;
 
-    private static final String COMPANY_NAME = "认定点1";
+    private static final String SHOP_ID = "shop001";
 
-    @Before
-    public void setUp() throws Exception {
-        ctx = new ClassPathXmlApplicationContext(
-                new String[]{
-                        "applicationContext-manager-test.xml", "applicationContext-tx.xml"
-                }
-        );
+    @Override
+    public String getDbDir() {
+        return mockEngineerManager.getDbDir();
+    }
+
+    @Override
+    public void initManager() {
         mockEngineerManager = ctx.getBean(EngineerManager.class);
     }
 
     @Test
     public void testImportEngineers() {
         List<Engineer> engineers = new ArrayList<Engineer>();
-        engineers.add(new MockEngineer("001", "测试1", SysCode.SaleRegion.NORTH_CHINA.getValue(), COMPANY_NAME, SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue()));
-        engineers.add(new MockEngineer("002", "测试2", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定点2", SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue()));
+        String shopName = "认定店1";
+        engineers.add(new MockEngineer("001", "测试1", SysCode.SaleRegion.NORTH_CHINA.getValue(), shopName, SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), SHOP_ID, "AGP", "", "", ""));
+        engineers.add(new MockEngineer("002", "测试2", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定点2", SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "shop002", "AGP", "", "", ""));
         mockEngineerManager.importEngineers(engineers);
         engineers.clear();
-        engineers.add(new MockEngineer("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), COMPANY_NAME, SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue()));
+        engineers.add(new MockEngineer("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), shopName, SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), SHOP_ID, "AGP", "", "", ""));
+        mockEngineerManager.importEngineers(engineers);
+        engineers.add(new MockEngineer("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), shopName, SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), SHOP_ID, "DPO", "kid@1.com", "13810001000", "饮马井"));
         mockEngineerManager.importEngineers(engineers);
         testQuery();
-        testImportEngineerTrainings();
-        testQuery1();
     }
 
     private void testQuery() {
-        List<Engineer> engineers = mockEngineerManager.query(COMPANY_NAME);
+        List<Engineer> engineers = mockEngineerManager.query(SHOP_ID);
         assertFalse(CollectionUtil.isEmpty(engineers));
-        assertEquals(1, engineers.size());
-    }
-
-    private void testQuery1() {
-        List<Engineer> engineers = mockEngineerManager.query(COMPANY_NAME);
-        assertFalse(CollectionUtil.isEmpty(engineers));
-        assertEquals(1, engineers.size());
-        assertFalse(CollectionUtil.isEmpty(engineers.get(0).getEngineerTrainings()));
-    }
-
-    private void testImportEngineerTrainings() {
-        List<EngineerTraining> trainings = new ArrayList<EngineerTraining>();
-        trainings.add(new MockEngineerTraining("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), COMPANY_NAME, SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "A", "测试", "", "2013/1/1", "M"));
-        mockEngineerManager.importEngineerTrainings(trainings);
-    }
-
-    @After
-    public void clearDb() {
-        File file = new File(mockEngineerManager.getDbDir());
-        File[] files = file.listFiles();
-        for (File f : files) {
-            delete(f.getPath());
-        }
+        assertEquals(2, engineers.size());
+        Engineer engineer = engineers.get(1);
+        assertEquals("DPO", engineer.getProductLine());
+        assertEquals("kid@1.com", engineer.getEmail());
+        assertEquals("13810001000", engineer.getPhone());
+        assertEquals("饮马井", engineer.getAddress());
+        assertEquals(3, mockEngineerManager.query().size());
     }
 }

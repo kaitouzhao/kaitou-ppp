@@ -1,5 +1,7 @@
 package kaitou.ppp.common.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,4 +171,13 @@ public abstract class FileUtil {
         writeLines(targetPath, readLines(srcPath));
     }
 
+    /**
+     * 校验文件是否存在
+     *
+     * @param filePath 文件路径
+     * @return 如果文件路径为空或者文件不存在，则为真
+     */
+    public static boolean isExists(String filePath) {
+        return StringUtils.isEmpty(filePath) || new File(filePath).exists();
+    }
 }
