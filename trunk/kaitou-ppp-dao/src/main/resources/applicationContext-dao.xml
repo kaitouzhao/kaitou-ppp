@@ -19,6 +19,16 @@
         <property name="dbDir" value="${db.file.dir}"/>
     </bean>
 
+    <bean id="shopRTSDao" class="kaitou.ppp.dao.shop.impl.ShopRTSDaoImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+    </bean>
+
+    <bean id="shopPayDao" class="kaitou.ppp.dao.shop.impl.ShopPayDaoImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+    </bean>
+
+    <bean id="cachedShopDao" class="kaitou.ppp.dao.shop.impl.CachedShopDaoImpl"/>
+
     <bean id="systemSettingsDao" class="kaitou.ppp.dao.system.impl.SystemSettingsDaoImpl">
         <property name="dbDir" value="${db.file.dir}"/>
     </bean>

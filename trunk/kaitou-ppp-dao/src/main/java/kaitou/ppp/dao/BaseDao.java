@@ -1,9 +1,8 @@
 package kaitou.ppp.dao;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
+import kaitou.ppp.common.log.BaseLogManager;
 import kaitou.ppp.domain.BaseDomain;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -22,9 +21,7 @@ import static kaitou.ppp.common.utils.FileUtil.*;
  * Date: 2015/1/22
  * Time: 11:53
  */
-public abstract class BaseDao<T extends BaseDomain> {
-
-    protected final Log log = LogFactory.getLog("DAO");
+public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
 
     /**
      * 数据文件目录
@@ -112,13 +109,13 @@ public abstract class BaseDao<T extends BaseDomain> {
             try {
                 domain.check();
             } catch (RuntimeException e) {
-                log.info("第" + (i + 1) + "行数据校验不通过", e);
+                logOperation("第" + (i + 1) + "行数据校验不通过。原因：" + e.getMessage());
                 continue;
             }
             String backDbFileName = domain.backDbFileName();
             List<T> domainList = domainMap.get(backDbFileName);
             if (domainList == null) {
-                domainList = query(domain.dbFileSuffix());
+                domainList = query(domain.dbFileName());
                 if (CollectionUtil.isEmpty(domainList)) {
                     domainList = new ArrayList<T>();
                 }
@@ -187,27 +184,75 @@ public abstract class BaseDao<T extends BaseDomain> {
      * @return 实体列表
      */
     public List<T> query(String... dbType) {
-        List<T> engineers = new ArrayList<T>();
+        List<T> domainList = new ArrayList<T>();
         final String domainName = getDomainClass().getSimpleName();
         if (!CollectionUtil.isEmpty(dbType)) {
             for (String sId : dbType) {
                 String dbFileSuffix = '_' + sId + '_' + domainName + ".kdb";
-                engineers.addAll(query(dbFileSuffix));
+                domainList.addAll(query(dbFileSuffix));
             }
-            return engineers;
+            return domainList;
         }
         File dbDirFile = new File(dbDir);
         File[] dbFiles = dbDirFile.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith("_" + domainName + ".kdb");
+                return name.endsWith(domainName + ".kdb");
             }
         });
         for (File dbFile : dbFiles) {
             String dbFileName = dbFile.getName();
-            String dbFileSuffix = dbFileName.substring(dbFileName.indexOf('_', 1), dbFileName.lastIndexOf('_')) + '_' + domainName + ".kdb";
-            engineers.addAll(query(dbFileSuffix));
+            domainList.addAll(query(dbFileName));
         }
-        return engineers;
+        return domainList;
+    }
+
+    /**
+     * 删除
+     *
+     * @param domains 待删除集合。支持一个或多个
+     * @return 成功删除记录数
+     */
+    public int delete(Object... domains) {
+        if (CollectionUtil.isEmpty(domains)) {
+            return 0;
+        }
+        Map<String, List<T>> domainMap = new HashMap<String, List<T>>();
+        int size = domains.length;
+        int updateIndex = -1;
+        int successCount = 0;
+        for (int i = 0; i < size; i++) {
+            T domain = (T) domains[i];
+            String backDbFileName = domain.backDbFileName();
+            List<T> domainList = domainMap.get(backDbFileName);
+            if (domainList == null) {
+                domainList = query(domain.dbFileName());
+                if (CollectionUtil.isEmpty(domainList)) {
+                    continue;
+                }
+                domainMap.put(backDbFileName, domainList);
+            }
+            for (int j = 0; j < domainList.size(); j++) {
+                if (domain.equals(domainList.get(j))) {
+                    updateIndex = j;
+                    break;
+                }
+            }
+            if (updateIndex > -1) {
+                domainList.remove(updateIndex);
+                updateIndex = -1;
+                successCount++;
+            }
+        }
+        for (Map.Entry<String, List<T>> item : domainMap.entrySet()) {
+            StringBuilder dbFilePath = new StringBuilder(dbDir).append(File.separatorChar).append(item.getKey());
+            List<T> domainList = item.getValue();
+            List<String> eJsonList = new ArrayList<String>();
+            for (Object domain : domainList) {
+                eJsonList.add(object2Json(domain));
+            }
+            writeLines(dbFilePath.toString(), eJsonList);
+        }
+        return successCount;
     }
 }

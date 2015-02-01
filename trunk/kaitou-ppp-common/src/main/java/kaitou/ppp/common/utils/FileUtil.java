@@ -13,6 +13,9 @@ import java.util.List;
  * Time: 12:22
  */
 public abstract class FileUtil {
+
+    private static final String CHARSET_NAME = "UTF-8";
+
     /**
      * 向文件插入新行
      *

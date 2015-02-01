@@ -2,6 +2,7 @@ package kaitou.ppp.dao.system.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 import com.womai.bsp.tool.utils.PropertyUtil;
+import kaitou.ppp.common.utils.FileUtil;
 import kaitou.ppp.dao.BaseDao;
 import kaitou.ppp.dao.system.SystemSettingsDao;
 import kaitou.ppp.domain.system.SystemSettings;
@@ -100,7 +101,7 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
      */
     private void saveSettings(SystemSettings settings) {
         String dbFilePath = getBackDbFilePath();
-        delete(dbFilePath);
+        FileUtil.delete(dbFilePath);
         List<String> lines = new ArrayList<String>();
         lines.add(object2Json(settings));
         writeLines(dbFilePath, lines);

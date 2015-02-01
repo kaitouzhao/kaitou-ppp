@@ -9,10 +9,19 @@
                    value="%d [%p] %c.%M(%L) | %m%n"/>
         </layout>
     </appender>
-
-    <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+    <!--系统日志-->
+    <appender name="SYSTEM-LOG" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="Append" value="true"/>
-        <param name="file" value="${log.dir}/kaitou-ppp.log"/>
+        <param name="file" value="${log.dir}/kaitou-ppp-system.log"/>
+        <param name="datePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%p] %c.%M(%L) | %m%n"/>
+        </layout>
+    </appender>
+    <!--操作日志-->
+    <appender name="OPERATION-LOG" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="Append" value="true"/>
+        <param name="file" value="${log.dir}/kaitou-ppp-operation.log"/>
         <param name="datePattern" value="'.'yyyy-MM-dd"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%p] %c.%M(%L) | %m%n"/>
@@ -20,12 +29,18 @@
     </appender>
 
     <logger name="kaitou.ppp">
+        <level value="ERROR"/>
+        <appender-ref ref="SYSTEM-LOG"/>
+    </logger>
+
+    <logger name="kaitou.operation">
         <level value="INFO"/>
+        <appender-ref ref="OPERATION-LOG"/>
     </logger>
 
     <root>
         <level value="ERROR"/>
-        <appender-ref ref="FILE"/>
+        <!--<appender-ref ref="CONSOLE"/>-->
     </root>
 
 </log4j:configuration>

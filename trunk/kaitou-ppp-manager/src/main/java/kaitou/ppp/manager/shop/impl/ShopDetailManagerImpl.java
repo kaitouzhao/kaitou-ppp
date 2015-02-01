@@ -1,6 +1,7 @@
 package kaitou.ppp.manager.shop.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
+import kaitou.ppp.dao.shop.CachedShopDao;
 import kaitou.ppp.dao.shop.ShopDetailDao;
 import kaitou.ppp.domain.shop.ShopDetail;
 import kaitou.ppp.manager.FileDaoManager;
@@ -16,7 +17,12 @@ import java.util.List;
  */
 public class ShopDetailManagerImpl extends FileDaoManager implements ShopDetailManager {
 
-    private ShopDetailDao shopDetailDao;
+    protected ShopDetailDao shopDetailDao;
+    private CachedShopDao cachedShopDao;
+
+    public void setCachedShopDao(CachedShopDao cachedShopDao) {
+        this.cachedShopDao = cachedShopDao;
+    }
 
     public void setShopDetailDao(ShopDetailDao shopDetailDao) {
         this.shopDetailDao = shopDetailDao;
@@ -29,11 +35,25 @@ public class ShopDetailManagerImpl extends FileDaoManager implements ShopDetailM
 
     @Override
     public int importShopDetails(List<ShopDetail> shopDetails) {
-        return shopDetailDao.save(CollectionUtil.toArray(shopDetails, ShopDetail.class));
+        ShopDetail[] shopDetailsArray = CollectionUtil.toArray(shopDetails, ShopDetail.class);
+        int successCount = shopDetailDao.save(shopDetailsArray);
+        cachedShopDao.updateShopDetails(shopDetailsArray);
+        return successCount;
     }
 
     @Override
     public List<ShopDetail> query(String... numberOfYear) {
         return shopDetailDao.query(numberOfYear);
+    }
+
+    @Override
+    public void cacheShop() {
+        List<ShopDetail> details = query();
+        cachedShopDao.updateShopDetails(CollectionUtil.toArray(details, ShopDetail.class));
+    }
+
+    @Override
+    public int delete(Object... shopDetails) {
+        return shopDetailDao.delete(shopDetails);
     }
 }

@@ -36,4 +36,9 @@ public class EngineerTrainingManagerImpl extends FileDaoManager implements Engin
     public String getEntityName() {
         return EngineerTraining.class.getSimpleName();
     }
+
+    @Override
+    public int delete(Object... trainings) {
+        return engineerTrainingDao.delete(trainings);
+    }
 }

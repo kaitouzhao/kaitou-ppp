@@ -9,6 +9,8 @@ import kaitou.ppp.domain.shop.Shop;
  * Time: 12:32
  */
 public class MockShop extends Shop {
+    public MockShop() {
+    }
 
     public MockShop(String saleRegion, String id, String name, String linkMan, String phone, String address, String email) {
         this.saleRegion = saleRegion;
@@ -27,6 +29,7 @@ public class MockShop extends Shop {
         Shop shop = (Shop) o;
 
         if (id != null ? !id.equals(shop.getId()) : shop.getId() != null) return false;
+        if (saleRegion != null ? !saleRegion.equals(shop.getSaleRegion()) : shop.getSaleRegion() != null) return false;
 
         return true;
     }

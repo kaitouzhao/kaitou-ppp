@@ -33,4 +33,12 @@ public interface EngineerManager {
      * @return 工程师列表
      */
     public List<Engineer> query(String... shopId);
+
+    /**
+     * 删除
+     *
+     * @param engineers 待删除集合。支持一个或多个
+     * @return 成功执行个数
+     */
+    public int delete(Object... engineers);
 }

@@ -9,6 +9,8 @@ import kaitou.ppp.domain.engineer.Engineer;
  * Time: 13:32
  */
 public class MockEngineer extends Engineer {
+    public MockEngineer() {
+    }
 
     public MockEngineer(String id, String name, String saleRegion, String shopName, String shopLevel, String numberOfYear, String ACELevel, String dateOfEntry, String dateOfDeparture, String status, String shopId, String productLine, String email, String phone, String address) {
         this.id = id;

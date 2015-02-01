@@ -3,8 +3,8 @@ package kaitou.ppp.manager.engineer.impl;
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.dao.engineer.EngineerDao;
 import kaitou.ppp.domain.engineer.Engineer;
-import kaitou.ppp.manager.engineer.EngineerManager;
 import kaitou.ppp.manager.FileDaoManager;
+import kaitou.ppp.manager.engineer.EngineerManager;
 
 import java.util.List;
 
@@ -35,5 +35,10 @@ public class EngineerManagerImpl extends FileDaoManager implements EngineerManag
     @Override
     public List<Engineer> query(String... shopId) {
         return engineerDao.query(shopId);
+    }
+
+    @Override
+    public int delete(Object... engineers) {
+        return engineerDao.delete(engineers);
     }
 }

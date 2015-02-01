@@ -33,4 +33,17 @@ public interface ShopDetailManager {
      * @return 认定店明细列表
      */
     public List<ShopDetail> query(String... numberOfYear);
+
+    /**
+     * 缓存全部认定店
+     */
+    public void cacheShop();
+
+    /**
+     * 删除
+     *
+     * @param shopDetails 待删除集合。支持一个或多个
+     * @return 成功执行条数
+     */
+    public int delete(Object... shopDetails);
 }

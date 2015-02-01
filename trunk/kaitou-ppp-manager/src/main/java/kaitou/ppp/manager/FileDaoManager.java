@@ -17,6 +17,13 @@ public abstract class FileDaoManager {
     protected static ThreadLocal<Boolean> newTransaction = new ThreadLocal<Boolean>();
 
     /**
+     * 获取实体名
+     *
+     * @return 实体名
+     */
+    public abstract String getEntityName();
+
+    /**
      * 开启新事务
      * <p>
      * 如果已有新事务，则不开启
@@ -64,6 +71,4 @@ public abstract class FileDaoManager {
     public String getDbDir() {
         return dbDir;
     }
-
-    public abstract String getEntityName();
 }

@@ -36,4 +36,48 @@ public interface EngineerService {
      * @param targetFile 目标文件
      */
     public void exportTrainings(File targetFile);
+
+    /**
+     * 删除指定的工程师
+     *
+     * @param saleRegion  指定销售区域
+     * @param shopId      指定认定店编码
+     * @param id          指定工程师编码
+     * @param productLine 指定工程师产品线
+     */
+    public void deleteEngineer(String saleRegion, String shopId, String id, String productLine);
+
+    /**
+     * 删除指定的工程师发展信息
+     *
+     * @param saleRegion    指定销售区域
+     * @param shopId        指定认定店编码
+     * @param id            指定工程师编码
+     * @param productLine   指定工程师产品线
+     * @param trainingModel 培训机型
+     */
+    public void deleteEngineerTraining(String saleRegion, String shopId, String id, String productLine, String trainingModel);
+
+    /**
+     * 根据产品线导出在职工程师基本信息
+     *
+     * @param targetFile  目标文件
+     * @param productLine 产品线
+     */
+    @Deprecated
+    public void exportEngineers(File targetFile, String productLine);
+
+    /**
+     * 根据产品线统计在职工程师数
+     *
+     * @param targetFile 目标文件
+     */
+    public void countEngineersByProductLine(File targetFile);
+
+    /**
+     * 根据认定店信息统计在职工程师数
+     *
+     * @param targetFile 目标文件
+     */
+    public void countEngineersByShop(File targetFile);
 }

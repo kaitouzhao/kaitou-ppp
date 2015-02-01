@@ -10,11 +10,16 @@
     <bean id="engineerService" class="kaitou.ppp.service.impl.EngineerServiceImpl">
         <property name="engineerManager" ref="engineerManager"/>
         <property name="engineerTrainingManager" ref="engineerTrainingManager"/>
+        <property name="shopManager" ref="shopManager"/>
     </bean>
 
     <bean id="shopService" class="kaitou.ppp.service.impl.ShopServiceImpl">
         <property name="shopManager" ref="shopManager"/>
         <property name="shopDetailManager" ref="shopDetailManager"/>
+        <property name="engineerManager" ref="engineerManager"/>
+        <property name="engineerTrainingManager" ref="engineerTrainingManager"/>
+        <property name="shopRTSManager" ref="shopRTSManager"/>
+        <property name="shopPayManager" ref="shopPayManager"/>
     </bean>
 
     <bean id="systemSettingsService" class="kaitou.ppp.service.impl.SystemSettingsServiceImpl">

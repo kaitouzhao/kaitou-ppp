@@ -26,4 +26,12 @@ public interface EngineerDao {
      * @return 工程师列表
      */
     public List<Engineer> query(String... shopId);
+
+    /**
+     * 删除工程师
+     *
+     * @param engineers 待删除集合。可以是单个，也可以是多个
+     * @return 成功记录数
+     */
+    public int delete(Object... engineers);
 }

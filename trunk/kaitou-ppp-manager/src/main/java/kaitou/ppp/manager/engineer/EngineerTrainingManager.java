@@ -34,4 +34,12 @@ public interface EngineerTrainingManager {
      * @return 工程师培训信息列表
      */
     public List<EngineerTraining> query(String... shopId);
+
+    /**
+     * 删除
+     *
+     * @param trainings 待删除集合。支持一个或多个
+     * @return 成功执行个数
+     */
+    public int delete(Object... trainings);
 }

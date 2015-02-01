@@ -47,13 +47,16 @@ public class Shop extends BaseDomain {
         Shop shop = (Shop) o;
 
         if (id != null ? !id.equals(shop.id) : shop.id != null) return false;
+        if (saleRegion != null ? !saleRegion.equals(shop.saleRegion) : shop.saleRegion != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        int result = saleRegion != null ? saleRegion.hashCode() : 0;
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        return result;
     }
 
     @Override

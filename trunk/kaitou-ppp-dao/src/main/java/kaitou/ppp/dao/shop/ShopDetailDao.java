@@ -26,4 +26,12 @@ public interface ShopDetailDao {
      * @return 认定店明细列表
      */
     public List<ShopDetail> query(String... numberOfYear);
+
+    /**
+     * 删除
+     *
+     * @param shopDetails 待删除集合。支持一个或多个
+     * @return 成功执行记录数
+     */
+    public int delete(Object... shopDetails);
 }

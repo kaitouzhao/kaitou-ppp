@@ -26,4 +26,12 @@ public interface EngineerTrainingDao {
      * @return 培训信息列表
      */
     public List<EngineerTraining> query(String... shopId);
+
+    /**
+     * 删除培训信息
+     *
+     * @param trainings 待删除集合。可以是单个，也可以是多个
+     * @return 成功记录数
+     */
+    public int delete(Object... trainings);
 }

@@ -9,7 +9,6 @@
                 <db.file.dir>d://temp//ppp//db</db.file.dir>
                 <db.file.back>d://temp//ppp//db_back.zip</db.file.back>
                 <log.dir>d://temp//ppp//log</log.dir>
-                <fail.log.path>d://temp//kaitou-ppp-fail.log</fail.log.path>
             </properties>
         </profile>
 
@@ -19,7 +18,6 @@
                 <db.file.dir>d://ppp//db</db.file.dir>
                 <db.file.back>d://ppp//db_back.zip</db.file.back>
                 <log.dir>d://ppp//log</log.dir>
-                <fail.log.path>D://kaitou-ppp-fail.log</fail.log.path>
             </properties>
         </profile>
     </profiles>

@@ -48,6 +48,7 @@ public class EngineerManagerImplTest extends AbstractManagerTest {
         engineers.add(new MockEngineer("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), shopName, SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), SHOP_ID, "DPO", "kid@1.com", "13810001000", "饮马井"));
         mockEngineerManager.importEngineers(engineers);
         testQuery();
+        testDelete();
     }
 
     private void testQuery() {
@@ -60,5 +61,18 @@ public class EngineerManagerImplTest extends AbstractManagerTest {
         assertEquals("13810001000", engineer.getPhone());
         assertEquals("饮马井", engineer.getAddress());
         assertEquals(3, mockEngineerManager.query().size());
+    }
+
+    private void testDelete() {
+        MockEngineer deleted = new MockEngineer();
+        deleted.setSaleRegion(SysCode.SaleRegion.NORTH_CHINA.getValue());
+        deleted.setShopId(SHOP_ID);
+        deleted.setId("001");
+        deleted.setProductLine("wwe");
+        assertEquals(0, mockEngineerManager.delete(deleted));
+        assertEquals(2, mockEngineerManager.query(SHOP_ID).size());
+        deleted.setProductLine("DPO");
+        assertEquals(1, mockEngineerManager.delete(deleted));
+        assertEquals(1, mockEngineerManager.query(SHOP_ID).size());
     }
 }

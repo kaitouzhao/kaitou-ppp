@@ -25,4 +25,12 @@ public interface ShopDao {
      * @return 认定店列表
      */
     public List<Shop> query();
+
+    /**
+     * 删除
+     *
+     * @param shops 待删除集合。支持一个或多个
+     * @return 成功执行记录数
+     */
+    public int delete(Object... shops);
 }

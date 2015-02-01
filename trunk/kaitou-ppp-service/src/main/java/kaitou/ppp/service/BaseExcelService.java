@@ -2,6 +2,7 @@ package kaitou.ppp.service;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 import com.womai.bsp.tool.utils.ExcelUtil;
+import kaitou.ppp.common.log.BaseLogManager;
 import kaitou.ppp.domain.BaseDomain;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -18,18 +19,18 @@ import static com.womai.bsp.tool.utils.ExcelUtil.write2Excel;
  * Date: 2015/1/25
  * Time: 13:26
  */
-public abstract class BaseExcelService {
+public abstract class BaseExcelService extends BaseLogManager {
 
     /**
      * 将excel数据转换成实体
      *
      * @param srcFile     源文件
      * @param sheetName   读取sheet名
+     * @param headers     excel标题
      * @param columns     excel列与实体属性对应
-     * @param domainClass 实体类型
-     * @return 实体列表
+     * @param domainClass 实体类型   @return 实体列表
      */
-    protected <T extends BaseDomain> List<T> readFromExcel(File srcFile, String sheetName, String[] columns, Class<T> domainClass) {
+    protected <T extends BaseDomain> List<T> readFromExcel(File srcFile, String sheetName, String[] headers, String[] columns, Class<T> domainClass) {
         List<T> domainList = new ArrayList<T>();
         if (srcFile == null) {
             return domainList;
@@ -42,9 +43,9 @@ public abstract class BaseExcelService {
         }
         List<String[]> rows;
         try {
-            rows = readExcel(is, sheetName, columns.length, 2);
+            rows = readExcel(is, sheetName, headers.length, 2);
         } catch (Exception e) {
-            throw new RuntimeException("导入的excel格式不正确，请检查");
+            throw new RuntimeException("导入的excel格式不正确，请检查", e);
         }
         if (CollectionUtil.isEmpty(rows)) {
             return domainList;

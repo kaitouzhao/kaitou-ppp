@@ -23,11 +23,11 @@ import static org.junit.Assert.assertFalse;
  */
 public class FileUtilTest {
 
-    private static final String FILE_PATH = "1.kdb";
+    private static final String FILE_PATH = "D:\\temp\\ppp\\test\\1.kdb";
     private static final String NAME = "测试3";
     private static final String ID = "03";
 
-    @Before
+    @Test
     public void testWriteLines() {
         List<String> lines = new ArrayList<String>();
         lines.add(object2Json(new AMock().setName("测试1").setId("01")));
@@ -37,11 +37,10 @@ public class FileUtilTest {
         lines.add(object2Json(new AMock().setName(NAME).setId(ID)));
         lines.add(object2Json(new AMock().setName("测试4").setId("04")));
         writeLines(FILE_PATH, lines);
-
+        testReadLines();
     }
 
-    @Test
-    public void testReadLines() throws Exception {
+    private void testReadLines() {
         List<String> lines = readLines(FILE_PATH);
         assertFalse(CollectionUtil.isEmpty(lines));
         AMock aMock3 = json2Object(lines.get(2), AMock.class);
