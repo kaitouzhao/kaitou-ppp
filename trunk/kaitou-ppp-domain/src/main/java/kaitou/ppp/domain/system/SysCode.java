@@ -8,13 +8,29 @@ package kaitou.ppp.domain.system;
  */
 public class SysCode {
     /**
-     * 认定点等级
+     * 认定店状态
      */
-    public static enum CompanyLevel {
+    public static enum ShopStatus {
+        IN_THE_USE("认定中"), CANCEL("取消");
+        private String value;
+
+        ShopStatus(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    /**
+     * 认定店等级
+     */
+    public static enum ShopLevel {
         GOLD("金牌"), SILVER("银牌"), NORMAL("普通"), BACKUP("候补");
         private String value;
 
-        CompanyLevel(String value) {
+        ShopLevel(String value) {
             this.value = value;
         }
 
@@ -43,15 +59,47 @@ public class SysCode {
      * 销售区域
      */
     public static enum SaleRegion {
-        NORTH_CHINA("华北"), WEST_CHINA("华西");
+        NORTH_CHINA("华北", "HB"), WEST_CHINA("华西", "HX"), SOUTH_CHINA("华南", "HN"), EAST_CHINA("华东", "HD");
         private String value;
+        private String code;
 
-        SaleRegion(String value) {
+        SaleRegion(String value, String code) {
             this.value = value;
+            this.code = code;
         }
 
         public String getValue() {
             return value;
+        }
+
+        /**
+         * 转换成名称
+         *
+         * @param currentCode 编码
+         * @return 名称
+         */
+        public static String convert2Value(String currentCode) {
+            for (SaleRegion region : SaleRegion.values()) {
+                if (region.code.equals(currentCode)) {
+                    return region.value;
+                }
+            }
+            return currentCode;
+        }
+
+        /**
+         * 转换成编码
+         *
+         * @param currentName 名称
+         * @return 编码
+         */
+        public static String convert2Code(String currentName) {
+            for (SaleRegion region : SaleRegion.values()) {
+                if (region.value.equals(currentName)) {
+                    return region.code;
+                }
+            }
+            return currentName;
         }
     }
 

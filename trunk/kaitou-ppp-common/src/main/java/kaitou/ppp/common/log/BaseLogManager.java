@@ -27,20 +27,20 @@ public abstract class BaseLogManager {
      *
      * @param e 异常
      */
-    protected static final void logSystemEx(Exception e) {
+    protected static final void logSystemEx(Throwable e) {
         if (SYSTEM_LOG.isDebugEnabled()) {
-            SYSTEM_LOG.debug(e);
+            SYSTEM_LOG.debug("系统调试", e);
             return;
         }
         if (SYSTEM_LOG.isInfoEnabled()) {
-            SYSTEM_LOG.info(e);
+            SYSTEM_LOG.info("系统日志", e);
             return;
         }
         if (SYSTEM_LOG.isWarnEnabled()) {
-            SYSTEM_LOG.warn(e);
+            SYSTEM_LOG.warn("系统警告", e);
             return;
         }
-        SYSTEM_LOG.error(e);
+        SYSTEM_LOG.error("系统出错", e);
     }
 
     /**

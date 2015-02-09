@@ -2,12 +2,12 @@ package kaitou.ppp.common.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
 import org.apache.tools.zip.ZipOutputStream;
 
 import java.io.*;
-import java.util.zip.CRC32;
-import java.util.zip.CheckedOutputStream;
-import java.util.zip.Deflater;
+import java.util.Enumeration;
+import java.util.zip.*;
 
 /**
  * 压缩工具类.
@@ -43,6 +43,7 @@ public abstract class ZipUtil {
             zos.setLevel(Deflater.BEST_SPEED);
             String src = srcPath;
             src = src.replaceAll("\\\\", "/");
+            src = src.replaceAll("//", "/");
             String prefixDir;
             if (srcFile.isFile()) {
                 prefixDir = src.substring(0, src.lastIndexOf("/") + 1);
@@ -129,4 +130,122 @@ public abstract class ZipUtil {
             }
         }
     }
+
+    /**
+     * 使用 org.apache.tools.zip.ZipFile 解压文件，它与 java 类库中的
+     * java.util.zip.ZipFile 使用方式是一新的，只不过多了设置编码方式的
+     * 接口。
+     * <p/>
+     * 注，apache 没有提供 ZipInputStream 类，所以只能使用它提供的ZipFile
+     * 来读取压缩文件。
+     *
+     * @param archive       压缩包路径
+     * @param decompressDir 解压路径
+     */
+    public static void unzip(String archive, String decompressDir) {
+        try {
+            ZipFile zf = new ZipFile(archive, "GBK");//支持中文
+            Enumeration e = zf.getEntries();
+            while (e.hasMoreElements()) {
+                ZipEntry ze2 = (ZipEntry) e.nextElement();
+                String entryName = ze2.getName();
+                String path = decompressDir + "/" + entryName;
+                if (ze2.isDirectory()) {
+//                    System.out.println("正在创建解压目录 - " + entryName);
+                    File decompressDirFile = new File(path);
+                    if (!decompressDirFile.exists()) {
+                        decompressDirFile.mkdirs();
+                    }
+                } else {
+//                    System.out.println("正在创建解压文件 - " + entryName);
+                    String fileDir = path.substring(0, path.lastIndexOf("/"));
+                    File fileDirFile = new File(fileDir);
+                    if (!fileDirFile.exists()) {
+                        fileDirFile.mkdirs();
+                    }
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(
+                            decompressDir + "/" + entryName));
+                    BufferedInputStream bi = new BufferedInputStream(zf.getInputStream(ze2));
+                    byte[] readContent = new byte[1024];
+                    int readCount = bi.read(readContent);
+                    while (readCount != -1) {
+                        bos.write(readContent, 0, readCount);
+                        readCount = bi.read(readContent);
+                    }
+                    bos.close();
+                }
+            }
+            zf.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 使用 java api 中的 ZipInputStream 类解压文件，但如果压缩时采用了
+     * org.apache.tools.zip.ZipOutputStream时，而不是 java 类库中的
+     * java.util.zip.ZipOutputStream时，该方法不能使用，原因就是编码方
+     * 式不一致导致，运行时会抛如下异常：
+     * java.lang.IllegalArgumentException
+     * at java.util.zip.ZipInputStream.getUTF8String(ZipInputStream.java:290)
+     * <p/>
+     * 当然，如果压缩包使用的是java类库的java.util.zip.ZipOutputStream
+     * 压缩而成是不会有问题的，但它不支持中文
+     *
+     * @param archive       压缩包路径
+     * @param decompressDir 解压路径
+     */
+    @Deprecated
+    public static void readByZipInputStream(String archive, String decompressDir) {
+        BufferedInputStream bi = null;
+        BufferedOutputStream bos = null;
+        try {
+            //----解压文件(ZIP文件的解压缩实质上就是从输入流中读取数据):
+//            System.out.println("开始读压缩文件");
+            FileInputStream fi = new FileInputStream(archive);
+            CheckedInputStream csumi = new CheckedInputStream(fi, new CRC32());
+            ZipInputStream in2 = new ZipInputStream(csumi);
+            bi = new BufferedInputStream(in2);
+            java.util.zip.ZipEntry ze;//压缩文件条目
+            //遍历压缩包中的文件条目
+            while ((ze = in2.getNextEntry()) != null) {
+                String entryName = ze.getName();
+                if (ze.isDirectory()) {
+//                    System.out.println("正在创建解压目录 - " + entryName);
+                    File decompressDirFile = new File(decompressDir + "/" + entryName);
+                    if (!decompressDirFile.exists()) {
+                        decompressDirFile.mkdirs();
+                    }
+                } else {
+//                    System.out.println("正在创建解压文件 - " + entryName);
+                    bos = new BufferedOutputStream(new FileOutputStream(
+                            decompressDir + "/" + entryName));
+                    byte[] buffer = new byte[1024];
+                    int readCount = bi.read(buffer);
+
+                    while (readCount != -1) {
+                        bos.write(buffer, 0, readCount);
+                        readCount = bi.read(buffer);
+                    }
+//                    bos.close();
+                }
+            }
+//            bi.close();
+//            System.out.println("Checksum: " + csumi.getChecksum().getValue());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (bos != null) {
+                    bos.close();
+                }
+                if (bi != null) {
+                    bi.close();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
 }

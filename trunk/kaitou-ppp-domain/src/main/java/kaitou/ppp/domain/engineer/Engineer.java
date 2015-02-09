@@ -1,6 +1,7 @@
 package kaitou.ppp.domain.engineer;
 
 import kaitou.ppp.domain.BaseDomain;
+import kaitou.ppp.domain.system.SysCode;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -12,6 +13,8 @@ import org.apache.commons.lang.StringUtils;
 public class Engineer extends BaseDomain {
     /**
      * 销售区域
+     *
+     * @see kaitou.ppp.domain.system.SysCode.SaleRegion
      */
     protected String saleRegion;
     /**
@@ -56,6 +59,8 @@ public class Engineer extends BaseDomain {
     protected String dateOfDeparture;
     /**
      * 状态
+     *
+     * @see kaitou.ppp.domain.system.SysCode.EngineerStatus
      */
     protected String status;
     /**
@@ -108,7 +113,7 @@ public class Engineer extends BaseDomain {
     @Override
     public String dbFileName() {
         StringBuilder dbFileName = new StringBuilder();
-        dbFileName.append(saleRegion).append(dbFileSuffix());
+        dbFileName.append(SysCode.SaleRegion.convert2Code(saleRegion)).append(dbFileSuffix());
         return dbFileName.toString();
     }
 
@@ -156,7 +161,7 @@ public class Engineer extends BaseDomain {
     }
 
     public String getSaleRegion() {
-        return saleRegion;
+        return SysCode.SaleRegion.convert2Value(saleRegion);
     }
 
     public void setSaleRegion(String saleRegion) {

@@ -15,6 +15,7 @@ import java.util.List;
  * Date: 2015/1/31
  * Time: 10:07
  */
+@Deprecated
 public class InputDialog {
     /**
      * 对话框

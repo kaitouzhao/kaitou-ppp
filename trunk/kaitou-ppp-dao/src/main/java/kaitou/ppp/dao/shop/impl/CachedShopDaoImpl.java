@@ -84,15 +84,19 @@ public class CachedShopDaoImpl implements CachedShopDao {
     }
 
     @Override
-    public List<CachedShopDetail> queryCachedShopDetails(String shopId) {
+    public CachedShop getCachedShop(String shopId) {
         if (CollectionUtil.isEmpty(cachedShopMap) || StringUtils.isEmpty(shopId)) {
-            return new ArrayList<CachedShopDetail>();
+            return new CachedShop();
         }
         String jsonResult = cachedShopMap.get(shopId);
         if (StringUtils.isEmpty(jsonResult)) {
-            return new ArrayList<CachedShopDetail>();
+            return new CachedShop();
         }
-        CachedShop cachedShop = json2Object(jsonResult, CachedShop.class);
-        return cachedShop.getDetails();
+        return json2Object(jsonResult, CachedShop.class);
+    }
+
+    @Override
+    public List<CachedShopDetail> queryCachedShopDetails(String shopId) {
+        return getCachedShop(shopId).getDetails();
     }
 }

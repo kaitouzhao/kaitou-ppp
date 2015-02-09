@@ -1,0 +1,177 @@
+JFDML JFormDesigner: "5.2.1.0.138" Java: "1.7.0_40" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
+			"autoSize": false
+		} ) {
+			name: "this"
+			"$sizePolicy": 0
+			"title": "PPP-ERP主界面"
+			addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "thisMouseClicked", true ) )
+			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
+				name: "managerMenuBar"
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "shopMenu"
+					"text": "认定店管理"
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "shopBasicMenu"
+						"text": "基本信息"
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "importShopBasic"
+							"text": "导入"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "importShopBasicActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "queryShopBasic"
+							"text": "查询"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryShopBasicActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "exportShopBasic"
+							"text": "导出"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportShopBasicActionPerformed", true ) )
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "shopDetailMenu"
+						"text": "认定级别"
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "importShopDetail"
+							"text": "导入"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "importShopDetailActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "queryShopDetail"
+							"text": "查询"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryShopDetailActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "exportShopDetail"
+							"text": "导出历年认定店级别"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportShopDetailActionPerformed", true ) )
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "rtsMenu"
+						"text": "RTS"
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "importShopRTS"
+							"text": "导入"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "importShopRTSActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "queryShopRTS"
+							"text": "查询"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryShopRTSActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "exportShopRTS"
+							"text": "导出"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportShopRTSActionPerformed", true ) )
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "shopPayMenu"
+						"text": "帐号信息"
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "importShopPay"
+							"text": "导入"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "importShopPayActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "queryShopPay"
+							"text": "查询"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryShopPayActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "exportShopPay"
+							"text": "导出"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportShopPayActionPerformed", true ) )
+						} )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "exportAll"
+						"text": "基础信息全导出"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportAllActionPerformed", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "engineerMenu"
+					"text": "工程师管理"
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "engineerBasicMenu"
+						"text": "基本信息"
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "importEngineerBasic"
+							"text": "导入"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "importEngineerBasicActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "queryEngineerBasic"
+							"text": "查询"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryEngineerBasicActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "exportEngineerBasic"
+							"text": "导出"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportEngineerBasicActionPerformed", true ) )
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "engineerTrainingMenu"
+						"text": "培训信息"
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "importEngineerTraining"
+							"text": "导入"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "importEngineerTrainingActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "queryEngineerTraining"
+							"text": "查询"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryEngineerTrainingActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "exportEngineerTraining"
+							"text": "导出"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportEngineerTrainingActionPerformed", true ) )
+						} )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "countEngineerByProductLine"
+						"text": "产品线在职人数"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "countEngineerByProductLineActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "countEngineerByShop"
+						"text": "认定店在职人数"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "countEngineerByShopActionPerformed", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "helpMenu"
+					"text": "帮助"
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "aboutItem"
+						"text": "关于"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "aboutItemActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "backupDB"
+						"text": "备份数据"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "backupDBActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "recoveryDB"
+						"text": "恢复数据"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "recoveryDBActionPerformed", true ) )
+					} )
+				} )
+			}
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

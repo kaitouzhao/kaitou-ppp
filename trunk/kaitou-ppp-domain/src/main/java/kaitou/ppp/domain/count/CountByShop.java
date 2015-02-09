@@ -12,6 +12,7 @@ public class CountByShop extends BaseDomain {
 
     private String shopId;
     private String shopName;
+    private String productLine;
     private int count = 0;
 
     @Override
@@ -36,6 +37,7 @@ public class CountByShop extends BaseDomain {
 
         CountByShop that = (CountByShop) o;
 
+        if (productLine != null ? !productLine.equals(that.productLine) : that.productLine != null) return false;
         if (shopId != null ? !shopId.equals(that.shopId) : that.shopId != null) return false;
 
         return true;
@@ -43,7 +45,9 @@ public class CountByShop extends BaseDomain {
 
     @Override
     public int hashCode() {
-        return shopId != null ? shopId.hashCode() : 0;
+        int result = shopId != null ? shopId.hashCode() : 0;
+        result = 31 * result + (productLine != null ? productLine.hashCode() : 0);
+        return result;
     }
 
     @Override
@@ -51,6 +55,7 @@ public class CountByShop extends BaseDomain {
         return "CountByShop{" +
                 "shopId='" + shopId + '\'' +
                 ", shopName='" + shopName + '\'' +
+                ", productLine='" + productLine + '\'' +
                 ", count=" + count +
                 '}';
     }
@@ -79,6 +84,15 @@ public class CountByShop extends BaseDomain {
 
     public CountByShop setShopName(String shopName) {
         this.shopName = shopName;
+        return this;
+    }
+
+    public String getProductLine() {
+        return productLine;
+    }
+
+    public CountByShop setProductLine(String productLine) {
+        this.productLine = productLine;
         return this;
     }
 }

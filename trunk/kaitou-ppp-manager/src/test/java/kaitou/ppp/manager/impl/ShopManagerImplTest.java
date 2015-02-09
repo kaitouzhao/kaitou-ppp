@@ -40,13 +40,11 @@ public class ShopManagerImplTest extends AbstractManagerTest {
     @Test
     public void testImportShops() {
         List<Shop> shops = new ArrayList<Shop>();
-        shops.add(new MockShop("华北", "SHOP0001", "认定店1", "测试1", "13810001000", "饮马井", "k@1.com"));
+        shops.add(new MockShop("华北", "PPP0002", "认定店1", "测试1", "13810001000", "饮马井", "k@1.com"));
+        shops.add(new MockShop("华北", "PPP0001", "认定店1", "测试1", "13810001000", "饮马井", "k@1.com"));
         mockShopManager.importShops(shops);
         shops.clear();
-        shops.add(new MockShop("华北", "SHOP0001", "认定店1", "测试1", "13810001000", "饮马井", "k@1.com"));
-        mockShopManager.importShops(shops);
-        shops.clear();
-        shops.add(new MockShop("华北", "SHOP0002", "认定店1", "测试1", "13810001000", "饮马井", "k@1.com"));
+        shops.add(new MockShop("华北", "PPP0001", "认定店1", "测试1", "13810001000", "饮马井", "k@1.com"));
         mockShopManager.importShops(shops);
         testQuery();
         testDelete();
@@ -57,7 +55,7 @@ public class ShopManagerImplTest extends AbstractManagerTest {
         assertFalse(CollectionUtil.isEmpty(shops));
         assertEquals(2, shops.size());
         Shop shop = shops.get(0);
-        String shop0001 = "SHOP0001";
+        String shop0001 = "PPP0001";
         assertEquals(shop0001, shop.getId());
         assertEquals("13810001000", shop.getPhone());
     }
@@ -65,7 +63,7 @@ public class ShopManagerImplTest extends AbstractManagerTest {
     private void testDelete() {
         MockShop deleted = new MockShop();
         deleted.setSaleRegion("华北");
-        deleted.setId("SHOP0001");
+        deleted.setId("PPP0001");
         assertEquals(1, mockShopManager.delete(deleted));
         assertEquals(1, mockShopManager.query().size());
     }

@@ -101,6 +101,7 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
         if (CollectionUtil.isEmpty(domains)) {
             return 0;
         }
+        preSave(domains);
         Map<String, List<T>> domainMap = new HashMap<String, List<T>>();
         int size = domains.length;
         int updateIndex = -1;
@@ -149,6 +150,18 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
             successCount += writeLines(dbFilePath.toString(), eJsonList);
         }
         return successCount;
+    }
+
+    /**
+     * 保存/更新前操作
+     * <p>
+     * 保存/更新前如有特殊操作，请覆盖此方法
+     * </p>
+     *
+     * @param domains 实体集合。支持一个或多个
+     */
+    public void preSave(Object... domains) {
+
     }
 
     /**

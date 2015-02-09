@@ -5,6 +5,7 @@ import kaitou.ppp.dao.cache.CacheManager;
 import kaitou.ppp.domain.engineer.Engineer;
 import kaitou.ppp.domain.engineer.EngineerTraining;
 import kaitou.ppp.domain.shop.*;
+import kaitou.ppp.domain.system.SysCode;
 import kaitou.ppp.manager.engineer.EngineerManager;
 import kaitou.ppp.manager.engineer.EngineerTrainingManager;
 import kaitou.ppp.manager.shop.ShopDetailManager;
@@ -31,11 +32,17 @@ import static com.womai.bsp.tool.utils.BeanCopyUtil.copyBean;
  */
 public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
-    private static final String[] EXCEL_SHOP_HEADER = {"区域", "认定店编号", "认定店名称", "合同联系人", "联系电话", "邮寄地址", "联系邮箱"};
-    private static final String[] SHOP_COLUMN = {"saleRegion", "id", "name", "linkMan", "phone", "address", "email"};
+    private static final String[] IMPORT_SHOP_HEADER = {"区域", "认定店编号", "认定店名称", "合同联系人", "联系电话", "邮寄地址", "联系邮箱"};
+    private static final String[] IMPORT_SHOP_COLUMN = {"saleRegion", "id", "name", "linkMan", "phone", "address", "email"};
 
-    private static final String[] EXCEL_SHOP_DETAIL_HEADER = {"区域", "认定店编号", "认定店名称", "认定年份", "产品线", "认定级别", "认定机型"};
-    private static final String[] SHOP_DETAIL_COLUMN = {"saleRegion", "id", "name", "numberOfYear", "productLine", "level", "model"};
+    private static final String[] EXPORT_SHOP_HEADER = {"状态", "区域", "认定店编号", "认定店名称", "合同联系人", "联系电话", "邮寄地址", "联系邮箱"};
+    private static final String[] EXPORT_SHOP_COLUMN = {"status", "saleRegion", "id", "name", "linkMan", "phone", "address", "email"};
+
+    private static final String[] IMPORT_SHOP_DETAIL_HEADER = {"认定店编号", "认定店名称", "认定年份", "产品线", "认定级别", "认定机型"};
+    private static final String[] IMPORT_SHOP_DETAIL_COLUMN = {"id", "name", "numberOfYear", "productLine", "level", "model"};
+
+    private static final String[] EXPORT_SHOP_DETAIL_HEADER = {"区域", "认定店编号", "认定店名称", "认定年份", "产品线", "认定级别", "认定机型"};
+    private static final String[] EXPORT_SHOP_DETAIL_COLUMN = {"saleRegion", "id", "name", "numberOfYear", "productLine", "level", "model"};
 
     private static final String[] EXCEL_SHOP_RTS_HEADER = {"认定店编号", "认定店名称", "产品线", "RTS"};
     private static final String[] SHOP_RTS_COLUMN = {"id", "name", "productLine", "rts"};
@@ -80,19 +87,28 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     @Override
     public void importShops(File srcFile) {
-        List<Shop> shops = readFromExcel(srcFile, "基础", EXCEL_SHOP_HEADER, SHOP_COLUMN, Shop.class);
+        List<Shop> shops = readFromExcel(srcFile, "基础", IMPORT_SHOP_HEADER, IMPORT_SHOP_COLUMN, Shop.class);
         logOperation("成功导入认定店数：" + shopManager.importShops(shops));
     }
 
     @Override
     public void exportShops(File targetFile) {
-        export2Excel(shopManager.query(), "基础", EXCEL_SHOP_HEADER, SHOP_COLUMN, targetFile);
+        export2Excel(shopManager.query(), "基础", EXPORT_SHOP_HEADER, EXPORT_SHOP_COLUMN, targetFile);
     }
 
     @Override
     public void importShopDetails(File srcFile) {
-        List<ShopDetail> shopDetails = readFromExcel(srcFile, "发展", EXCEL_SHOP_DETAIL_HEADER, SHOP_DETAIL_COLUMN, ShopDetail.class);
-        int successCount = shopDetailManager.importShopDetails(shopDetails);
+        List<ShopDetail> shopDetails = readFromExcel(srcFile, "发展", IMPORT_SHOP_DETAIL_HEADER, IMPORT_SHOP_DETAIL_COLUMN, ShopDetail.class);
+        int successCount = 0;
+        if (CollectionUtil.isEmpty(shopDetails)) {
+            logOperation("成功导入认定店明细数：" + successCount);
+            return;
+        }
+        for (ShopDetail shopDetail : shopDetails) {
+            CachedShop cachedShop = shopManager.getCachedShop(shopDetail.getId());
+            shopDetail.setSaleRegion(cachedShop.getSaleRegion());
+        }
+        successCount = shopDetailManager.importShopDetails(shopDetails);
         logOperation("成功导入认定店明细数：" + successCount);
         if (successCount <= 0) {
             return;
@@ -120,7 +136,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     @Override
     public void exportShopDetails(File targetFile, String... numberOfYear) {
-        export2Excel(shopDetailManager.query(numberOfYear), "发展", EXCEL_SHOP_DETAIL_HEADER, SHOP_DETAIL_COLUMN, targetFile);
+        export2Excel(shopDetailManager.query(numberOfYear), "发展", EXPORT_SHOP_DETAIL_HEADER, EXPORT_SHOP_DETAIL_COLUMN, targetFile);
     }
 
     @Override
@@ -129,6 +145,11 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
         shop.setSaleRegion(saleRegion);
         shop.setId(id);
         logOperation("成功删除认定店个数：" + shopManager.delete(shop));
+    }
+
+    @Override
+    public void deleteShops(Object... shops) {
+        logOperation("成功删除认定店个数：" + shopManager.delete(shops));
     }
 
     @Override
@@ -148,6 +169,11 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     }
 
     @Override
+    public void deleteShopDetails(Object... details) {
+        logOperation("成功删除认定店认定信息个数：" + shopDetailManager.delete(details));
+    }
+
+    @Override
     public void deleteShopPay(String id) {
         ShopPay pay = new ShopPay();
         pay.setId(id);
@@ -155,10 +181,20 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     }
 
     @Override
+    public void deleteShopPays(Object... pays) {
+        logOperation("成功删除认定店账户个数：" + shopPayManager.delete(pays));
+    }
+
+    @Override
     public void deleteShopRTS(String id, String productLine) {
         ShopRTS rts = new ShopRTS();
         rts.setId(id);
         rts.setProductLine(productLine);
+        logOperation("成功删除认定店RTS个数：" + shopRTSManager.delete(rts));
+    }
+
+    @Override
+    public void deleteShopRTSs(Object... rts) {
         logOperation("成功删除认定店RTS个数：" + shopRTSManager.delete(rts));
     }
 
@@ -213,5 +249,44 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
             shopAlls.add(shopAll);
         }
         export2Excel(shopAlls, "基础信息全导出", EXCEL_SHOP_ALL_HEADER, SHOP_ALL_COLUMN, targetFile);
+    }
+
+    @Override
+    public List<Shop> queryAllShops() {
+        return shopManager.query();
+    }
+
+    @Override
+    public List<ShopDetail> queryAllDetails() {
+        return shopDetailManager.query();
+    }
+
+    @Override
+    public List<ShopRTS> queryAllRTSs() {
+        return shopRTSManager.query();
+    }
+
+    @Override
+    public List<ShopPay> queryAllPays() {
+        return shopPayManager.query();
+    }
+
+    @Override
+    public void editShop(Shop shop) {
+        List<Shop> shops = new ArrayList<Shop>();
+        shops.add(shop);
+        int successCount = shopManager.importShops(shops);
+        logOperation("成功编辑认定店个数：" + successCount);
+        if (successCount <= 0) {
+            return;
+        }
+        if (SysCode.ShopStatus.IN_THE_USE.getValue().equals(shop.getStatus())) {
+            return;
+        }
+        List<Engineer> shopEngineers = new ArrayList<Engineer>(engineerManager.query(shop.getId()));
+        for (Engineer engineer : shopEngineers) {
+            engineer.setStatus(SysCode.EngineerStatus.OFF.getValue());
+        }
+        logOperation("成功更新工程师数：" + engineerManager.importEngineers(shopEngineers));
     }
 }

@@ -1,5 +1,6 @@
 package kaitou.ppp.common.utils;
 
+import com.womai.bsp.tool.utils.CollectionUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
@@ -155,6 +156,16 @@ public abstract class FileUtil {
         File file = new File(filePath);
         if (!file.exists()) {
             return;
+        }
+        if (file.isFile()) {
+            file.delete();
+            return;
+        }
+        File[] files = file.listFiles();
+        if (!CollectionUtil.isEmpty(files)) {
+            for (File f : files) {
+                delete(f.getAbsolutePath());
+            }
         }
         file.delete();
     }

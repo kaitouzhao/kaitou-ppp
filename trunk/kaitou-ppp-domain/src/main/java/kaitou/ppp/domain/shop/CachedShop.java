@@ -10,7 +10,12 @@ import java.util.List;
  * Time: 13:04
  */
 public class CachedShop {
-
+    /**
+     * 销售区域
+     *
+     * @see kaitou.ppp.domain.system.SysCode.SaleRegion
+     */
+    private String saleRegion;
     /**
      * 认定店编码
      */
@@ -71,10 +76,19 @@ public class CachedShop {
     @Override
     public String toString() {
         return "CachedShop{" +
-                "id='" + id + '\'' +
+                "saleRegion='" + saleRegion + '\'' +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", details=" + details +
                 '}';
+    }
+
+    public String getSaleRegion() {
+        return saleRegion;
+    }
+
+    public void setSaleRegion(String saleRegion) {
+        this.saleRegion = saleRegion;
     }
 
     public String getId() {

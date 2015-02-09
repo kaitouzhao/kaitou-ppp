@@ -1,0 +1,114 @@
+JFDML JFormDesigner: "5.2.1.0.138" Java: "1.7.0_40" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
+			"autoSize": false
+		} ) {
+			name: "this"
+			"$sizePolicy": 1
+			"$locationPolicy": 0
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosed", "thisWindowClosed", true ) )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "resultArea"
+				"autoscrolls": true
+				add( new FormComponent( "javax.swing.JTable" ) {
+					name: "dataTable"
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "dataTableMouseClicked", true ) )
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"height": 485
+				"width": 1366
+				"x": 0
+				"y": 145
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "firstPageBtn"
+				"text": "首页"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "firstPageBtnActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 305
+				"y": 635
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "previousPageBtn"
+				"text": "上一页"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "previousPageBtnActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 375
+				"y": 635
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "nextPageBtn"
+				"text": "下一页"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "nextPageBtnActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 455
+				"y": 635
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "recordCountShow"
+				"text": "总计："
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 5
+				"y": 640
+				"width": 120
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "jump2Page"
+				"text": "跳转到："
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 155
+				"y": 640
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "selectPage"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "selectPageActionPerformed", true ) )
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "selectPageItemStateChanged", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 205
+				"y": 635
+				"width": 90
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+				"alignment": 0
+			} ) {
+				name: "queryArea"
+				"autoscrolls": true
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 0
+				"y": 5
+				"height": 95
+				"width": 1366
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "queryBtn"
+				"text": "检索"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryBtnActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 70
+				"y": 110
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "resetBtn"
+				"text": "重置"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "resetBtnActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 5
+				"y": 110
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "deleteBtn"
+				"text": "删除选中的记录"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "deleteBtnActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 765
+				"y": 635
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 920, 695 )
+		} )
+	}
+}

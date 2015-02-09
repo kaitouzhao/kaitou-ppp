@@ -38,11 +38,11 @@ public class EngineerTrainingManagerImplTest extends AbstractManagerTest {
     @Test
     public void testImportEngineerTrainings() throws Exception {
         List<EngineerTraining> trainings = new ArrayList<EngineerTraining>();
-        trainings.add(new MockEngineerTraining("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定店1", SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "AGP", "测试", "正常", "2013/1/1", "M", SHOP_ID));
+        trainings.add(new MockEngineerTraining("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定店1", SysCode.ShopLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "AGP", "测试", "正常", "2013/1/1", "M", SHOP_ID));
         mockEngineerTrainingManager.importEngineerTrainings(trainings);
-        trainings.add(new MockEngineerTraining("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定店1", SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "AGP", "测试", "正常", "2013/1/1", "M", SHOP_ID));
+        trainings.add(new MockEngineerTraining("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定店1", SysCode.ShopLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "AGP", "测试", "正常", "2013/1/1", "M", SHOP_ID));
         mockEngineerTrainingManager.importEngineerTrainings(trainings);
-        trainings.add(new MockEngineerTraining("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定店1", SysCode.CompanyLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "AGP", "测试", "正常", "2013/2/1", "M", SHOP_ID));
+        trainings.add(new MockEngineerTraining("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定店1", SysCode.ShopLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "AGP", "测试", "正常", "2013/2/1", "M", SHOP_ID));
         mockEngineerTrainingManager.importEngineerTrainings(trainings);
         testQuery();
     }

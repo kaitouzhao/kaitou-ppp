@@ -5,6 +5,7 @@ import kaitou.ppp.domain.count.CountByProductLine;
 import kaitou.ppp.domain.count.CountByShop;
 import kaitou.ppp.domain.engineer.Engineer;
 import kaitou.ppp.domain.engineer.EngineerTraining;
+import kaitou.ppp.domain.shop.CachedShop;
 import kaitou.ppp.domain.shop.CachedShopDetail;
 import kaitou.ppp.domain.system.SysCode;
 import kaitou.ppp.manager.engineer.EngineerManager;
@@ -12,6 +13,7 @@ import kaitou.ppp.manager.engineer.EngineerTrainingManager;
 import kaitou.ppp.manager.shop.ShopManager;
 import kaitou.ppp.service.BaseExcelService;
 import kaitou.ppp.service.EngineerService;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
 
     private ShopManager shopManager;
 
-    private static final String[] IMPORT_ENGINEER_HEADER = new String[]{"区域", "产品线", "在职状态", "认定店编码", "认定店名称", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "邮箱", "电话", "地址"};
-    private static final String[] IMPORT_ENGINEER_COLUMN = {"saleRegion", "productLine", "status", "shopId", "shopName", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "email", "phone", "address"};
+    private static final String[] IMPORT_ENGINEER_HEADER = new String[]{"产品线", "在职状态", "认定店编码", "认定店名称", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "邮箱", "电话", "地址"};
+    private static final String[] IMPORT_ENGINEER_COLUMN = {"productLine", "status", "shopId", "shopName", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "email", "phone", "address"};
 
     private static final String[] IMPORT_TRAINING_HEADER = new String[]{"产品线", "工程师编号", "工程师姓名", "培训师", "培训类型", "培训时间", "培训机型"};
     private static final String[] IMPORT_TRAINING_COLUMN = {"productLine", "id", "name", "trainer", "trainingType", "dateOfTraining", "trainingModel"};
@@ -65,6 +67,8 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
             return;
         }
         for (Engineer engineer : engineers) {
+            CachedShop cachedShop = shopManager.getCachedShop(engineer.getShopId());
+            engineer.setSaleRegion(cachedShop.getSaleRegion());
             CachedShopDetail shopDetail = shopManager.getCachedShopDetail(engineer.getShopId(), engineer.getProductLine());
             engineer.setNumberOfYear(shopDetail.getNumberOfYear());
             engineer.setShopLevel(shopDetail.getLevel());
@@ -115,6 +119,11 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
     }
 
     @Override
+    public void deleteEngineers(Object... engineers) {
+        logOperation("已删除工程师个数：" + engineerManager.delete(engineers));
+    }
+
+    @Override
     public void deleteEngineerTraining(String saleRegion, String shopId, String id, String productLine, String trainingModel) {
         List<EngineerTraining> trainings = engineerTrainingManager.query(shopId);
         if (CollectionUtil.isEmpty(trainings)) {
@@ -128,6 +137,11 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
             }
         }
         logOperation("已删除工程师发展信息个数：" + engineerTrainingManager.delete(CollectionUtil.toArray(deleted, EngineerTraining.class)));
+    }
+
+    @Override
+    public void deleteEngineerTrainings(Object... trainings) {
+        logOperation("已删除工程师发展信息个数：" + engineerTrainingManager.delete(trainings));
     }
 
     @Override
@@ -167,26 +181,50 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
     }
 
     @Override
-    public void countEngineersByShop(File targetFile) {
+    public void countEngineersByShop(String productLine, File targetFile) {
         List<Engineer> allEngineers = engineerManager.query();
         List<CountByShop> result = new ArrayList<CountByShop>();
         CountByShop countByShop;
         String shopId;
+        String engineerProductLine;
         int index;
         for (Engineer engineer : allEngineers) {
             if (!SysCode.EngineerStatus.ON.getValue().equals(engineer.getStatus())) {
                 continue;
             }
+            if (!StringUtils.isEmpty(productLine)) {
+                if (!productLine.equals(engineer.getProductLine())) {
+                    continue;
+                }
+            }
             shopId = engineer.getShopId();
-            index = result.indexOf(new CountByShop().setShopId(shopId));
+            engineerProductLine = engineer.getProductLine();
+            index = result.indexOf(new CountByShop().setShopId(shopId).setProductLine(engineerProductLine));
             if (index < 0) {
-                countByShop = new CountByShop().setShopId(shopId).setShopName(engineer.getShopName());
+                countByShop = new CountByShop().setShopId(shopId).setShopName(engineer.getShopName()).setProductLine(engineerProductLine);
                 result.add(countByShop);
             } else {
                 countByShop = result.get(index);
             }
             countByShop.setCount(countByShop.getCount() + 1);
         }
-        export2Excel(result, "认定店在职工程师统计", new String[]{"认定店编码", "认定店名", "人数"}, new String[]{"shopId", "shopName", "count"}, targetFile);
+        export2Excel(result, "认定店在职工程师统计", new String[]{"认定店编码", "认定店名", "产品线", "人数"}, new String[]{"shopId", "shopName", "productLine", "count"}, targetFile);
+    }
+
+    @Override
+    public List<Engineer> queryAllEngineers() {
+        return engineerManager.query();
+    }
+
+    @Override
+    public List<EngineerTraining> queryAllTrainings() {
+        return engineerTrainingManager.query();
+    }
+
+    @Override
+    public void editEngineer(Engineer engineer) {
+        List<Engineer> engineers = new ArrayList<Engineer>();
+        engineers.add(engineer);
+        logOperation("成功更新工程师数：" + engineerManager.importEngineers(engineers));
     }
 }

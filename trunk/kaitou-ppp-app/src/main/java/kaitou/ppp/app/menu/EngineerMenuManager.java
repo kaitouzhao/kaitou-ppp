@@ -2,6 +2,7 @@ package kaitou.ppp.app.menu;
 
 import kaitou.ppp.app.BaseForm;
 import kaitou.ppp.app.dialog.InputDialog;
+import kaitou.ppp.app.table.PageTable;
 import kaitou.ppp.service.EngineerService;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import java.io.File;
  * Date: 2015/1/30
  * Time: 16:42
  */
+@Deprecated
 public class EngineerMenuManager extends BaseForm {
 
     private static EngineerService engineerService;
@@ -36,6 +38,10 @@ public class EngineerMenuManager extends BaseForm {
      */
     private static JMenuItem exportBasicItem = new JMenuItem("导出");
     /**
+     * 查询基本信息
+     */
+    private static JMenuItem queryBasicItem = new JMenuItem("查询");
+    /**
      * 删除
      */
     private static JMenuItem deleteBasicItem = new JMenuItem("删除");
@@ -55,6 +61,10 @@ public class EngineerMenuManager extends BaseForm {
      * 导出培训信息
      */
     private static JMenuItem exportTrainingItem = new JMenuItem("导出");
+    /**
+     * 查询培训信息
+     */
+    private static JMenuItem queryTrainingItem = new JMenuItem("查询");
     /**
      * 删除
      */
@@ -77,12 +87,16 @@ public class EngineerMenuManager extends BaseForm {
         basicMenu.addSeparator();
         basicMenu.add(exportBasicItem);
         basicMenu.addSeparator();
+        basicMenu.add(queryBasicItem);
+        basicMenu.addSeparator();
         basicMenu.add(deleteBasicItem);
         basicMenu.addSeparator();
 
         trainingMenu.add(importTrainingItem);
         trainingMenu.addSeparator();
         trainingMenu.add(exportTrainingItem);
+        trainingMenu.addSeparator();
+        trainingMenu.add(queryTrainingItem);
         trainingMenu.addSeparator();
         trainingMenu.add(deleteTrainingItem);
         trainingMenu.addSeparator();
@@ -106,6 +120,12 @@ public class EngineerMenuManager extends BaseForm {
     private static final String[] BASIC_FIELDS = new String[]{"区域", "认定店编码", "工程师编号", "工程师产品线"};
     private static final String[] TRAINING_FIELDS = new String[]{"区域", "认定店编码", "工程师编号", "工程师产品线", "培训机型"};
 
+    private static final String[] QUERY_ENGINEER_HEADER = new String[]{"区域", "产品线", "在职状态", "认定店编码", "认定店名称", "认定店等级", "认定年限", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "邮箱", "电话", "地址"};
+    private static final String[] QUERY_ENGINEER_COLUMN = {"saleRegion", "productLine", "status", "shopId", "shopName", "shopLevel", "numberOfYear", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "email", "phone", "address"};
+
+    private static final String[] QUERY_TRAINING_HEADER = new String[]{"区域", "产品线", "在职状态", "认定店编码", "认定店名称", "认定店等级", "认定年限", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "培训师", "培训类型", "培训时间", "培训机型"};
+    private static final String[] QUERY_TRAINING_COLUMN = {"saleRegion", "productLine", "status", "shopId", "shopName", "shopLevel", "numberOfYear", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "trainer", "trainingType", "dateOfTraining", "trainingModel"};
+
     /**
      * 事件
      */
@@ -114,7 +134,7 @@ public class EngineerMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File srcFile = chooseImportFile();
+                    File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
                     if (srcFile == null) return;
                     engineerService.importEngineers(srcFile);
                     showMessage(true);
@@ -128,7 +148,7 @@ public class EngineerMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     engineerService.exportEngineers(targetFile);
                     showMessage(true);
@@ -136,6 +156,12 @@ public class EngineerMenuManager extends BaseForm {
                     logSystemEx(e1);
                     showMessage(false);
                 }
+            }
+        });
+        queryBasicItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new PageTable(QUERY_ENGINEER_HEADER, QUERY_ENGINEER_COLUMN, engineerService.queryAllEngineers());
             }
         });
         deleteBasicItem.addActionListener(new ActionListener() {
@@ -164,7 +190,7 @@ public class EngineerMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File srcFile = chooseImportFile();
+                    File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
                     if (srcFile == null) return;
                     engineerService.importEngineerTrainings(srcFile);
                     showMessage(true);
@@ -178,7 +204,7 @@ public class EngineerMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     engineerService.exportTrainings(targetFile);
                     showMessage(true);
@@ -186,6 +212,12 @@ public class EngineerMenuManager extends BaseForm {
                     logSystemEx(e1);
                     showMessage(false);
                 }
+            }
+        });
+        queryTrainingItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new PageTable(QUERY_TRAINING_HEADER, QUERY_TRAINING_COLUMN, engineerService.queryAllTrainings());
             }
         });
         deleteTrainingItem.addActionListener(new ActionListener() {
@@ -214,7 +246,7 @@ public class EngineerMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     engineerService.countEngineersByProductLine(targetFile);
                     showMessage(true);
@@ -228,9 +260,9 @@ public class EngineerMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
-                    engineerService.countEngineersByShop(targetFile);
+                    engineerService.countEngineersByShop("", targetFile);
                     showMessage(true);
                 } catch (Exception e1) {
                     logSystemEx(e1);

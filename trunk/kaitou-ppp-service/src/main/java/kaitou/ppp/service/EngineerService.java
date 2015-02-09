@@ -1,6 +1,10 @@
 package kaitou.ppp.service;
 
+import kaitou.ppp.domain.engineer.Engineer;
+import kaitou.ppp.domain.engineer.EngineerTraining;
+
 import java.io.File;
+import java.util.List;
 
 /**
  * 工程师业务处理层.
@@ -45,7 +49,15 @@ public interface EngineerService {
      * @param id          指定工程师编码
      * @param productLine 指定工程师产品线
      */
+    @Deprecated
     public void deleteEngineer(String saleRegion, String shopId, String id, String productLine);
+
+    /**
+     * 删除指定的工程师
+     *
+     * @param engineers 工程师集合
+     */
+    public void deleteEngineers(Object... engineers);
 
     /**
      * 删除指定的工程师发展信息
@@ -56,7 +68,15 @@ public interface EngineerService {
      * @param productLine   指定工程师产品线
      * @param trainingModel 培训机型
      */
+    @Deprecated
     public void deleteEngineerTraining(String saleRegion, String shopId, String id, String productLine, String trainingModel);
+
+    /**
+     * 删除指定的工程师发展信息
+     *
+     * @param trainings 发展信息集合
+     */
+    public void deleteEngineerTrainings(Object... trainings);
 
     /**
      * 根据产品线导出在职工程师基本信息
@@ -77,7 +97,29 @@ public interface EngineerService {
     /**
      * 根据认定店信息统计在职工程师数
      *
-     * @param targetFile 目标文件
+     * @param productLine 产品线。为空默认全部
+     * @param targetFile  目标文件
      */
-    public void countEngineersByShop(File targetFile);
+    public void countEngineersByShop(String productLine, File targetFile);
+
+    /**
+     * 查询全部工程师
+     *
+     * @return 工程师列表
+     */
+    public List<Engineer> queryAllEngineers();
+
+    /**
+     * 查询全部工程师培训信息
+     *
+     * @return 培训信息列表
+     */
+    public List<EngineerTraining> queryAllTrainings();
+
+    /**
+     * 编辑工程师基本信息
+     *
+     * @param engineer 工程师
+     */
+    public void editEngineer(Engineer engineer);
 }

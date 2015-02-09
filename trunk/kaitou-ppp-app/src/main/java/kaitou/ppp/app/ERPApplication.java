@@ -16,8 +16,8 @@ import static kaitou.ppp.app.menu.ShopMenuManager.shopMenu;
  * Date: 2015/1/17
  * Time: 23:29
  */
+@Deprecated
 public class ERPApplication extends BaseForm {
-    private static DbService dbService;
 
     /**
      * 启动进度条
@@ -35,10 +35,6 @@ public class ERPApplication extends BaseForm {
      * 菜单栏
      */
     private static JMenuBar menuBar;
-
-    static {
-        dbService = ctx.getBean(DbService.class);
-    }
 
     /**
      * 启动入口
@@ -69,7 +65,6 @@ public class ERPApplication extends BaseForm {
 
         mainFrame = new JFrame("正在启动PPP-ERP中...");
         mainFrame.setBounds(300, 100, 600, 500);
-        mainFrame.setLayout(new FlowLayout());
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.add(progressBar);
 

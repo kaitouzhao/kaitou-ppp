@@ -1,10 +1,9 @@
 package kaitou.ppp.common.utils;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-
+import static kaitou.ppp.common.utils.ZipUtil.readByZipInputStream;
+import static kaitou.ppp.common.utils.ZipUtil.unzip;
 import static kaitou.ppp.common.utils.ZipUtil.zip;
 
 /**
@@ -15,21 +14,22 @@ import static kaitou.ppp.common.utils.ZipUtil.zip;
  */
 public class ZipUtilTest {
 
-    private static final String SRC_FILE_PATH = Thread.currentThread().getContextClassLoader().getResource("2.kdb").getPath();
-    private static final String SRC_DIR_PATH = Thread.currentThread().getContextClassLoader().getResource("kdb").getPath();
-    private static StringBuilder targetFilePath = new StringBuilder("2.zip");
-    private static StringBuilder targetDirPath = new StringBuilder("kdb.zip");
+    private static final String SRC_FILE_PATH = "D:\\temp\\ppp\\test\\zip\\2.kdb";
+    private static final String SRC_DIR_PATH = "D:\\temp\\ppp\\test\\zip\\kdb";
+    private static final String TARGET_FILE_PATH = "D:\\temp\\ppp\\test\\zip\\2.zip";
+    private static final String TARGET_DIR_PATH = "D:\\temp\\ppp\\test\\zip\\kdb.zip";
 
-    @Before
-    public void setUp() {
-        File file = new File(Thread.currentThread().getContextClassLoader().getResource("kdb").getPath());
-        targetFilePath.insert(0, file.getParent() + File.separatorChar);
-        targetDirPath.insert(0, file.getParent() + File.separatorChar);
-    }
+    private static final String UNZIP_PATH = "D:\\temp\\ppp\\test\\zip\\unzip";
 
     @Test
     public void testZip() {
-        zip(SRC_FILE_PATH, targetFilePath.toString());
-        zip(SRC_DIR_PATH, targetDirPath.toString());
+        zip(SRC_FILE_PATH, TARGET_FILE_PATH);
+        zip(SRC_DIR_PATH, TARGET_DIR_PATH);
+        testUnZip();
+    }
+
+    private void testUnZip() {
+        unzip(TARGET_FILE_PATH, UNZIP_PATH);
+        unzip(TARGET_DIR_PATH, UNZIP_PATH);
     }
 }

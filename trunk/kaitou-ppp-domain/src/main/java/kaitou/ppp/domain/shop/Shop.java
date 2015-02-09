@@ -1,6 +1,7 @@
 package kaitou.ppp.domain.shop;
 
 import kaitou.ppp.domain.BaseDomain;
+import kaitou.ppp.domain.system.SysCode;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -12,6 +13,8 @@ import org.apache.commons.lang.StringUtils;
 public class Shop extends BaseDomain {
     /**
      * 销售区域
+     *
+     * @see kaitou.ppp.domain.system.SysCode.SaleRegion
      */
     protected String saleRegion;
     /**
@@ -38,6 +41,12 @@ public class Shop extends BaseDomain {
      * 联系邮箱
      */
     protected String email;
+    /**
+     * 认定店状态
+     *
+     * @see kaitou.ppp.domain.system.SysCode.ShopStatus
+     */
+    protected String status = SysCode.ShopStatus.IN_THE_USE.getValue();
 
     @Override
     public boolean equals(Object o) {
@@ -69,6 +78,7 @@ public class Shop extends BaseDomain {
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 ", email='" + email + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 
@@ -85,7 +95,7 @@ public class Shop extends BaseDomain {
     @Override
     public String dbFileName() {
         StringBuilder dbFileName = new StringBuilder();
-        dbFileName.append(saleRegion).append(dbFileSuffix());
+        dbFileName.append(SysCode.SaleRegion.convert2Code(saleRegion)).append(dbFileSuffix());
         return dbFileName.toString();
     }
 
@@ -95,7 +105,7 @@ public class Shop extends BaseDomain {
     }
 
     public String getSaleRegion() {
-        return saleRegion;
+        return SysCode.SaleRegion.convert2Value(saleRegion);
     }
 
     public void setSaleRegion(String saleRegion) {
@@ -148,5 +158,13 @@ public class Shop extends BaseDomain {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

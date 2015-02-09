@@ -1,6 +1,7 @@
 package kaitou.ppp.app;
 
 import kaitou.ppp.common.log.BaseLogManager;
+import kaitou.ppp.service.DbService;
 import kaitou.ppp.service.ShopService;
 import kaitou.ppp.service.SystemSettingsService;
 import org.springframework.context.ApplicationContext;
@@ -16,11 +17,13 @@ import java.io.File;
  * Date: 2015/1/30
  * Time: 16:52
  */
+@Deprecated
 public class BaseForm extends BaseLogManager {
 
     protected static ApplicationContext ctx;
     protected static SystemSettingsService systemSettingsService;
     protected static ShopService shopService;
+    protected static DbService dbService;
 
     /**
      * 主界面
@@ -39,16 +42,19 @@ public class BaseForm extends BaseLogManager {
         );
         systemSettingsService = ctx.getBean(SystemSettingsService.class);
         shopService = ctx.getBean(ShopService.class);
+        dbService = ctx.getBean(DbService.class);
     }
 
     /**
      * 选择导入文件
      *
+     * @param description 文件类型描述
+     * @param extensions  文件扩展名
      * @return 文件
      */
-    protected static File chooseImportFile() {
+    protected static File chooseImportFile(String description, String... extensions) {
         JFileChooser chooser = new JFileChooser(getLastChoosePath());
-        chooser.setFileFilter(new FileNameExtensionFilter("excel文件", "xls", "xlsx"));
+        chooser.setFileFilter(new FileNameExtensionFilter(description, extensions));
         int returnVal = chooser.showOpenDialog(new JPanel());
         if (returnVal != JFileChooser.APPROVE_OPTION) {
             return null;
@@ -73,16 +79,18 @@ public class BaseForm extends BaseLogManager {
     /**
      * 选择导出文件
      *
+     * @param description 文件类型描述
+     * @param extensions  文件扩展名
      * @return 文件
      */
-    protected static File chooseExportFile() {
+    protected static File chooseExportFile(String description, String... extensions) {
         JFileChooser chooser = new JFileChooser(getLastChoosePath());
-        chooser.setFileFilter(new FileNameExtensionFilter("excel文件", "xlsx"));
+        chooser.setFileFilter(new FileNameExtensionFilter(description, extensions));
         int returnVal = chooser.showOpenDialog(new JPanel());
         if (returnVal != JFileChooser.APPROVE_OPTION) {
             return null;
         }
-        String exportFilePath = chooser.getSelectedFile().getPath() + ".xlsx";
+        String exportFilePath = chooser.getSelectedFile().getPath() + '.' + extensions[0];
         systemSettingsService.updateLastFileChooserPath(exportFilePath);
         logOperation("导出文件：" + exportFilePath);
         File srcFile = new File(exportFilePath);

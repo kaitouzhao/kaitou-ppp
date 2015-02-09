@@ -1,5 +1,6 @@
 package kaitou.ppp.manager.shop;
 
+import kaitou.ppp.domain.shop.CachedShop;
 import kaitou.ppp.domain.shop.CachedShopDetail;
 import kaitou.ppp.domain.shop.Shop;
 
@@ -55,6 +56,14 @@ public interface ShopManager {
      * @return 最近的发展信息
      */
     public CachedShopDetail getCachedShopDetail(String shopId, String productLine);
+
+    /**
+     * 获取缓存的认定店
+     *
+     * @param shopId 认定店编码
+     * @return 认定店
+     */
+    public CachedShop getCachedShop(String shopId);
 
     /**
      * 获取缓存的认定店所有产品线最近发展信息

@@ -29,7 +29,12 @@
     <bean id="dbService" class="kaitou.ppp.service.impl.DbServiceImpl">
         <property name="dbDir" value="d://ppp//db"/>
         <property name="backDbFile" value="d://ppp//db_back.zip"/>
+        <property name="pppDir" value="d://ppp"/>
         <property name="systemSettingsManager" ref="systemSettingsManager"/>
+    </bean>
+
+    <bean id="upgradeService" class="kaitou.ppp.service.impl.UpgradeServiceImpl">
+        <property name="dbDir" value="d://ppp//db"/>
     </bean>
 
 </beans>

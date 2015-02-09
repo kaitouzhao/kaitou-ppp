@@ -1,6 +1,7 @@
 package kaitou.ppp.domain.shop;
 
 import kaitou.ppp.domain.BaseDomain;
+import kaitou.ppp.domain.system.SysCode;
 
 /**
  * 基础信息全导出.
@@ -11,6 +12,8 @@ import kaitou.ppp.domain.BaseDomain;
 public class ShopAll extends BaseDomain {
     /**
      * 销售区域
+     *
+     * @see kaitou.ppp.domain.system.SysCode.SaleRegion
      */
     private String saleRegion;
     /**
@@ -119,7 +122,7 @@ public class ShopAll extends BaseDomain {
     }
 
     public String getSaleRegion() {
-        return saleRegion;
+        return SysCode.SaleRegion.convert2Value(saleRegion);
     }
 
     public void setSaleRegion(String saleRegion) {

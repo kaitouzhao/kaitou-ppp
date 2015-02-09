@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.womai.bsp.tool.utils.ExcelUtil.readExcel;
+import static com.womai.bsp.tool.utils.ExcelUtil.readExcelIsLegal;
 import static com.womai.bsp.tool.utils.ExcelUtil.write2Excel;
 
 /**
@@ -35,6 +36,10 @@ public abstract class BaseExcelService extends BaseLogManager {
         if (srcFile == null) {
             return domainList;
         }
+        if (!readExcelIsLegal(srcFile, sheetName, headers)) {
+            logOperation("导入的excel格式不正确，请检查");
+            throw new RuntimeException("导入的excel格式不正确，请检查");
+        }
         InputStream is;
         try {
             is = new FileInputStream(srcFile);
@@ -45,6 +50,7 @@ public abstract class BaseExcelService extends BaseLogManager {
         try {
             rows = readExcel(is, sheetName, headers.length, 2);
         } catch (Exception e) {
+            logOperation("导入的excel格式不正确，请检查");
             throw new RuntimeException("导入的excel格式不正确，请检查", e);
         }
         if (CollectionUtil.isEmpty(rows)) {

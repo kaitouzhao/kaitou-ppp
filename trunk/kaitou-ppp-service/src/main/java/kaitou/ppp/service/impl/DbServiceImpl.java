@@ -4,6 +4,10 @@ import kaitou.ppp.common.utils.FileUtil;
 import kaitou.ppp.manager.system.SystemSettingsManager;
 import kaitou.ppp.service.DbService;
 
+import java.io.File;
+
+import static kaitou.ppp.common.utils.FileUtil.*;
+import static kaitou.ppp.common.utils.ZipUtil.unzip;
 import static kaitou.ppp.common.utils.ZipUtil.zip;
 
 /**
@@ -23,6 +27,14 @@ public class DbServiceImpl implements DbService {
      * DB备份文件路径
      */
     private String backDbFile;
+    /**
+     * ppp文件目录
+     */
+    private String pppDir;
+
+    public void setPppDir(String pppDir) {
+        this.pppDir = pppDir;
+    }
 
     public void setDbDir(String dbDir) {
         this.dbDir = dbDir;
@@ -38,10 +50,24 @@ public class DbServiceImpl implements DbService {
 
     @Override
     public void backupDB() {
-        if (!systemSettingsManager.shouldBackup() && FileUtil.isExists(backDbFile)) {
+        if (!systemSettingsManager.shouldBackup() && isExists(backDbFile)) {
             return;
         }
-        zip(dbDir, backDbFile);
+        backupDB(backDbFile);
+    }
+
+    @Override
+    public void backupDB(String targetFilePath) {
+        zip(dbDir, targetFilePath);
         systemSettingsManager.updateLastBackupTime();
+    }
+
+    @Override
+    public void recovery(String srcFilePath) {
+        String dbBack4Recovery = pppDir + File.separatorChar + "db_back_recovery.zip";
+        delete(dbBack4Recovery);
+        backupDB(dbBack4Recovery);
+        delete(dbDir);
+        unzip(srcFilePath, pppDir);
     }
 }

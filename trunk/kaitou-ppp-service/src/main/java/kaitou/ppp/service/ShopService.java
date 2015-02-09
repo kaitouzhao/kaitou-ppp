@@ -1,6 +1,12 @@
 package kaitou.ppp.service;
 
+import kaitou.ppp.domain.shop.Shop;
+import kaitou.ppp.domain.shop.ShopDetail;
+import kaitou.ppp.domain.shop.ShopPay;
+import kaitou.ppp.domain.shop.ShopRTS;
+
 import java.io.File;
+import java.util.List;
 
 /**
  * 认定店业务处理层.
@@ -44,7 +50,15 @@ public interface ShopService {
      * @param saleRegion 指定区域
      * @param id         指定编码
      */
+    @Deprecated
     public void deleteShop(String saleRegion, String id);
+
+    /**
+     * 删除认定店基本信息
+     *
+     * @param shops 认定店集合
+     */
+    public void deleteShops(Object... shops);
 
     /**
      * 删除认定店认定信息
@@ -53,14 +67,30 @@ public interface ShopService {
      * @param productLine  产品线
      * @param numberOfYear 认定年份
      */
+    @Deprecated
     public void deleteShopDetail(String id, String productLine, String numberOfYear);
+
+    /**
+     * 删除认定店认定级别
+     *
+     * @param details 认定级别集合
+     */
+    public void deleteShopDetails(Object... details);
 
     /**
      * 删除认定店账户
      *
      * @param id 指定编码
      */
+    @Deprecated
     public void deleteShopPay(String id);
+
+    /**
+     * 删除认定店帐号信息
+     *
+     * @param pays 帐号信息集合
+     */
+    public void deleteShopPays(Object... pays);
 
     /**
      * 删除认定店RTS
@@ -68,7 +98,15 @@ public interface ShopService {
      * @param id          指定编码
      * @param productLine 产品线
      */
+    @Deprecated
     public void deleteShopRTS(String id, String productLine);
+
+    /**
+     * 删除认定店RTS
+     *
+     * @param rts RTS集合
+     */
+    public void deleteShopRTSs(Object... rts);
 
     /**
      * 缓存全部认定店
@@ -109,4 +147,39 @@ public interface ShopService {
      * @param targetFile 目标文件
      */
     public void exportAll(File targetFile);
+
+    /**
+     * 查询全部认定店基本信息
+     *
+     * @return 基本信息列表
+     */
+    public List<Shop> queryAllShops();
+
+    /**
+     * 查询全部认定店认定级别
+     *
+     * @return 认定级别列表
+     */
+    public List<ShopDetail> queryAllDetails();
+
+    /**
+     * 查询全部认定店RTS
+     *
+     * @return RTS列表
+     */
+    public List<ShopRTS> queryAllRTSs();
+
+    /**
+     * 查询全部认定店帐号信息
+     *
+     * @return 帐号信息列表
+     */
+    public List<ShopPay> queryAllPays();
+
+    /**
+     * 编辑认定店基本信息
+     *
+     * @param shop 认定店
+     */
+    public void editShop(Shop shop);
 }

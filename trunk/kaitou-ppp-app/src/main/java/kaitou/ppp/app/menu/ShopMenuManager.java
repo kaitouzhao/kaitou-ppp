@@ -16,6 +16,7 @@ import java.io.File;
  * Date: 2015/1/30
  * Time: 16:37
  */
+@Deprecated
 public class ShopMenuManager extends BaseForm {
     /**
      * 认定店管理
@@ -170,7 +171,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File srcFile = chooseImportFile();
+                    File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
                     if (srcFile == null) return;
                     shopService.importShops(srcFile);
                     showMessage(true);
@@ -184,7 +185,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     shopService.exportShops(targetFile);
                     showMessage(true);
@@ -220,7 +221,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File srcFile = chooseImportFile();
+                    File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
                     if (srcFile == null) return;
                     shopService.importShopDetails(srcFile);
                     showMessage(true);
@@ -236,7 +237,7 @@ public class ShopMenuManager extends BaseForm {
                 try {
                     showInput("请输入导出年份（不填默认全部年份）");
                     String numberOfYear = textField.getText();
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     if (StringUtils.isEmpty(numberOfYear)) {
                         shopService.exportShopDetails(targetFile);
@@ -276,7 +277,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File srcFile = chooseImportFile();
+                    File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
                     if (srcFile == null) return;
                     shopService.importRTSs(srcFile);
                     showMessage(true);
@@ -290,7 +291,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     shopService.exportRTSs(targetFile);
                     showMessage(true);
@@ -326,7 +327,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File srcFile = chooseImportFile();
+                    File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
                     if (srcFile == null) return;
                     shopService.importPays(srcFile);
                     showMessage(true);
@@ -340,7 +341,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     shopService.exportPays(targetFile);
                     showMessage(true);
@@ -376,7 +377,7 @@ public class ShopMenuManager extends BaseForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File targetFile = chooseExportFile();
+                    File targetFile = chooseExportFile("excel文件", "xlsx");
                     if (targetFile == null) return;
                     shopService.exportAll(targetFile);
                     showMessage(true);

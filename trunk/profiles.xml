@@ -8,6 +8,7 @@
             <properties>
                 <db.file.dir>d://temp//ppp//db</db.file.dir>
                 <db.file.back>d://temp//ppp//db_back.zip</db.file.back>
+                <ppp.file.dir>d://temp//ppp</ppp.file.dir>
                 <log.dir>d://temp//ppp//log</log.dir>
             </properties>
         </profile>
@@ -17,6 +18,7 @@
             <properties>
                 <db.file.dir>d://ppp//db</db.file.dir>
                 <db.file.back>d://ppp//db_back.zip</db.file.back>
+                <ppp.file.dir>d://ppp</ppp.file.dir>
                 <log.dir>d://ppp//log</log.dir>
             </properties>
         </profile>
