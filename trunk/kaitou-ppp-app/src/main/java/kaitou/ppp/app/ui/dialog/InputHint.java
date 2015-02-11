@@ -54,14 +54,14 @@ public class InputHint extends JDialog {
         }
     }
 
-    public InputHint(Dialog owner, String[] fields) {
+    private InputHint(Dialog owner, String[] fields) {
         super(owner);
         initComponents();
         initInputArea(fields);
         setVisible(true);
     }
 
-    private void okButtonActionPerformed(ActionEvent e) {
+    private void okButtonActionPerformed() {
         isOk = true;
         setVisible(false);
     }
@@ -132,7 +132,7 @@ public class InputHint extends JDialog {
                 okButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        okButtonActionPerformed(e);
+                        okButtonActionPerformed();
                     }
                 });
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,

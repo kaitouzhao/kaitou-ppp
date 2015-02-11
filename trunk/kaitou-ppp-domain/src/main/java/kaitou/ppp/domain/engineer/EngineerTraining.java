@@ -153,28 +153,28 @@ public class EngineerTraining extends BaseDomain {
 
         EngineerTraining training = (EngineerTraining) o;
 
-        if (!dateOfTraining.equals(training.dateOfTraining)) return false;
-        if (!id.equals(training.id)) return false;
-        if (!productLine.equals(training.productLine)) return false;
-        if (!saleRegion.equals(training.saleRegion)) return false;
-        if (!shopId.equals(training.shopId)) return false;
-        if (!trainer.equals(training.trainer)) return false;
-        if (!trainingModel.equals(training.trainingModel)) return false;
-        if (!trainingType.equals(training.trainingType)) return false;
+        if (dateOfTraining != null ? !dateOfTraining.equals(training.dateOfTraining) : training.dateOfTraining != null)
+            return false;
+        if (id != null ? !id.equals(training.id) : training.id != null) return false;
+        if (productLine != null ? !productLine.equals(training.productLine) : training.productLine != null)
+            return false;
+        if (trainer != null ? !trainer.equals(training.trainer) : training.trainer != null) return false;
+        if (trainingModel != null ? !trainingModel.equals(training.trainingModel) : training.trainingModel != null)
+            return false;
+        if (trainingType != null ? !trainingType.equals(training.trainingType) : training.trainingType != null)
+            return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + saleRegion.hashCode();
-        result = 31 * result + shopId.hashCode();
-        result = 31 * result + productLine.hashCode();
-        result = 31 * result + trainer.hashCode();
-        result = 31 * result + trainingType.hashCode();
-        result = 31 * result + dateOfTraining.hashCode();
-        result = 31 * result + trainingModel.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (productLine != null ? productLine.hashCode() : 0);
+        result = 31 * result + (trainer != null ? trainer.hashCode() : 0);
+        result = 31 * result + (trainingType != null ? trainingType.hashCode() : 0);
+        result = 31 * result + (dateOfTraining != null ? dateOfTraining.hashCode() : 0);
+        result = 31 * result + (trainingModel != null ? trainingModel.hashCode() : 0);
         return result;
     }
 

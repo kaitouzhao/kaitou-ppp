@@ -10,6 +10,7 @@ import kaitou.ppp.domain.shop.CachedShopDetail;
 import kaitou.ppp.domain.system.SysCode;
 import kaitou.ppp.manager.engineer.EngineerManager;
 import kaitou.ppp.manager.engineer.EngineerTrainingManager;
+import kaitou.ppp.manager.listener.EngineerUpdateListener;
 import kaitou.ppp.manager.shop.ShopManager;
 import kaitou.ppp.service.BaseExcelService;
 import kaitou.ppp.service.EngineerService;
@@ -34,6 +35,8 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
 
     private ShopManager shopManager;
 
+    private List<EngineerUpdateListener> engineerUpdateListeners;
+
     private static final String[] IMPORT_ENGINEER_HEADER = new String[]{"产品线", "在职状态", "认定店编码", "认定店名称", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "邮箱", "电话", "地址"};
     private static final String[] IMPORT_ENGINEER_COLUMN = {"productLine", "status", "shopId", "shopName", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "email", "phone", "address"};
 
@@ -45,6 +48,10 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
 
     private static final String[] EXPORT_TRAINING_HEADER = new String[]{"区域", "产品线", "在职状态", "认定店编码", "认定店名称", "认定店等级", "认定年限", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "培训师", "培训类型", "培训时间", "培训机型"};
     private static final String[] EXPORT_TRAINING_COLUMN = {"saleRegion", "productLine", "status", "shopId", "shopName", "shopLevel", "numberOfYear", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "trainer", "trainingType", "dateOfTraining", "trainingModel"};
+
+    public void setEngineerUpdateListeners(List<EngineerUpdateListener> engineerUpdateListeners) {
+        this.engineerUpdateListeners = engineerUpdateListeners;
+    }
 
     public void setShopManager(ShopManager shopManager) {
         this.shopManager = shopManager;
@@ -61,9 +68,18 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
     @Override
     public void importEngineers(File srcFile) {
         List<Engineer> engineers = readFromExcel(srcFile, "基础", IMPORT_ENGINEER_HEADER, IMPORT_ENGINEER_COLUMN, Engineer.class);
+        importEngineers(engineers);
+    }
+
+    /**
+     * 导入/更新工程师
+     *
+     * @param engineers 工程师列表
+     */
+    private void importEngineers(List<Engineer> engineers) {
         int successCount = 0;
         if (CollectionUtil.isEmpty(engineers)) {
-            logOperation("成功导入工程师数：" + successCount);
+            logOperation("成功导入/更新工程师数：" + successCount);
             return;
         }
         for (Engineer engineer : engineers) {
@@ -74,7 +90,16 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
             engineer.setShopLevel(shopDetail.getLevel());
         }
         successCount = engineerManager.importEngineers(engineers);
-        logOperation("成功导入工程师数：" + successCount);
+        logOperation("成功导入/更新工程师数：" + successCount);
+        if (successCount <= 0) {
+            return;
+        }
+        if (CollectionUtil.isEmpty(engineerUpdateListeners)) {
+            return;
+        }
+        for (EngineerUpdateListener listener : engineerUpdateListeners) {
+            listener.updateEngineerEvent(CollectionUtil.toArray(engineers, Engineer.class));
+        }
     }
 
     @Override
@@ -85,9 +110,18 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
     @Override
     public void importEngineerTrainings(File srcFile) {
         List<EngineerTraining> trainings = readFromExcel(srcFile, "发展", IMPORT_TRAINING_HEADER, IMPORT_TRAINING_COLUMN, EngineerTraining.class);
+        importEngineerTrainings(trainings);
+    }
+
+    /**
+     * 导入/更新工程师发展信息
+     *
+     * @param trainings 发展信息列表
+     */
+    private void importEngineerTrainings(List<EngineerTraining> trainings) {
         int successCount = 0;
         if (CollectionUtil.isEmpty(trainings)) {
-            logOperation("成功导入培训信息数：" + successCount);
+            logOperation("成功导入/更新培训信息数：" + successCount);
             return;
         }
         List<Engineer> allEngineers = engineerManager.query();
@@ -100,7 +134,7 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
             }
         }
         successCount = engineerTrainingManager.importEngineerTrainings(trainings);
-        logOperation("成功导入工程师培训信息数：" + successCount);
+        logOperation("成功导入/更新工程师培训信息数：" + successCount);
     }
 
     @Override
@@ -142,18 +176,6 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
     @Override
     public void deleteEngineerTrainings(Object... trainings) {
         logOperation("已删除工程师发展信息个数：" + engineerTrainingManager.delete(trainings));
-    }
-
-    @Override
-    public void exportEngineers(File targetFile, String productLine) {
-        List<Engineer> allEngineers = engineerManager.query();
-        List<Engineer> engineers = new ArrayList<Engineer>();
-        for (Engineer engineer : allEngineers) {
-            if (SysCode.EngineerStatus.ON.getValue().equals(engineer.getStatus()) && engineer.getProductLine().equals(productLine)) {
-                engineers.add(engineer);
-            }
-        }
-        export2Excel(engineers, "基础", EXPORT_ENGINEER_HEADER, EXPORT_ENGINEER_COLUMN, targetFile);
     }
 
     @Override
@@ -222,9 +244,12 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
     }
 
     @Override
-    public void editEngineer(Engineer engineer) {
-        List<Engineer> engineers = new ArrayList<Engineer>();
-        engineers.add(engineer);
-        logOperation("成功更新工程师数：" + engineerManager.importEngineers(engineers));
+    public void saveOrUpdateEngineer(Engineer engineer) {
+        importEngineers(CollectionUtil.newList(engineer));
+    }
+
+    @Override
+    public void saveOrUpdateEngineerTraining(EngineerTraining training) {
+        importEngineerTrainings(CollectionUtil.newList(training));
     }
 }

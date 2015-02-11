@@ -35,44 +35,28 @@ public class MockEngineerTraining extends EngineerTraining {
 
         EngineerTraining training = (EngineerTraining) o;
 
-        if (!aceLevel.equals(training.getAceLevel())) return false;
-        if (!dateOfDeparture.equals(training.getDateOfDeparture())) return false;
-        if (!dateOfEntry.equals(training.getDateOfEntry())) return false;
-        if (!dateOfTraining.equals(training.getDateOfTraining())) return false;
-        if (!id.equals(training.getId())) return false;
-        if (!name.equals(training.getName())) return false;
-        if (!numberOfYear.equals(training.getNumberOfYear())) return false;
-        if (!productLine.equals(training.getProductLine())) return false;
-        if (!saleRegion.equals(training.getSaleRegion())) return false;
-        if (!shopId.equals(training.getShopId())) return false;
-        if (!shopLevel.equals(training.getShopLevel())) return false;
-        if (!shopName.equals(training.getShopName())) return false;
-        if (!status.equals(training.getStatus())) return false;
-        if (!trainer.equals(training.getTrainer())) return false;
-        if (!trainingModel.equals(training.getTrainingModel())) return false;
-        if (!trainingType.equals(training.getTrainingType())) return false;
+        if (dateOfTraining != null ? !dateOfTraining.equals(training.getDateOfTraining()) : training.getDateOfTraining() != null)
+            return false;
+        if (id != null ? !id.equals(training.getId()) : training.getId() != null) return false;
+        if (productLine != null ? !productLine.equals(training.getProductLine()) : training.getProductLine() != null)
+            return false;
+        if (trainer != null ? !trainer.equals(training.getTrainer()) : training.getTrainer() != null) return false;
+        if (trainingModel != null ? !trainingModel.equals(training.getTrainingModel()) : training.getTrainingModel() != null)
+            return false;
+        if (trainingType != null ? !trainingType.equals(training.getTrainingType()) : training.getTrainingType() != null)
+            return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + saleRegion.hashCode();
-        result = 31 * result + shopId.hashCode();
-        result = 31 * result + shopName.hashCode();
-        result = 31 * result + shopLevel.hashCode();
-        result = 31 * result + numberOfYear.hashCode();
-        result = 31 * result + aceLevel.hashCode();
-        result = 31 * result + dateOfEntry.hashCode();
-        result = 31 * result + dateOfDeparture.hashCode();
-        result = 31 * result + status.hashCode();
-        result = 31 * result + productLine.hashCode();
-        result = 31 * result + trainer.hashCode();
-        result = 31 * result + trainingType.hashCode();
-        result = 31 * result + dateOfTraining.hashCode();
-        result = 31 * result + trainingModel.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (productLine != null ? productLine.hashCode() : 0);
+        result = 31 * result + (trainer != null ? trainer.hashCode() : 0);
+        result = 31 * result + (trainingType != null ? trainingType.hashCode() : 0);
+        result = 31 * result + (dateOfTraining != null ? dateOfTraining.hashCode() : 0);
+        result = 31 * result + (trainingModel != null ? trainingModel.hashCode() : 0);
         return result;
     }
 

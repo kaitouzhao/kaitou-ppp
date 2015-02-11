@@ -177,9 +177,30 @@ public interface ShopService {
     public List<ShopPay> queryAllPays();
 
     /**
-     * 编辑认定店基本信息
+     * 保存/更新认定店基本信息
      *
      * @param shop 认定店
      */
-    public void editShop(Shop shop);
+    public void saveOrUpdateShop(Shop shop);
+
+    /**
+     * 保存/更新认定店认定级别
+     *
+     * @param detail 认定级别
+     */
+    public void saveOrUpdateShopDetail(ShopDetail detail);
+
+    /**
+     * 保存/更新认定店RTS
+     *
+     * @param rts RTS
+     */
+    public void saveOrUpdateShopRTS(ShopRTS rts);
+
+    /**
+     * 保存/更新认定店帐号信息
+     *
+     * @param pay 帐号信息
+     */
+    public void saveOrUpdateShopPay(ShopPay pay);
 }

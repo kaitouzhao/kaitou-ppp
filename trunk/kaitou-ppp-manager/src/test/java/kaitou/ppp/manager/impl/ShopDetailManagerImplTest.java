@@ -48,7 +48,7 @@ public class ShopDetailManagerImplTest extends AbstractManagerTest {
     private void testQuery() {
         List<ShopDetail> shopDetails = mockShopDetailManager.query("2014");
         assertFalse(CollectionUtil.isEmpty(shopDetails));
-        assertEquals(3, shopDetails.size());
+        assertEquals(2, shopDetails.size());
         ShopDetail shopDetail = shopDetails.get(1);
         assertEquals("SHOP0002", shopDetail.getId());
         assertEquals("金牌", shopDetail.getLevel());

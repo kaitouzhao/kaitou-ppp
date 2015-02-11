@@ -11,5 +11,6 @@ public interface UpgradeService {
      * 升级至1.4操作
      * <p>将区域名开头的db文件改名为区域编码开头</p>
      */
+    @Deprecated
     public void upgradeTo1Dot4();
 }

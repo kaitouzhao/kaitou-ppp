@@ -6,11 +6,13 @@
     <bean id="engineerManager" class="kaitou.ppp.manager.engineer.impl.EngineerManagerImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="engineerDao" ref="engineerDao"/>
+        <property name="cachedShopDao" ref="cachedShopDao"/>
     </bean>
 
     <bean id="engineerTrainingManager" class="kaitou.ppp.manager.engineer.impl.EngineerTrainingManagerImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="engineerTrainingDao" ref="engineerTrainingDao"/>
+        <property name="cachedShopDao" ref="cachedShopDao"/>
     </bean>
 
     <bean id="shopManager" class="kaitou.ppp.manager.shop.impl.ShopManagerImpl">

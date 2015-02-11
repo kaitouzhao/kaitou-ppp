@@ -79,15 +79,6 @@ public interface EngineerService {
     public void deleteEngineerTrainings(Object... trainings);
 
     /**
-     * 根据产品线导出在职工程师基本信息
-     *
-     * @param targetFile  目标文件
-     * @param productLine 产品线
-     */
-    @Deprecated
-    public void exportEngineers(File targetFile, String productLine);
-
-    /**
      * 根据产品线统计在职工程师数
      *
      * @param targetFile 目标文件
@@ -117,9 +108,16 @@ public interface EngineerService {
     public List<EngineerTraining> queryAllTrainings();
 
     /**
-     * 编辑工程师基本信息
+     * 保存/更新工程师基本信息
      *
      * @param engineer 工程师
      */
-    public void editEngineer(Engineer engineer);
+    public void saveOrUpdateEngineer(Engineer engineer);
+
+    /**
+     * 保存/更新工程师发展信息
+     *
+     * @param training 发展信息
+     */
+    public void saveOrUpdateEngineerTraining(EngineerTraining training);
 }

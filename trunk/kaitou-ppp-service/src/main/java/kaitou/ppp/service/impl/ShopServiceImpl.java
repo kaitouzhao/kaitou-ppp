@@ -2,12 +2,8 @@ package kaitou.ppp.service.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.dao.cache.CacheManager;
-import kaitou.ppp.domain.engineer.Engineer;
-import kaitou.ppp.domain.engineer.EngineerTraining;
 import kaitou.ppp.domain.shop.*;
-import kaitou.ppp.domain.system.SysCode;
-import kaitou.ppp.manager.engineer.EngineerManager;
-import kaitou.ppp.manager.engineer.EngineerTrainingManager;
+import kaitou.ppp.manager.listener.ShopUpdateListener;
 import kaitou.ppp.manager.shop.ShopDetailManager;
 import kaitou.ppp.manager.shop.ShopManager;
 import kaitou.ppp.manager.shop.ShopPayManager;
@@ -18,9 +14,7 @@ import org.joda.time.DateTime;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.womai.bsp.tool.utils.BeanCopyUtil.copyBean;
 
@@ -54,12 +48,14 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     private static final String[] SHOP_ALL_COLUMN = {"saleRegion", "id", "name", "linkMan", "phone", "address", "email", "numberOfYear", "productLine", "level"};
 
     private ShopManager shopManager;
-    private ShopDetailManager shopDetailManager;
     private ShopRTSManager shopRTSManager;
     private ShopPayManager shopPayManager;
+    private ShopDetailManager shopDetailManager;
+    private List<ShopUpdateListener> shopUpdateListeners;
 
-    private EngineerManager engineerManager;
-    private EngineerTrainingManager engineerTrainingManager;
+    public void setShopUpdateListeners(List<ShopUpdateListener> shopUpdateListeners) {
+        this.shopUpdateListeners = shopUpdateListeners;
+    }
 
     public void setShopRTSManager(ShopRTSManager shopRTSManager) {
         this.shopRTSManager = shopRTSManager;
@@ -67,14 +63,6 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     public void setShopPayManager(ShopPayManager shopPayManager) {
         this.shopPayManager = shopPayManager;
-    }
-
-    public void setEngineerManager(EngineerManager engineerManager) {
-        this.engineerManager = engineerManager;
-    }
-
-    public void setEngineerTrainingManager(EngineerTrainingManager engineerTrainingManager) {
-        this.engineerTrainingManager = engineerTrainingManager;
     }
 
     public void setShopManager(ShopManager shopManager) {
@@ -88,7 +76,26 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     @Override
     public void importShops(File srcFile) {
         List<Shop> shops = readFromExcel(srcFile, "基础", IMPORT_SHOP_HEADER, IMPORT_SHOP_COLUMN, Shop.class);
-        logOperation("成功导入认定店数：" + shopManager.importShops(shops));
+        importShops(shops);
+    }
+
+    /**
+     * 导入/更新认定店
+     *
+     * @param shops 认定店列表
+     */
+    private void importShops(List<Shop> shops) {
+        int successCount = shopManager.importShops(shops);
+        logOperation("成功导入/更新认定店数：" + successCount);
+        if (successCount <= 0) {
+            return;
+        }
+        if (CollectionUtil.isEmpty(shopUpdateListeners)) {
+            return;
+        }
+        for (ShopUpdateListener listener : shopUpdateListeners) {
+            listener.updateShopEvent(CollectionUtil.toArray(shops, Shop.class));
+        }
     }
 
     @Override
@@ -99,9 +106,18 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     @Override
     public void importShopDetails(File srcFile) {
         List<ShopDetail> shopDetails = readFromExcel(srcFile, "发展", IMPORT_SHOP_DETAIL_HEADER, IMPORT_SHOP_DETAIL_COLUMN, ShopDetail.class);
+        importShopDetails(shopDetails);
+    }
+
+    /**
+     * 导入/更新认定店认定级别
+     *
+     * @param shopDetails 认定级别列表
+     */
+    private void importShopDetails(List<ShopDetail> shopDetails) {
         int successCount = 0;
         if (CollectionUtil.isEmpty(shopDetails)) {
-            logOperation("成功导入认定店明细数：" + successCount);
+            logOperation("成功导入/更新认定店认定级别数：" + successCount);
             return;
         }
         for (ShopDetail shopDetail : shopDetails) {
@@ -109,29 +125,16 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
             shopDetail.setSaleRegion(cachedShop.getSaleRegion());
         }
         successCount = shopDetailManager.importShopDetails(shopDetails);
-        logOperation("成功导入认定店明细数：" + successCount);
+        logOperation("成功导入/更新认定店认定级别数：" + successCount);
         if (successCount <= 0) {
             return;
         }
-        Set<String> shopIds = new HashSet<String>();
-        for (ShopDetail detail : shopDetails) {
-            shopIds.add(detail.getId());
+        if (CollectionUtil.isEmpty(shopUpdateListeners)) {
+            return;
         }
-        String[] shopIdArray = CollectionUtil.toArray(shopIds, String.class);
-        List<Engineer> shopEngineers = new ArrayList<Engineer>(engineerManager.query(shopIdArray));
-        List<EngineerTraining> shopEngineerTrainings = new ArrayList<EngineerTraining>(engineerTrainingManager.query(shopIdArray));
-        for (Engineer engineer : shopEngineers) {
-            CachedShopDetail shopDetail = shopManager.getCachedShopDetail(engineer.getShopId(), engineer.getProductLine());
-            engineer.setShopLevel(shopDetail.getLevel());
-            engineer.setNumberOfYear(shopDetail.getNumberOfYear());
+        for (ShopUpdateListener listener : shopUpdateListeners) {
+            listener.updateShopDetailEvent(CollectionUtil.toArray(shopDetails, ShopDetail.class));
         }
-        for (EngineerTraining training : shopEngineerTrainings) {
-            CachedShopDetail shopDetail = shopManager.getCachedShopDetail(training.getShopId(), training.getProductLine());
-            training.setShopLevel(shopDetail.getLevel());
-            training.setNumberOfYear(shopDetail.getNumberOfYear());
-        }
-        logOperation("成功更新工程师数：" + engineerManager.importEngineers(shopEngineers));
-        logOperation("成功更新工程师培训信息数：" + engineerTrainingManager.importEngineerTrainings(shopEngineerTrainings));
     }
 
     @Override
@@ -208,7 +211,16 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     @Override
     public void importRTSs(File srcFile) {
         List<ShopRTS> shopRTSes = readFromExcel(srcFile, "RTS", EXCEL_SHOP_RTS_HEADER, SHOP_RTS_COLUMN, ShopRTS.class);
-        logOperation("成功导入RTS数：" + shopRTSManager.importShops(shopRTSes));
+        importShopRTSs(shopRTSes);
+    }
+
+    /**
+     * 导入/更新认定店RTS
+     *
+     * @param shopRTSes rts列表
+     */
+    private void importShopRTSs(List<ShopRTS> shopRTSes) {
+        logOperation("成功导入/更新RTS数：" + shopRTSManager.importShops(shopRTSes));
     }
 
     @Override
@@ -219,7 +231,16 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     @Override
     public void importPays(File srcFile) {
         List<ShopPay> shopPays = readFromExcel(srcFile, "付款信息", EXCEL_SHOP_PAY_HEADER, SHOP_PAY_COLUMN, ShopPay.class);
-        logOperation("成功导入付款信息数：" + shopPayManager.importShops(shopPays));
+        importShopPays(shopPays);
+    }
+
+    /**
+     * 导入/更新认定店帐号信息
+     *
+     * @param shopPays 帐号信息列表
+     */
+    private void importShopPays(List<ShopPay> shopPays) {
+        logOperation("成功导入/更新认定店帐号信息数：" + shopPayManager.importShops(shopPays));
     }
 
     @Override
@@ -272,21 +293,22 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     }
 
     @Override
-    public void editShop(Shop shop) {
-        List<Shop> shops = new ArrayList<Shop>();
-        shops.add(shop);
-        int successCount = shopManager.importShops(shops);
-        logOperation("成功编辑认定店个数：" + successCount);
-        if (successCount <= 0) {
-            return;
-        }
-        if (SysCode.ShopStatus.IN_THE_USE.getValue().equals(shop.getStatus())) {
-            return;
-        }
-        List<Engineer> shopEngineers = new ArrayList<Engineer>(engineerManager.query(shop.getId()));
-        for (Engineer engineer : shopEngineers) {
-            engineer.setStatus(SysCode.EngineerStatus.OFF.getValue());
-        }
-        logOperation("成功更新工程师数：" + engineerManager.importEngineers(shopEngineers));
+    public void saveOrUpdateShop(Shop shop) {
+        importShops(CollectionUtil.newList(shop));
+    }
+
+    @Override
+    public void saveOrUpdateShopDetail(ShopDetail detail) {
+        importShopDetails(CollectionUtil.newList(detail));
+    }
+
+    @Override
+    public void saveOrUpdateShopRTS(ShopRTS rts) {
+        importShopRTSs(CollectionUtil.newList(rts));
+    }
+
+    @Override
+    public void saveOrUpdateShopPay(ShopPay pay) {
+        importShopPays(CollectionUtil.newList(pay));
     }
 }

@@ -34,8 +34,7 @@ public abstract class UIUtil extends BaseLogManager {
         String importFilePath = chooser.getSelectedFile().getPath();
         getSystemSettingsService().updateLastFileChooserPath(importFilePath);
         logOperation("导入文件：" + importFilePath);
-        File srcFile = new File(importFilePath);
-        return srcFile;
+        return new File(importFilePath);
     }
 
     /**
@@ -65,8 +64,7 @@ public abstract class UIUtil extends BaseLogManager {
         String exportFilePath = chooser.getSelectedFile().getPath() + '.' + extensions[0];
         getSystemSettingsService().updateLastFileChooserPath(exportFilePath);
         logOperation("导出文件：" + exportFilePath);
-        File srcFile = new File(exportFilePath);
-        return srcFile;
+        return new File(exportFilePath);
     }
 
     /**
@@ -75,7 +73,7 @@ public abstract class UIUtil extends BaseLogManager {
      * @param ex    异常
      * @param frame 父窗体
      */
-    protected static void handleEx(Exception ex, JFrame frame) {//TODO 有没有更好地方式呢？？
+    public static void handleEx(Exception ex, JFrame frame) {//TODO 有没有更好地方式呢？？
         logSystemEx(ex);
         new OperationHint(frame, "很抱歉！出错了~");
     }

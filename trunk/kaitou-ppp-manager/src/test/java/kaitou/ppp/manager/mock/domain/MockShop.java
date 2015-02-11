@@ -29,14 +29,13 @@ public class MockShop extends Shop {
         Shop shop = (Shop) o;
 
         if (id != null ? !id.equals(shop.getId()) : shop.getId() != null) return false;
-        if (saleRegion != null ? !saleRegion.equals(shop.getSaleRegion()) : shop.getSaleRegion() != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override

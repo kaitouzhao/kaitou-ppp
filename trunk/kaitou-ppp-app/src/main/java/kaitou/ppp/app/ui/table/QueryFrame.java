@@ -7,63 +7,41 @@ package kaitou.ppp.app.ui.table;
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.app.ui.dialog.ConfirmHint;
 import kaitou.ppp.app.ui.dialog.OperationHint;
+import kaitou.ppp.app.ui.dialog.SaveDialog;
 import kaitou.ppp.domain.BaseDomain;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kaitou.ppp.app.ui.UIUtil.handleEx;
 import static kaitou.ppp.app.ui.op.DeleteOp.delete;
-import static kaitou.ppp.app.ui.op.EditOp.edit;
+import static kaitou.ppp.app.ui.op.SaveOrUpdateOp.saveOrUpdate;
 import static kaitou.ppp.common.utils.ReflectionUtil.getFieldValue;
 import static kaitou.ppp.common.utils.ReflectionUtil.setFieldValue;
 
 /**
  * 查询界面
  *
- * @author kaitou zhao
+ * @author 赵立伟
  */
-public class QueryFrame extends JFrame {
+public class QueryFrame<T extends BaseDomain> extends JFrame {
     /**
      * 操作列标题
      */
     private static final String OP_COLUMN_TITLE = "操作";
     /**
-     * 操作列号
-     */
-    private int opColumnIndex = -1;
-    /**
-     * 操作名
-     * <p>只支持一组互斥操作</p>
-     */
-    private String[] opNames;
-    /**
-     * 操作属性
-     * <p>只支持一组互斥操作</p>
-     */
-    private String opFieldName;
-    /**
      * 当前frame
      */
     private QueryFrame self = this;
-    /**
-     * 标题集合
-     */
-    private String[] tableTitles;
-    /**
-     * 属性名集合
-     */
-    private String[] fieldNames;
-    /**
-     * 查询属性集合
-     */
-    private String[] queryFieldNames;
     /**
      * 查询区域输入框动态集合
      */
@@ -71,7 +49,7 @@ public class QueryFrame extends JFrame {
     /**
      * 数据源
      */
-    private java.util.List<? extends BaseDomain> datas;
+    private List<T> datas;
     /**
      * 显示的数据
      */
@@ -93,9 +71,13 @@ public class QueryFrame extends JFrame {
      */
     private int recordCount;
     /**
-     * 领域类型
+     * 查询对象
      */
-    private String domainType;
+    private IQueryObject<T> queryObject;
+    /**
+     * 操作列号
+     */
+    private int opColumnIndex = -1;
 
     /**
      * 构造器
@@ -109,17 +91,13 @@ public class QueryFrame extends JFrame {
      * @param queryObject 查询对象接口。提供查询所需参数
      */
     @SuppressWarnings(value = "unchecked")
-    public QueryFrame(List<? extends BaseDomain> datas, IQueryObject queryObject) {
-        this.tableTitles = queryObject.tableTitles();
+    public QueryFrame(List<T> datas, IQueryObject<T> queryObject) {
+        this.queryObject = queryObject;
+        String[] tableTitles = this.queryObject.tableTitles();
         if (OP_COLUMN_TITLE.equals(tableTitles[tableTitles.length - 1])) {
             opColumnIndex = tableTitles.length - 1;
-            opFieldName = queryObject.opFieldName();
-            opNames = queryObject.opNames();
         }
-        this.fieldNames = queryObject.fieldNames();
-        this.queryFieldNames = queryObject.queryFieldNames();
         this.datas = datas;
-        domainType = queryObject.domainType();
         shownDatas.addAll(datas);
         initComponents();
         initTableData();
@@ -187,17 +165,14 @@ public class QueryFrame extends JFrame {
      * @param list 当前显示列表
      */
     private void view(List<? extends BaseDomain> list) {
+        String[] fieldNames = queryObject.fieldNames();
         Object[][] objects = new Object[(list.size())][fieldNames.length];
         for (int i = 0; i < objects.length; i++) {
             objects[i] = list.get(i).export2Array(fieldNames);
         }
-        if (dataTable == null) {
-            dataTable = new JTable(new QueryTable(objects,
-                    tableTitles));
-        } else {
-            dataTable.setModel(new QueryTable(objects,
-                    tableTitles));
-        }
+        String[] tableTitles = queryObject.tableTitles();
+        dataTable.setModel(new QueryTable(objects,
+                tableTitles));
         if (opColumnIndex < 0) {
             return;
         }
@@ -205,104 +180,151 @@ public class QueryFrame extends JFrame {
         dataTable.getColumnModel().getColumn(opColumnIndex).setCellRenderer(new QueryTableBtnCellEditor());
     }
 
-    private void firstPageBtnActionPerformed() {
-        currentPageIndex = 1;
-        select();
+    private void firstPageBtnActionPerformed(ActionEvent e) {
+        try {
+            currentPageIndex = 1;
+            select();
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
     }
 
-    private void previousPageBtnActionPerformed() {
-        previousPage();
+    private void previousPageBtnActionPerformed(ActionEvent e) {
+        try {
+            previousPage();
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
     }
 
-    private void nextPageBtnActionPerformed() {
-        nextPage();
+    private void nextPageBtnActionPerformed(ActionEvent e) {
+        try {
+            nextPage();
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
     }
 
-    private void thisWindowClosed() {
+    private void thisWindowClosed(WindowEvent e) {
         setVisible(false);
     }
 
     @SuppressWarnings(value = "unchecked")
-    private void queryBtnActionPerformed() {
-        shownDatas.clear();
-        if (!CollectionUtil.isEmpty(datas) && !CollectionUtil.isEmpty(queryTextFields)) {
-            List<Integer> excludes = new ArrayList<Integer>();
-            JTextField textField;
-            String textFieldValue;
-            for (int i = 0; i < datas.size(); i++) {
-                for (int j = 0; j < queryTextFields.size(); j++) {
-                    textField = queryTextFields.get(j);
-                    textFieldValue = StringUtils.isEmpty(textField.getText()) ? "" : textField.getText().trim();
-                    if (StringUtils.isEmpty(textFieldValue)) {
+    private void queryBtnActionPerformed(ActionEvent e) {
+        try {
+            shownDatas.clear();
+            if (!CollectionUtil.isEmpty(datas) && !CollectionUtil.isEmpty(queryTextFields)) {
+                List<Integer> excludes = new ArrayList<Integer>();
+                JTextField textField;
+                String textFieldValue;
+                String[] queryFieldNames = queryObject.queryFieldNames();
+                for (int i = 0; i < datas.size(); i++) {
+                    for (int j = 0; j < queryTextFields.size(); j++) {
+                        textField = queryTextFields.get(j);
+                        textFieldValue = StringUtils.isEmpty(textField.getText()) ? "" : textField.getText().trim();
+                        if (StringUtils.isEmpty(textFieldValue)) {
+                            continue;
+                        }
+                        Object fieldValue = getFieldValue(queryFieldNames[j], datas.get(i));
+                        if (fieldValue == null || fieldValue.toString().trim().equals("")) {
+                            excludes.add(i);
+                            break;
+                        }
+                        String fieldValueStr = fieldValue.toString();
+                        if (fieldValueStr.indexOf(textFieldValue.trim()) < 0) {
+                            excludes.add(i);
+                            break;
+                        }
+                    }
+                }
+                for (int i = 0; i < datas.size(); i++) {
+                    if (excludes.contains(i)) {
                         continue;
                     }
-                    Object fieldValue = getFieldValue(queryFieldNames[j], datas.get(i));
-                    if (fieldValue == null || fieldValue.toString().trim().equals("")) {
-                        excludes.add(i);
-                        break;
-                    }
-                    String fieldValueStr = fieldValue.toString();
-                    if (!fieldValueStr.startsWith(textFieldValue.trim()) && !fieldValueStr.endsWith(textFieldValue.trim())) {
-                        excludes.add(i);
-                        break;
-                    }
+                    shownDatas.add(datas.get(i));
                 }
+            } else {
+                shownDatas.addAll(datas);
             }
-            for (int i = 0; i < datas.size(); i++) {
-                if (excludes.contains(i)) {
-                    continue;
-                }
-                shownDatas.add(datas.get(i));
-            }
-        } else {
-            shownDatas.addAll(datas);
+            initTableData();
+            currentPageIndex = 1;
+            select();
+        } catch (Exception ex) {
+            handleEx(ex, this);
         }
-        initTableData();
-        currentPageIndex = 1;
-        select();
     }
 
-    private void selectPageActionPerformed() {
+    private void selectPageActionPerformed(ActionEvent e) {
+        // DO NOTHING
     }
 
     private void selectPageItemStateChanged(ItemEvent e) {
-        currentPageIndex = Integer.valueOf(e.getItem().toString());
-        select();
+        try {
+            currentPageIndex = Integer.valueOf(e.getItem().toString());
+            select();
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
     }
 
     @SuppressWarnings(value = "unchecked")
-    private void resetBtnActionPerformed() {
-        for (JTextField queryTextField : queryTextFields) {
-            queryTextField.setText("");
+    private void resetBtnActionPerformed(ActionEvent e) {
+        try {
+            for (JTextField queryTextField : queryTextFields) {
+                queryTextField.setText("");
+            }
+            shownDatas.addAll(datas);
+            queryBtnActionPerformed(e);
+        } catch (Exception ex) {
+            handleEx(ex, this);
         }
-        shownDatas.addAll(datas);
-        queryBtnActionPerformed();
     }
 
-    private void dataTableMouseClicked() {
-        // TODO 暂未实现
+    private void dataTableMouseClicked(MouseEvent e) {
+        // DO NOTHING
     }
 
-    private void deleteBtnActionPerformed() {
-        int[] deleteIndexes = dataTable.getSelectedRows();
-        if (deleteIndexes.length <= 0) {
-            new OperationHint(this, "请先选择要删除的记录");
-            return;
+    private void deleteBtnActionPerformed(ActionEvent e) {
+        try {
+            int[] deleteIndexes = dataTable.getSelectedRows();
+            if (deleteIndexes.length <= 0) {
+                new OperationHint(this, "请先选择要删除的记录");
+                return;
+            }
+            ConfirmHint hint = new ConfirmHint(this, "是否确认删除这些记录？");
+            if (!hint.isOk()) {
+                return;
+            }
+            Object[] deleted = new Object[deleteIndexes.length];
+            List<Integer> deletedIndexes = new ArrayList<Integer>();
+            for (int i = 0; i < deleteIndexes.length; i++) {
+                int index = getShownDataIndex(deleteIndexes[i]);
+                deleted[i] = shownDatas.get(index);
+                deletedIndexes.add(index);
+            }
+            for (Integer deletedIndex : deletedIndexes) {
+                datas.remove(shownDatas.get(deletedIndex));
+            }
+            delete(queryObject.domainType(), deleted);
+            new OperationHint(this, "删除成功！");
+            queryBtnActionPerformed(e);
+        } catch (Exception ex) {
+            handleEx(ex, this);
         }
-        ConfirmHint hint = new ConfirmHint(this, "是否确认删除这些记录？");
-        if (!hint.isOk()) {
-            return;
+    }
+
+    private void saveBtnActionPerformed(ActionEvent e) {
+        try {
+            SaveDialog<T> saveDialog = new SaveDialog<T>(this, queryObject);
+            if (!saveDialog.isOk() || saveDialog.getDomain() == null) {
+                return;
+            }
+            datas.add(saveDialog.getDomain());
+            new OperationHint(self, "添加成功");
+            queryBtnActionPerformed(e);
+        } catch (Exception ex) {
+            handleEx(ex, this);
         }
-        Object[] deleted = new Object[deleteIndexes.length];
-        for (int i = 0; i < deleteIndexes.length; i++) {
-            int index = getShownDataIndex(deleteIndexes[i]);
-            deleted[i] = shownDatas.get(index);
-            shownDatas.remove(index);
-            datas.remove(index);
-        }
-        delete(domainType, deleted);
-        new OperationHint(this, "删除成功！");
-        queryBtnActionPerformed();
     }
 
     /**
@@ -317,9 +339,28 @@ public class QueryFrame extends JFrame {
 
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == opColumnIndex; // TODO 暂时只支持操作列可编辑。1.5版会支持部分列可编辑
+            int editableColumnStartIndex = queryObject.editableColumnStartIndex();
+            return (editableColumnStartIndex >= 0 && column >= editableColumnStartIndex) || column == opColumnIndex;
         }
 
+        @Override
+        public void fireTableCellUpdated(int row, int column) {
+            super.fireTableCellUpdated(row, column);
+            ConfirmHint hint = new ConfirmHint(self, "是否确定更新这行记录？");
+            if (!hint.isOk()) {
+                select();
+                return;
+            }
+            Object edited = shownDatas.get(getShownDataIndex(row));
+            Object dataObj = datas.get(datas.indexOf(edited));
+            String fieldName = String.valueOf(Array.get(queryObject.fieldNames(), column));
+            String fieldValue = String.valueOf(dataTable.getValueAt(row, column));
+            setFieldValue(fieldName, edited, fieldValue);
+            setFieldValue(fieldName, dataObj, fieldValue);
+            saveOrUpdate(queryObject.domainType(), dataObj);
+            new OperationHint(self, "更新成功");
+            select();
+        }
     }
 
     /**
@@ -348,16 +389,18 @@ public class QueryFrame extends JFrame {
             Object dataObj = datas.get(datas.indexOf(shownObj));
             String btnText = btn.getText();
             String changeValue;
+            String[] opNames = queryObject.opNames();
             if (btnText.equals(opNames[0])) {
                 changeValue = opNames[0];
             } else {
                 changeValue = opNames[1];
             }
+            String opFieldName = queryObject.opFieldName();
             setFieldValue(opFieldName, shownObj, changeValue);
             setFieldValue(opFieldName, dataObj, changeValue);
-            edit(domainType, dataObj);
+            saveOrUpdate(queryObject.domainType(), dataObj);
             new OperationHint(self, "操作成功");
-            queryBtnActionPerformed();
+            select();
         }
 
         @Override
@@ -372,7 +415,8 @@ public class QueryFrame extends JFrame {
          * @param row 行数
          */
         private void initBtn(int row) {
-            Object initFieldValue = getFieldValue(opFieldName, shownDatas.get(getShownDataIndex(row)));
+            Object initFieldValue = getFieldValue(queryObject.opFieldName(), shownDatas.get(getShownDataIndex(row)));
+            String[] opNames = queryObject.opNames();
             if (initFieldValue == null || opNames[1].equals(initFieldValue)) {
                 btn.setText(opNames[0]);
                 return;
@@ -419,12 +463,13 @@ public class QueryFrame extends JFrame {
         queryBtn = new JButton();
         resetBtn = new JButton();
         deleteBtn = new JButton();
+        saveBtn = new JButton();
 
         //======== this ========
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                thisWindowClosed();
+                thisWindowClosed(e);
             }
         });
         Container contentPane = getContentPane();
@@ -438,7 +483,7 @@ public class QueryFrame extends JFrame {
             dataTable.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    dataTableMouseClicked();
+                    dataTableMouseClicked(e);
                 }
             });
             resultArea.setViewportView(dataTable);
@@ -451,7 +496,7 @@ public class QueryFrame extends JFrame {
         firstPageBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                firstPageBtnActionPerformed();
+                firstPageBtnActionPerformed(e);
             }
         });
         contentPane.add(firstPageBtn);
@@ -462,7 +507,7 @@ public class QueryFrame extends JFrame {
         previousPageBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                previousPageBtnActionPerformed();
+                previousPageBtnActionPerformed(e);
             }
         });
         contentPane.add(previousPageBtn);
@@ -473,7 +518,7 @@ public class QueryFrame extends JFrame {
         nextPageBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                nextPageBtnActionPerformed();
+                nextPageBtnActionPerformed(e);
             }
         });
         contentPane.add(nextPageBtn);
@@ -493,7 +538,7 @@ public class QueryFrame extends JFrame {
         selectPage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                selectPageActionPerformed();
+                selectPageActionPerformed(e);
             }
         });
         selectPage.addItemListener(new ItemListener() {
@@ -518,7 +563,7 @@ public class QueryFrame extends JFrame {
         queryBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                queryBtnActionPerformed();
+                queryBtnActionPerformed(e);
             }
         });
         contentPane.add(queryBtn);
@@ -529,7 +574,7 @@ public class QueryFrame extends JFrame {
         resetBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                resetBtnActionPerformed();
+                resetBtnActionPerformed(e);
             }
         });
         contentPane.add(resetBtn);
@@ -540,11 +585,22 @@ public class QueryFrame extends JFrame {
         deleteBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteBtnActionPerformed();
+                deleteBtnActionPerformed(e);
             }
         });
         contentPane.add(deleteBtn);
         deleteBtn.setBounds(new Rectangle(new Point(765, 635), deleteBtn.getPreferredSize()));
+
+        //---- saveBtn ----
+        saveBtn.setText("\u6dfb\u52a0");
+        saveBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveBtnActionPerformed(e);
+            }
+        });
+        contentPane.add(saveBtn);
+        saveBtn.setBounds(new Rectangle(new Point(580, 635), saveBtn.getPreferredSize()));
 
         contentPane.setPreferredSize(new Dimension(920, 695));
         setSize(920, 695);
@@ -557,16 +613,18 @@ public class QueryFrame extends JFrame {
      * 初始化查询区域
      */
     private void initQueryArea() {
+        String[] queryFieldNames = queryObject.queryFieldNames();
         if (CollectionUtil.isEmpty(queryFieldNames)) {
             return;
         }
         JLabel queryLabel;
         JTextField queryTextField;
         String queryLabelTitle = null;
+        String[] fieldNames = queryObject.fieldNames();
         for (String queryFieldName : queryFieldNames) {
             for (int j = 0; j < fieldNames.length; j++) {
                 if (queryFieldName.equals(fieldNames[j])) {
-                    queryLabelTitle = tableTitles[j];
+                    queryLabelTitle = queryObject.tableTitles()[j];
                     break;
                 }
             }
@@ -576,6 +634,22 @@ public class QueryFrame extends JFrame {
             queryLabel = new JLabel(queryLabelTitle);
             queryArea.add(queryLabel);
             queryTextField = new JTextField(10);
+            queryTextField.addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    queryBtnActionPerformed(null);
+                }
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+
+                }
+            });
             queryArea.add(queryTextField);
             queryTextFields.add(queryTextField);
         }
@@ -594,5 +668,6 @@ public class QueryFrame extends JFrame {
     private JButton queryBtn;
     private JButton resetBtn;
     private JButton deleteBtn;
+    private JButton saveBtn;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

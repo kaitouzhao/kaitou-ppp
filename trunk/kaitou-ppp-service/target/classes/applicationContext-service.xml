@@ -11,15 +11,28 @@
         <property name="engineerManager" ref="engineerManager"/>
         <property name="engineerTrainingManager" ref="engineerTrainingManager"/>
         <property name="shopManager" ref="shopManager"/>
+        <property name="engineerUpdateListeners">
+            <list>
+                <ref bean="engineerTrainingManager"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="shopService" class="kaitou.ppp.service.impl.ShopServiceImpl">
         <property name="shopManager" ref="shopManager"/>
         <property name="shopDetailManager" ref="shopDetailManager"/>
-        <property name="engineerManager" ref="engineerManager"/>
-        <property name="engineerTrainingManager" ref="engineerTrainingManager"/>
         <property name="shopRTSManager" ref="shopRTSManager"/>
         <property name="shopPayManager" ref="shopPayManager"/>
+        <property name="shopUpdateListeners">
+            <list>
+                <ref bean="shopManager"/>
+                <ref bean="shopDetailManager"/>
+                <ref bean="shopPayManager"/>
+                <ref bean="shopRTSManager"/>
+                <ref bean="engineerManager"/>
+                <ref bean="engineerTrainingManager"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="systemSettingsService" class="kaitou.ppp.service.impl.SystemSettingsServiceImpl">
@@ -27,14 +40,14 @@
     </bean>
 
     <bean id="dbService" class="kaitou.ppp.service.impl.DbServiceImpl">
-        <property name="dbDir" value="d://ppp//db"/>
-        <property name="backDbFile" value="d://ppp//db_back.zip"/>
-        <property name="pppDir" value="d://ppp"/>
+        <property name="dbDir" value="d://temp//ppp//db"/>
+        <property name="backDbFile" value="d://temp//ppp//db_back.zip"/>
+        <property name="pppDir" value="d://temp//ppp"/>
         <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
     <bean id="upgradeService" class="kaitou.ppp.service.impl.UpgradeServiceImpl">
-        <property name="dbDir" value="d://ppp//db"/>
+        <property name="dbDir" value="d://temp//ppp//db"/>
     </bean>
 
 </beans>

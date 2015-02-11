@@ -1,6 +1,7 @@
 package kaitou.ppp.manager;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
+import kaitou.ppp.common.utils.JsonValidator;
 import org.aspectj.lang.JoinPoint;
 
 import java.io.File;
@@ -8,6 +9,7 @@ import java.io.FilenameFilter;
 
 import static kaitou.ppp.common.utils.FileUtil.copy;
 import static kaitou.ppp.common.utils.FileUtil.delete;
+import static kaitou.ppp.common.utils.JsonValidator.*;
 
 /**
  * 文件DAO事务管理.
@@ -20,7 +22,7 @@ public class FileDaoTransaction {
     /**
      * 开启事务
      *
-     * @param joinPoint
+     * @param joinPoint 切点
      */
     public void doBefore(JoinPoint joinPoint) {
         FileDaoManager daoManager = (FileDaoManager) joinPoint.getTarget();
@@ -64,8 +66,14 @@ public class FileDaoTransaction {
         if (CollectionUtil.isEmpty(backFiles)) {
             return;
         }
-        for (int i = 0; i < backFiles.length; i++) {
-            File backFile = backFiles[i];
+        for (File backFile : backFiles) {
+            String backFilePath = backFile.getPath();
+            if (!validateFile(backFilePath)) {
+                rollback(daoManager);
+                throw new RuntimeException("back文件：" + backFilePath + "损坏！已执行回滚！");
+            }
+        }
+        for (File backFile : backFiles) {
             String backFileName = backFile.getName();
             String dbFileName = backFileName.substring(0, backFileName.indexOf('.')) + ".kdb";
             String backFilePath = backFile.getPath();
@@ -106,8 +114,8 @@ public class FileDaoTransaction {
         if (CollectionUtil.isEmpty(backFiles)) {
             return;
         }
-        for (int i = 0; i < backFiles.length; i++) {
-            delete(backFiles[i].getPath());
+        for (File backFile : backFiles) {
+            delete(backFile.getPath());
         }
         daoManager.closeTransaction();
     }

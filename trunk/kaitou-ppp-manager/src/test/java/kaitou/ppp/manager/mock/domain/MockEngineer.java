@@ -36,20 +36,17 @@ public class MockEngineer extends Engineer {
 
         Engineer engineer = (Engineer) o;
 
-        if (!id.equals(engineer.getId())) return false;
-        if (!productLine.equals(engineer.getProductLine())) return false;
-        if (!saleRegion.equals(engineer.getSaleRegion())) return false;
-        if (!shopId.equals(engineer.getShopId())) return false;
+        if (id != null ? !id.equals(engineer.getId()) : engineer.getId() != null) return false;
+        if (productLine != null ? !productLine.equals(engineer.getProductLine()) : engineer.getProductLine() != null)
+            return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = saleRegion.hashCode();
-        result = 31 * result + shopId.hashCode();
-        result = 31 * result + id.hashCode();
-        result = 31 * result + productLine.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (productLine != null ? productLine.hashCode() : 0);
         return result;
     }
 

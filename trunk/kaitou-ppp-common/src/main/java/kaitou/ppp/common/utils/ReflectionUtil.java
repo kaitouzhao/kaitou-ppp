@@ -1,7 +1,5 @@
 package kaitou.ppp.common.utils;
 
-import com.womai.bsp.tool.utils.CollectionUtil;
-
 import java.lang.reflect.Method;
 
 /**
@@ -45,6 +43,24 @@ public abstract class ReflectionUtil {
             Method method = obj.getClass().getMethod(setterMethod.toString(), String.class);
             method.invoke(obj, fieldValue);
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 创建对象实例
+     *
+     * @param tClass 对象类型
+     * @param <T>    对象类型
+     * @return 对象实例
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(Class<T> tClass) {
+        try {
+            return tClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

@@ -8,6 +8,12 @@ import kaitou.ppp.app.ui.dialog.InputHint;
 import kaitou.ppp.app.ui.dialog.OperationHint;
 import kaitou.ppp.app.ui.table.QueryFrame;
 import kaitou.ppp.app.ui.table.queryobject.*;
+import kaitou.ppp.domain.engineer.Engineer;
+import kaitou.ppp.domain.engineer.EngineerTraining;
+import kaitou.ppp.domain.shop.Shop;
+import kaitou.ppp.domain.shop.ShopDetail;
+import kaitou.ppp.domain.shop.ShopPay;
+import kaitou.ppp.domain.shop.ShopRTS;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -35,7 +41,6 @@ public class MainFrame extends JFrame {
     public static void main(String[] args) {
         getSystemSettingsService().updateSystemSettings();
         getDbService().backupDB();
-        getUpgradeService().upgradeTo1Dot4();
         getShopService().cacheAllShops();
 
         new MainFrame();
@@ -71,11 +76,11 @@ public class MainFrame extends JFrame {
     }
 
     private void queryShopBasicActionPerformed() {
-        new QueryFrame(getShopService().queryAllShops(), new ShopQueryObject());
+        new QueryFrame<Shop>(getShopService().queryAllShops(), new ShopQueryObject());
     }
 
     private void queryEngineerBasicActionPerformed() {
-        new QueryFrame(getEngineerService().queryAllEngineers(), new EngineerQueryObject());
+        new QueryFrame<Engineer>(getEngineerService().queryAllEngineers(), new EngineerQueryObject());
     }
 
     private void aboutItemActionPerformed() {
@@ -138,7 +143,7 @@ public class MainFrame extends JFrame {
     }
 
     private void queryEngineerTrainingActionPerformed() {
-        new QueryFrame(getEngineerService().queryAllTrainings(), new EngineerTrainingQueryObject());
+        new QueryFrame<EngineerTraining>(getEngineerService().queryAllTrainings(), new EngineerTrainingQueryObject());
     }
 
     private void exportEngineerTrainingActionPerformed() {
@@ -191,7 +196,7 @@ public class MainFrame extends JFrame {
     }
 
     private void queryShopDetailActionPerformed() {
-        new QueryFrame(getShopService().queryAllDetails(), new ShopDetailQueryObject());
+        new QueryFrame<ShopDetail>(getShopService().queryAllDetails(), new ShopDetailQueryObject());
     }
 
     private void exportShopDetailActionPerformed() {
@@ -226,7 +231,7 @@ public class MainFrame extends JFrame {
     }
 
     private void queryShopRTSActionPerformed() {
-        new QueryFrame(getShopService().queryAllRTSs(), new ShopRTSQueryObject());
+        new QueryFrame<ShopRTS>(getShopService().queryAllRTSs(), new ShopRTSQueryObject());
     }
 
     private void exportShopRTSActionPerformed() {
@@ -252,7 +257,7 @@ public class MainFrame extends JFrame {
     }
 
     private void queryShopPayActionPerformed() {
-        new QueryFrame(getShopService().queryAllPays(), new ShopPayQueryObject());
+        new QueryFrame<ShopPay>(getShopService().queryAllPays(), new ShopPayQueryObject());
     }
 
     private void exportShopPayActionPerformed() {

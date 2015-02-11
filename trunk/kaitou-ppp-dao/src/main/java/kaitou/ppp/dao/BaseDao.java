@@ -68,8 +68,7 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
         if (CollectionUtil.isEmpty(backFiles)) {
             return;
         }
-        for (int i = 0; i < backFiles.length; i++) {
-            File backFile = backFiles[i];
+        for (File backFile : backFiles) {
             String backFileName = backFile.getName();
             String dbFileName = backFileName.substring(0, backFileName.indexOf('.')) + ".kdb";
             String backFilePath = backFile.getPath();
@@ -86,8 +85,8 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
         if (CollectionUtil.isEmpty(backFiles)) {
             return;
         }
-        for (int i = 0; i < backFiles.length; i++) {
-            delete(backFiles[i].getPath());
+        for (File backFile : backFiles) {
+            delete(backFile.getPath());
         }
     }
 
@@ -97,6 +96,7 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
      * @param domains 实体集合。支持一个或多个
      * @return 成功保存记录数
      */
+    @SuppressWarnings("unchecked")
     public int save(Object... domains) {
         if (CollectionUtil.isEmpty(domains)) {
             return 0;
@@ -105,14 +105,18 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
         Map<String, List<T>> domainMap = new HashMap<String, List<T>>();
         int size = domains.length;
         int updateIndex = -1;
-        for (int i = 0; i < size; i++) {
+        int successCount = 0;
+        int i = 0;
+        while (i < size) {
             T domain = (T) domains[i];
             try {
                 domain.check();
             } catch (RuntimeException e) {
                 logOperation("第" + (i + 1) + "行数据校验不通过。原因：" + e.getMessage());
+                i++;
                 continue;
             }
+            successCount++;
             String backDbFileName = domain.backDbFileName();
             List<T> domainList = domainMap.get(backDbFileName);
             if (domainList == null) {
@@ -124,6 +128,7 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
             }
             if (CollectionUtil.isEmpty(domainList)) {
                 domainList.add(domain);
+                i++;
                 continue;
             }
             for (int j = 0; j < domainList.size(); j++) {
@@ -138,16 +143,15 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
             } else {
                 domainList.add(domain);
             }
+            i++;
         }
-        int successCount = 0;
         for (Map.Entry<String, List<T>> item : domainMap.entrySet()) {
-            StringBuilder dbFilePath = new StringBuilder(dbDir).append('/').append(item.getKey());
             List<T> domainList = item.getValue();
             List<String> eJsonList = new ArrayList<String>();
             for (Object domain : domainList) {
                 eJsonList.add(object2Json(domain));
             }
-            successCount += writeLines(dbFilePath.toString(), eJsonList);
+            writeLines(dbDir + '/' + item.getKey(), eJsonList);
         }
         return successCount;
     }
@@ -226,16 +230,16 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
      * @param domains 待删除集合。支持一个或多个
      * @return 成功删除记录数
      */
+    @SuppressWarnings("unchecked")
     public int delete(Object... domains) {
         if (CollectionUtil.isEmpty(domains)) {
             return 0;
         }
         Map<String, List<T>> domainMap = new HashMap<String, List<T>>();
-        int size = domains.length;
         int updateIndex = -1;
         int successCount = 0;
-        for (int i = 0; i < size; i++) {
-            T domain = (T) domains[i];
+        for (Object domain1 : domains) {
+            T domain = (T) domain1;
             String backDbFileName = domain.backDbFileName();
             List<T> domainList = domainMap.get(backDbFileName);
             if (domainList == null) {
@@ -258,13 +262,12 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
             }
         }
         for (Map.Entry<String, List<T>> item : domainMap.entrySet()) {
-            StringBuilder dbFilePath = new StringBuilder(dbDir).append(File.separatorChar).append(item.getKey());
             List<T> domainList = item.getValue();
             List<String> eJsonList = new ArrayList<String>();
             for (Object domain : domainList) {
                 eJsonList.add(object2Json(domain));
             }
-            writeLines(dbFilePath.toString(), eJsonList);
+            writeLines(dbDir + File.separatorChar + item.getKey(), eJsonList);
         }
         return successCount;
     }

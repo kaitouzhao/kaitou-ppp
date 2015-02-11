@@ -9,7 +9,8 @@ import kaitou.ppp.domain.engineer.EngineerTraining;
  * Date: 2015/2/6
  * Time: 15:21
  */
-public class EngineerTrainingQueryObject implements IQueryObject {
+public class EngineerTrainingQueryObject implements IQueryObject<EngineerTraining> {
+
     @Override
     public String title() {
         return "查询工程师发展信息";
@@ -43,5 +44,25 @@ public class EngineerTrainingQueryObject implements IQueryObject {
     @Override
     public String opFieldName() {
         return null;
+    }
+
+    @Override
+    public int editableColumnStartIndex() {
+        return -1;
+    }
+
+    @Override
+    public String[] saveTitles() {
+        return new String[]{"产品线", "工程师编号", "工程师姓名", "培训师", "培训类型", "培训时间", "培训机型"};
+    }
+
+    @Override
+    public String[] saveFieldNames() {
+        return new String[]{"productLine", "id", "name", "trainer", "trainingType", "dateOfTraining", "trainingModel"};
+    }
+
+    @Override
+    public Class<EngineerTraining> domainClass() {
+        return EngineerTraining.class;
     }
 }

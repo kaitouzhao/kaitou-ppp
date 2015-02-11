@@ -9,7 +9,7 @@ import kaitou.ppp.domain.shop.ShopDetail;
  * Date: 2015/2/6
  * Time: 14:56
  */
-public class ShopDetailQueryObject implements IQueryObject {
+public class ShopDetailQueryObject implements IQueryObject<ShopDetail> {
     @Override
     public String title() {
         return "查询认定店认定级别";
@@ -43,5 +43,25 @@ public class ShopDetailQueryObject implements IQueryObject {
     @Override
     public String opFieldName() {
         return null;
+    }
+
+    @Override
+    public int editableColumnStartIndex() {
+        return -1;
+    }
+
+    @Override
+    public String[] saveTitles() {
+        return new String[]{"认定店编号", "认定店名称", "认定年份", "产品线", "认定级别", "认定机型"};
+    }
+
+    @Override
+    public String[] saveFieldNames() {
+        return new String[]{"id", "name", "numberOfYear", "productLine", "level", "model"};
+    }
+
+    @Override
+    public Class<ShopDetail> domainClass() {
+        return ShopDetail.class;
     }
 }

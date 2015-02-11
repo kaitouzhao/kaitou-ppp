@@ -6,7 +6,7 @@
 
     <groupId>kaitou.ppp</groupId>
     <artifactId>kaitou-ppp</artifactId>
-    <version>1.4</version>
+    <version>1.5-SNAPSHOT</version>
     <description>PPP ERP</description>
     <modules>
         <module>kaitou-ppp-common</module>
@@ -30,7 +30,7 @@
         <commons-compress.version>1.5</commons-compress.version>
         <commons-collections.version>3.2.1</commons-collections.version>
 
-        <bsp-tool.version>1.2</bsp-tool.version>
+        <bsp-tool.version>1.3-SNAPSHOT</bsp-tool.version>
     </properties>
     <packaging>pom</packaging>
 

@@ -37,7 +37,13 @@ public abstract class BaseExcelService extends BaseLogManager {
             return domainList;
         }
         if (!readExcelIsLegal(srcFile, sheetName, headers)) {
-            logOperation("导入的excel格式不正确，请检查");
+            StringBuilder logInfo = new StringBuilder("导入的excel格式不正确。请检查以下内容：sheet名（正确应该是：");
+            logInfo.append(sheetName).append("）、列名（正确应该是：");
+            for (String header : headers) {
+                logInfo.append(header).append(" ");
+            }
+            logInfo.append("）");
+            logOperation(logInfo.toString());
             throw new RuntimeException("导入的excel格式不正确，请检查");
         }
         InputStream is;

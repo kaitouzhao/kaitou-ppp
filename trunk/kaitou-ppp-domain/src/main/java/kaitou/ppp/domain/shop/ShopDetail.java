@@ -87,24 +87,18 @@ public class ShopDetail extends BaseDomain {
         ShopDetail that = (ShopDetail) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (level != null ? !level.equals(that.level) : that.level != null) return false;
         if (model != null ? !model.equals(that.model) : that.model != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (numberOfYear != null ? !numberOfYear.equals(that.numberOfYear) : that.numberOfYear != null) return false;
         if (productLine != null ? !productLine.equals(that.productLine) : that.productLine != null) return false;
-        if (saleRegion != null ? !saleRegion.equals(that.saleRegion) : that.saleRegion != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = saleRegion != null ? saleRegion.hashCode() : 0;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (numberOfYear != null ? numberOfYear.hashCode() : 0);
         result = 31 * result + (productLine != null ? productLine.hashCode() : 0);
-        result = 31 * result + (level != null ? level.hashCode() : 0);
         result = 31 * result + (model != null ? model.hashCode() : 0);
         return result;
     }

@@ -6,7 +6,9 @@ import kaitou.ppp.dao.shop.ShopDao;
 import kaitou.ppp.domain.shop.CachedShop;
 import kaitou.ppp.domain.shop.CachedShopDetail;
 import kaitou.ppp.domain.shop.Shop;
+import kaitou.ppp.domain.shop.ShopDetail;
 import kaitou.ppp.manager.FileDaoManager;
+import kaitou.ppp.manager.listener.ShopUpdateListener;
 import kaitou.ppp.manager.shop.ShopManager;
 
 import java.util.Collections;
@@ -19,7 +21,7 @@ import java.util.List;
  * Date: 2015/1/25
  * Time: 12:22
  */
-public class ShopManagerImpl extends FileDaoManager implements ShopManager {
+public class ShopManagerImpl extends FileDaoManager implements ShopManager, ShopUpdateListener {
 
     protected ShopDao shopDao;
     private CachedShopDao cachedShopDao;
@@ -39,10 +41,7 @@ public class ShopManagerImpl extends FileDaoManager implements ShopManager {
 
     @Override
     public int importShops(List<Shop> shops) {
-        Shop[] shopArray = CollectionUtil.toArray(shops, Shop.class);
-        int successCount = shopDao.save(shopArray);
-        cachedShopDao.updateShops(shopArray);
-        return successCount;
+        return shopDao.save(CollectionUtil.toArray(shops, Shop.class));
     }
 
     @Override
@@ -85,5 +84,15 @@ public class ShopManagerImpl extends FileDaoManager implements ShopManager {
     @Override
     public List<CachedShopDetail> queryCachedShopDetails(String shopId) {
         return cachedShopDao.queryCachedShopDetails(shopId);
+    }
+
+    @Override
+    public void updateShopEvent(Shop... shops) {
+        cachedShopDao.updateShops(shops);
+    }
+
+    @Override
+    public void updateShopDetailEvent(ShopDetail... shopDetails) {
+        // DO NOTHING
     }
 }

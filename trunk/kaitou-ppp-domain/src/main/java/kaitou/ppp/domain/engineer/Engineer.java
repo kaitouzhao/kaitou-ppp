@@ -88,20 +88,17 @@ public class Engineer extends BaseDomain {
 
         Engineer engineer = (Engineer) o;
 
-        if (!id.equals(engineer.id)) return false;
-        if (!productLine.equals(engineer.productLine)) return false;
-        if (!saleRegion.equals(engineer.saleRegion)) return false;
-        if (!shopId.equals(engineer.shopId)) return false;
+        if (id != null ? !id.equals(engineer.id) : engineer.id != null) return false;
+        if (productLine != null ? !productLine.equals(engineer.productLine) : engineer.productLine != null)
+            return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = saleRegion.hashCode();
-        result = 31 * result + shopId.hashCode();
-        result = 31 * result + id.hashCode();
-        result = 31 * result + productLine.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (productLine != null ? productLine.hashCode() : 0);
         return result;
     }
 
