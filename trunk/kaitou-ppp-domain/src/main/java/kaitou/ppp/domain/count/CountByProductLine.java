@@ -35,9 +35,8 @@ public class CountByProductLine extends BaseDomain {
 
         CountByProductLine that = (CountByProductLine) o;
 
-        if (productLine != null ? !productLine.equals(that.productLine) : that.productLine != null) return false;
+        return !(productLine != null ? !productLine.equals(that.productLine) : that.productLine != null);
 
-        return true;
     }
 
     @Override

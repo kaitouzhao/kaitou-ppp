@@ -34,12 +34,12 @@ public class ShopRTSManagerImplTest extends AbstractManagerTest {
     public void testImportShops() {
         List<ShopRTS> shopRTSes = new ArrayList<ShopRTS>();
         shopRTSes.add(new MockShopRTS("SHOP0001", "测试店1", "M1", "测试1"));
-        mockShopRTSManager.importShops(shopRTSes);
+        mockShopRTSManager.save(shopRTSes);
         shopRTSes.add(new MockShopRTS("SHOP0002", "测试店2", "M1", "测试1"));
-        mockShopRTSManager.importShops(shopRTSes);
+        mockShopRTSManager.save(shopRTSes);
         shopRTSes.clear();
         shopRTSes.add(new MockShopRTS("SHOP0001", "测试店2", "M1", "测试2"));
-        mockShopRTSManager.importShops(shopRTSes);
+        mockShopRTSManager.save(shopRTSes);
         testQuery();
     }
 

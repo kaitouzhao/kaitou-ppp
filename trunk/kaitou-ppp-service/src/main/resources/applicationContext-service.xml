@@ -7,6 +7,17 @@
     <import resource="applicationContext-manager.xml"/>
     <import resource="applicationContext-tx.xml"/>
 
+    <bean id="cardService" class="kaitou.ppp.service.impl.CardServiceImpl">
+        <property name="complete" value="${card.complete}"/>
+        <property name="logFileName" value="${card.logFileName}"/>
+        <property name="output" value="${card.output}"/>
+        <property name="template" value="${card.template}"/>
+        <property name="templateName" value="${card.templateName}"/>
+        <property name="workspace" value="${card.workspace}"/>
+        <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
+        <property name="shopManager" ref="shopManager"/>
+    </bean>
+
     <bean id="engineerService" class="kaitou.ppp.service.impl.EngineerServiceImpl">
         <property name="engineerManager" ref="engineerManager"/>
         <property name="engineerTrainingManager" ref="engineerTrainingManager"/>
@@ -33,6 +44,7 @@
                 <ref bean="engineerTrainingManager"/>
             </list>
         </property>
+        <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
     </bean>
 
     <bean id="systemSettingsService" class="kaitou.ppp.service.impl.SystemSettingsServiceImpl">

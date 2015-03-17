@@ -41,12 +41,12 @@ public class EngineerManagerImplTest extends AbstractManagerTest {
         String shopName = "认定店1";
         engineers.add(new MockEngineer("001", "测试1", SysCode.SaleRegion.NORTH_CHINA.getValue(), shopName, SysCode.ShopLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), SHOP_ID, "AGP", "", "", ""));
         engineers.add(new MockEngineer("002", "测试2", SysCode.SaleRegion.NORTH_CHINA.getValue(), "认定点2", SysCode.ShopLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), "shop002", "AGP", "", "", ""));
-        mockEngineerManager.importEngineers(engineers);
+        mockEngineerManager.save(engineers);
         engineers.clear();
         engineers.add(new MockEngineer("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), shopName, SysCode.ShopLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), SHOP_ID, "AGP", "", "", ""));
-        mockEngineerManager.importEngineers(engineers);
+        mockEngineerManager.save(engineers);
         engineers.add(new MockEngineer("001", "测试3", SysCode.SaleRegion.NORTH_CHINA.getValue(), shopName, SysCode.ShopLevel.GOLD.getValue(), "1", SysCode.ACELevel.FIRST.getValue(), "2013/1/1", "1", SysCode.EngineerStatus.ON.getValue(), SHOP_ID, "DPO", "kid@1.com", "13810001000", "饮马井"));
-        mockEngineerManager.importEngineers(engineers);
+        mockEngineerManager.save(engineers);
         testQuery();
         testDelete();
     }

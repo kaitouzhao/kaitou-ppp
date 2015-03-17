@@ -24,7 +24,7 @@ public interface ShopRTSManager {
      * @param shopRTSs 认定店RTS列表
      * @return 成功执行个数
      */
-    public int importShops(List<ShopRTS> shopRTSs);
+    public int save(List<ShopRTS> shopRTSs);
 
     /**
      * 获取全部认定店RTS

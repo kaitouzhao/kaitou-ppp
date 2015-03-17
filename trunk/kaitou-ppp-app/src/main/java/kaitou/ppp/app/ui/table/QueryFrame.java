@@ -12,7 +12,6 @@ import kaitou.ppp.domain.BaseDomain;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -231,7 +230,7 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
                             break;
                         }
                         String fieldValueStr = fieldValue.toString();
-                        if (fieldValueStr.indexOf(textFieldValue.trim()) < 0) {
+                        if (!fieldValueStr.contains(textFieldValue.trim())) {
                             excludes.add(i);
                             break;
                         }
@@ -344,6 +343,7 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void fireTableCellUpdated(int row, int column) {
             super.fireTableCellUpdated(row, column);
             ConfirmHint hint = new ConfirmHint(self, "是否确定更新这行记录？");
@@ -376,6 +376,7 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void actionPerformed(ActionEvent e) {
             int[] opIndexes = dataTable.getSelectedRows();
             if (opIndexes.length <= 0) {

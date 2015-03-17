@@ -10,9 +10,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.womai.bsp.tool.utils.ExcelUtil.readExcel;
-import static com.womai.bsp.tool.utils.ExcelUtil.readExcelIsLegal;
-import static com.womai.bsp.tool.utils.ExcelUtil.write2Excel;
+import static com.womai.bsp.tool.utils.ExcelUtil.*;
+import static com.womai.bsp.tool.utils.PropertyUtil.getValue;
 
 /**
  * excel操作业务层.
@@ -22,6 +21,9 @@ import static com.womai.bsp.tool.utils.ExcelUtil.write2Excel;
  */
 public abstract class BaseExcelService extends BaseLogManager {
 
+    private static final String SCHEME_PROPERTIES = "scheme.properties";
+    private static final String SHEET_NAME_SUFFIX = "_SHEET_NAME";
+
     /**
      * 将excel数据转换成实体
      *
@@ -29,7 +31,8 @@ public abstract class BaseExcelService extends BaseLogManager {
      * @param sheetName   读取sheet名
      * @param headers     excel标题
      * @param columns     excel列与实体属性对应
-     * @param domainClass 实体类型   @return 实体列表
+     * @param domainClass 实体类型
+     * @return 实体列表
      */
     protected <T extends BaseDomain> List<T> readFromExcel(File srcFile, String sheetName, String[] headers, String[] columns, Class<T> domainClass) {
         List<T> domainList = new ArrayList<T>();
@@ -44,7 +47,7 @@ public abstract class BaseExcelService extends BaseLogManager {
             }
             logInfo.append("）");
             logOperation(logInfo.toString());
-            throw new RuntimeException("导入的excel格式不正确，请检查");
+            throw new RuntimeException(logInfo.toString());
         }
         InputStream is;
         try {
@@ -78,12 +81,28 @@ public abstract class BaseExcelService extends BaseLogManager {
     }
 
     /**
+     * 将excel数据转换成实体
+     *
+     * @param srcFile     源文件
+     * @param domainClass 实体类型
+     * @return 实体列表
+     */
+    protected <T extends BaseDomain> List<T> readFromExcel(File srcFile, Class<T> domainClass) {
+        String simpleName = domainClass.getSimpleName();
+        String sheetName = getValue(SCHEME_PROPERTIES, simpleName + SHEET_NAME_SUFFIX);
+        String importPrefix = "IMPORT_";
+        String[] headers = getValue(SCHEME_PROPERTIES, importPrefix + simpleName + "_HEADER").split(",");
+        String[] columns = getValue(SCHEME_PROPERTIES, importPrefix + simpleName + "_COLUMN").split(",");
+        return readFromExcel(srcFile, sheetName, headers, columns, domainClass);
+    }
+
+    /**
      * 写excel文件
      *
      * @param targetFile 目标文件
      * @param wb         活动工作簿
      */
-    protected void writeExcelFile(File targetFile, Workbook wb) {
+    protected void writeExcelFile(File targetFile, Workbook wb) throws IOException {
         OutputStream os = null;
         try {
             os = new FileOutputStream(targetFile);
@@ -95,11 +114,7 @@ public abstract class BaseExcelService extends BaseLogManager {
             throw new RuntimeException(e);
         } finally {
             if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                os.close();
             }
         }
     }
@@ -112,7 +127,7 @@ public abstract class BaseExcelService extends BaseLogManager {
      * @param headers    excel标题
      * @param columns    excel列与实体属性对应
      * @param targetFile 目标文件
-     * @param <T>
+     * @param <T>        实体类型
      */
     protected <T extends BaseDomain> void export2Excel(List<T> domainList, String sheetName, String[] headers, String[] columns, File targetFile) {
         if (targetFile == null) {
@@ -128,7 +143,27 @@ public abstract class BaseExcelService extends BaseLogManager {
             }
             wb = write2Excel(sheetName, headers, datas, ExcelUtil.ExcelVersion.V2007);
         }
-        writeExcelFile(targetFile, wb);
+        try {
+            writeExcelFile(targetFile, wb);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    /**
+     * 导出至excel
+     *
+     * @param domainList  实体列表
+     * @param targetFile  目标文件
+     * @param domainClass 实体类型
+     * @param <T>         实体类型
+     */
+    protected <T extends BaseDomain> void export2Excel(List<T> domainList, File targetFile, Class<T> domainClass) {
+        String simpleName = domainClass.getSimpleName();
+        String sheetName = getValue(SCHEME_PROPERTIES, simpleName + SHEET_NAME_SUFFIX);
+        String exportPrefix = "EXPORT_";
+        String[] headers = getValue(SCHEME_PROPERTIES, exportPrefix + simpleName + "_HEADER").split(",");
+        String[] columns = getValue(SCHEME_PROPERTIES, exportPrefix + simpleName + "_COLUMN").split(",");
+        export2Excel(domainList, sheetName, headers, columns, targetFile);
+    }
 }

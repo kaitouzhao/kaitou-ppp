@@ -6,6 +6,7 @@ import kaitou.ppp.domain.BaseDomain;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.Map;
 
 import static com.womai.bsp.tool.utils.JsonUtil.json2Object;
 import static com.womai.bsp.tool.utils.JsonUtil.object2Json;
-import static kaitou.ppp.common.utils.FileUtil.*;
+import static kaitou.ppp.common.utils.FileUtil.readLines;
+import static kaitou.ppp.common.utils.FileUtil.writeLines;
 
 /**
  * DAO父类.
@@ -42,52 +44,6 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
      */
     public void setDbDir(String dbDir) {
         this.dbDir = dbDir;
-    }
-
-    /**
-     * 获取备份文件集合
-     *
-     * @return 备份文件集合
-     */
-    protected File[] getBackFile() {
-        File dirFile = new File(dbDir);
-        final String domainName = getDomainClass().getSimpleName();
-        return dirFile.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith("_" + domainName + ".kdb.back");
-            }
-        });
-    }
-
-    /**
-     * 提交
-     */
-    protected void commit() {
-        File[] backFiles = getBackFile();
-        if (CollectionUtil.isEmpty(backFiles)) {
-            return;
-        }
-        for (File backFile : backFiles) {
-            String backFileName = backFile.getName();
-            String dbFileName = backFileName.substring(0, backFileName.indexOf('.')) + ".kdb";
-            String backFilePath = backFile.getPath();
-            copy(backFilePath, dbDir + '\\' + dbFileName);
-            delete(backFilePath);
-        }
-    }
-
-    /**
-     * 回滚
-     */
-    protected void rollback() {
-        File[] backFiles = getBackFile();
-        if (CollectionUtil.isEmpty(backFiles)) {
-            return;
-        }
-        for (File backFile : backFiles) {
-            delete(backFile.getPath());
-        }
     }
 
     /**
@@ -151,7 +107,11 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
             for (Object domain : domainList) {
                 eJsonList.add(object2Json(domain));
             }
-            writeLines(dbDir + '/' + item.getKey(), eJsonList);
+            try {
+                writeLines(dbDir + '/' + item.getKey(), eJsonList);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return successCount;
     }
@@ -184,10 +144,17 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
         });
         List<T> domainList = new ArrayList<T>();
         if (!CollectionUtil.isEmpty(dbFiles)) {
-            List<String> lines = readLines(dbFiles[0].getPath());
-            if (!CollectionUtil.isEmpty(lines)) {
-                for (String line : lines) {
-                    domainList.add(json2Object(line, getDomainClass()));
+            for (File dbFile : dbFiles) {
+                List<String> lines;
+                try {
+                    lines = readLines(dbFile.getPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                if (!CollectionUtil.isEmpty(lines)) {
+                    for (String line : lines) {
+                        domainList.add(json2Object(line, getDomainClass()));
+                    }
                 }
             }
         }
@@ -267,7 +234,11 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
             for (Object domain : domainList) {
                 eJsonList.add(object2Json(domain));
             }
-            writeLines(dbDir + File.separatorChar + item.getKey(), eJsonList);
+            try {
+                writeLines(dbDir + File.separatorChar + item.getKey(), eJsonList);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return successCount;
     }

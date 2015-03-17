@@ -55,9 +55,8 @@ public class ShopRTS extends BaseDomain {
         ShopRTS shopRTS = (ShopRTS) o;
 
         if (id != null ? !id.equals(shopRTS.id) : shopRTS.id != null) return false;
-        if (productLine != null ? !productLine.equals(shopRTS.productLine) : shopRTS.productLine != null) return false;
+        return !(productLine != null ? !productLine.equals(shopRTS.productLine) : shopRTS.productLine != null);
 
-        return true;
     }
 
     @Override

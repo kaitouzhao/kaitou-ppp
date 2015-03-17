@@ -49,9 +49,8 @@ public class ShopPay extends BaseDomain {
 
         ShopPay shopPay = (ShopPay) o;
 
-        if (id != null ? !id.equals(shopPay.id) : shopPay.id != null) return false;
+        return !(id != null ? !id.equals(shopPay.id) : shopPay.id != null);
 
-        return true;
     }
 
     @Override

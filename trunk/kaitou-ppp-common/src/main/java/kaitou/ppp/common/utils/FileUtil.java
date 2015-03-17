@@ -15,8 +15,6 @@ import java.util.List;
  */
 public abstract class FileUtil {
 
-    private static final String CHARSET_NAME = "UTF-8";
-
     /**
      * 向文件插入新行
      *
@@ -24,7 +22,7 @@ public abstract class FileUtil {
      * @param lines    新行
      * @return 成功记录数
      */
-    public static int writeLines(String filePath, List<String> lines) {
+    public static int writeLines(String filePath, List<String> lines) throws IOException {
         PrintWriter out = null;
         FileWriter fw = null;
         try {
@@ -48,11 +46,7 @@ public abstract class FileUtil {
             throw new RuntimeException(e);
         } finally {
             if (fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                fw.close();
             }
             if (out != null) {
                 out.close();
@@ -109,7 +103,7 @@ public abstract class FileUtil {
      * @param filePath 文件路径
      * @return 行
      */
-    public static List<String> readLines(String filePath) {
+    public static List<String> readLines(String filePath) throws RuntimeException, IOException {
         File file = new File(filePath);
         if (!file.exists()) {
             return new ArrayList<String>();
@@ -131,18 +125,10 @@ public abstract class FileUtil {
             throw new RuntimeException(e);
         } finally {
             if (fr != null) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                fr.close();
             }
             if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                reader.close();
             }
         }
     }
@@ -158,16 +144,21 @@ public abstract class FileUtil {
             return;
         }
         if (file.isFile()) {
-            file.delete();
+            if (!file.delete()) {
+                throw new RuntimeException("删除文件：" + filePath + "失败");
+            }
             return;
         }
         File[] files = file.listFiles();
         if (!CollectionUtil.isEmpty(files)) {
+            assert files != null;
             for (File f : files) {
                 delete(f.getAbsolutePath());
             }
         }
-        file.delete();
+        if (!file.delete()) {
+            throw new RuntimeException("删除目录：" + filePath + "失败");
+        }
     }
 
     /**
@@ -182,7 +173,11 @@ public abstract class FileUtil {
             return;
         }
         delete(targetPath);
-        writeLines(targetPath, readLines(srcPath));
+        try {
+            writeLines(targetPath, readLines(srcPath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

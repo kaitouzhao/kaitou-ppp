@@ -5,7 +5,7 @@ import kaitou.ppp.dao.shop.CachedShopDao;
 import kaitou.ppp.dao.shop.ShopDetailDao;
 import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.shop.ShopDetail;
-import kaitou.ppp.manager.FileDaoManager;
+import kaitou.ppp.manager.BaseFileDaoManager;
 import kaitou.ppp.manager.listener.ShopUpdateListener;
 import kaitou.ppp.manager.shop.ShopDetailManager;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * Date: 2015/1/25
  * Time: 18:12
  */
-public class ShopDetailManagerImpl extends FileDaoManager implements ShopDetailManager, ShopUpdateListener {
+public class ShopDetailManagerImpl extends BaseFileDaoManager<ShopDetail> implements ShopDetailManager, ShopUpdateListener {
 
     protected ShopDetailDao shopDetailDao;
     private CachedShopDao cachedShopDao;
@@ -31,29 +31,19 @@ public class ShopDetailManagerImpl extends FileDaoManager implements ShopDetailM
     }
 
     @Override
+    public Class<ShopDetail> domainClass() {
+        return ShopDetail.class;
+    }
+
+    @Override
     public String getEntityName() {
-        return ShopDetail.class.getSimpleName();
-    }
-
-    @Override
-    public int importShopDetails(List<ShopDetail> shopDetails) {
-        return shopDetailDao.save(CollectionUtil.toArray(shopDetails, ShopDetail.class));
-    }
-
-    @Override
-    public List<ShopDetail> query(String... numberOfYear) {
-        return shopDetailDao.query(numberOfYear);
+        return domainClass().getSimpleName();
     }
 
     @Override
     public void cacheShop() {
         List<ShopDetail> details = query();
         cachedShopDao.updateShopDetails(CollectionUtil.toArray(details, ShopDetail.class));
-    }
-
-    @Override
-    public int delete(Object... shopDetails) {
-        return shopDetailDao.delete(shopDetails);
     }
 
     @Override
@@ -71,7 +61,7 @@ public class ShopDetailManagerImpl extends FileDaoManager implements ShopDetailM
                 detail.setName(shop.getName());
             }
         }
-        importShopDetails(details);
+        save(details);
     }
 
     @Override

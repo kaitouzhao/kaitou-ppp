@@ -24,12 +24,12 @@ public class ShopPayManagerImplTest extends AbstractManagerTest {
     public void testImportShops() {
         List<ShopPay> shopPays = new ArrayList<ShopPay>();
         shopPays.add(new MockShopPay("SHOP0001", "测试店1", "01", "01", "中行", "a1"));
-        mockShopPayManager.importShops(shopPays);
+        mockShopPayManager.save(shopPays);
         shopPays.add(new MockShopPay("SHOP0002", "测试店2", "02", "02", "中行", "a2"));
-        mockShopPayManager.importShops(shopPays);
+        mockShopPayManager.save(shopPays);
         shopPays.clear();
         shopPays.add(new MockShopPay("SHOP0001", "测试店1", "03", "03", "中行", "a3"));
-        mockShopPayManager.importShops(shopPays);
+        mockShopPayManager.save(shopPays);
         testQuery();
     }
 

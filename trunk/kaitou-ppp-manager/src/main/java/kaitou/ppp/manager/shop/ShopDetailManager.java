@@ -24,7 +24,7 @@ public interface ShopDetailManager {
      * @param shopDetails 认定店明细列表
      * @return 成功执行个数
      */
-    public int importShopDetails(List<ShopDetail> shopDetails);
+    public int save(List<ShopDetail> shopDetails);
 
     /**
      * 获取认定店明细

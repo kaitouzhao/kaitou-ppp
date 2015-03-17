@@ -89,10 +89,8 @@ public class Engineer extends BaseDomain {
         Engineer engineer = (Engineer) o;
 
         if (id != null ? !id.equals(engineer.id) : engineer.id != null) return false;
-        if (productLine != null ? !productLine.equals(engineer.productLine) : engineer.productLine != null)
-            return false;
+        return !(productLine != null ? !productLine.equals(engineer.productLine) : engineer.productLine != null);
 
-        return true;
     }
 
     @Override
@@ -109,9 +107,7 @@ public class Engineer extends BaseDomain {
      */
     @Override
     public String dbFileName() {
-        StringBuilder dbFileName = new StringBuilder();
-        dbFileName.append(SysCode.SaleRegion.convert2Code(saleRegion)).append(dbFileSuffix());
-        return dbFileName.toString();
+        return SysCode.SaleRegion.convert2Code(saleRegion) + dbFileSuffix();
     }
 
     @Override

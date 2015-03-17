@@ -9,7 +9,7 @@
 
     <bean id="mockEngineerManager" class="kaitou.ppp.manager.mock.manager.MockEngineerManagerImpl">
         <property name="dbDir" value="D:\temp\ppp\test\engineer"/>
-        <property name="engineerDao" ref="mockEngineerDao"/>
+        <property name="dao" ref="mockEngineerDao"/>
     </bean>
 
     <bean id="mockEngineerTrainingDao" class="kaitou.ppp.manager.mock.dao.MockEngineerTrainingDaoImpl">
@@ -18,7 +18,7 @@
 
     <bean id="mockEngineerTrainingManager" class="kaitou.ppp.manager.mock.manager.MockEngineerTrainingManagerImpl">
         <property name="dbDir" value="D:\temp\ppp\test\engineer_training"/>
-        <property name="engineerTrainingDao" ref="mockEngineerTrainingDao"/>
+        <property name="dao" ref="mockEngineerTrainingDao"/>
     </bean>
 
     <bean id="mockCachedShopDao" class="kaitou.ppp.manager.mock.dao.MockCachedShopDaoImpl"/>
@@ -29,6 +29,7 @@
 
     <bean id="mockShopManager" class="kaitou.ppp.manager.mock.manager.MockShopManagerImpl">
         <property name="dbDir" value="D:\temp\ppp\test\shop"/>
+        <property name="dao" ref="mockShopDao"/>
         <property name="shopDao" ref="mockShopDao"/>
         <property name="cachedShopDao" ref="mockCachedShopDao"/>
     </bean>
@@ -39,6 +40,7 @@
 
     <bean id="mockShopDetailManager" class="kaitou.ppp.manager.mock.manager.MockShopDetailManagerImpl">
         <property name="dbDir" value="D:\temp\ppp\test\shop_detail"/>
+        <property name="dao" ref="mockShopDetailDao"/>
         <property name="shopDetailDao" ref="mockShopDetailDao"/>
         <property name="cachedShopDao" ref="mockCachedShopDao"/>
     </bean>
@@ -49,7 +51,7 @@
 
     <bean id="mockShopRTSManager" class="kaitou.ppp.manager.mock.manager.MockShopRTSManagerImpl">
         <property name="dbDir" value="D:\temp\ppp\test\shop_rts"/>
-        <property name="shopRTSDao" ref="mockShopRTSDao"/>
+        <property name="dao" ref="mockShopRTSDao"/>
     </bean>
 
     <bean id="mockShopPayDao" class="kaitou.ppp.manager.mock.dao.MockShopPayDaoImpl">
@@ -58,7 +60,7 @@
 
     <bean id="mockShopPayManager" class="kaitou.ppp.manager.mock.manager.MockShopPayManagerImpl">
         <property name="dbDir" value="D:\temp\ppp\test\shop_pay"/>
-        <property name="shopPayDao" ref="mockShopPayDao"/>
+        <property name="dao" ref="mockShopPayDao"/>
     </bean>
 
     <bean id="mockSystemSettingsDao" class="kaitou.ppp.manager.mock.dao.MockSystemSettingsDaoImpl">

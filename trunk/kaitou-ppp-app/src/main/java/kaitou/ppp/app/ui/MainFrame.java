@@ -8,6 +8,7 @@ import kaitou.ppp.app.ui.dialog.InputHint;
 import kaitou.ppp.app.ui.dialog.OperationHint;
 import kaitou.ppp.app.ui.table.QueryFrame;
 import kaitou.ppp.app.ui.table.queryobject.*;
+import kaitou.ppp.domain.card.CardApplicationRecord;
 import kaitou.ppp.domain.engineer.Engineer;
 import kaitou.ppp.domain.engineer.EngineerTraining;
 import kaitou.ppp.domain.shop.Shop;
@@ -20,6 +21,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 import static com.womai.bsp.tool.utils.PropertyUtil.getValue;
@@ -48,12 +51,12 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         initComponents();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
     }
 
-    private void importShopBasicActionPerformed() {
+    private void importShopBasicActionPerformed(ActionEvent e) {
         try {
             File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
             if (srcFile == null) return;
@@ -64,7 +67,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void exportShopBasicActionPerformed() {
+    private void exportShopBasicActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("excel文件", "xlsx");
             if (targetFile == null) return;
@@ -75,19 +78,19 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void queryShopBasicActionPerformed() {
+    private void queryShopBasicActionPerformed(ActionEvent e) {
         new QueryFrame<Shop>(getShopService().queryAllShops(), new ShopQueryObject());
     }
 
-    private void queryEngineerBasicActionPerformed() {
+    private void queryEngineerBasicActionPerformed(ActionEvent e) {
         new QueryFrame<Engineer>(getEngineerService().queryAllEngineers(), new EngineerQueryObject());
     }
 
-    private void aboutItemActionPerformed() {
+    private void aboutItemActionPerformed(ActionEvent e) {
         new OperationHint(this, "当前系统版本：" + getValue("config.properties", "version"));
     }
 
-    private void backupDBActionPerformed() {
+    private void backupDBActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("压缩文件", "zip");
             if (targetFile == null) return;
@@ -98,7 +101,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void recoveryDBActionPerformed() {
+    private void recoveryDBActionPerformed(ActionEvent e) {
         try {
             File srcFile = chooseImportFile("压缩文件", "zip");
             if (srcFile == null) return;
@@ -109,7 +112,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void importEngineerBasicActionPerformed() {
+    private void importEngineerBasicActionPerformed(ActionEvent e) {
         try {
             File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
             if (srcFile == null) return;
@@ -120,7 +123,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void exportEngineerBasicActionPerformed() {
+    private void exportEngineerBasicActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("excel文件", "xlsx");
             if (targetFile == null) return;
@@ -131,7 +134,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void importEngineerTrainingActionPerformed() {
+    private void importEngineerTrainingActionPerformed(ActionEvent e) {
         try {
             File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
             if (srcFile == null) return;
@@ -142,11 +145,11 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void queryEngineerTrainingActionPerformed() {
+    private void queryEngineerTrainingActionPerformed(ActionEvent e) {
         new QueryFrame<EngineerTraining>(getEngineerService().queryAllTrainings(), new EngineerTrainingQueryObject());
     }
 
-    private void exportEngineerTrainingActionPerformed() {
+    private void exportEngineerTrainingActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("excel文件", "xlsx");
             if (targetFile == null) return;
@@ -157,7 +160,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void countEngineerByProductLineActionPerformed() {
+    private void countEngineerByProductLineActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("excel文件", "xlsx");
             if (targetFile == null) return;
@@ -168,7 +171,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void countEngineerByShopActionPerformed() {
+    private void countEngineerByShopActionPerformed(ActionEvent e) {
         try {
             InputHint inputHint = new InputHint(this, new String[]{"请选择产品线"});
             if (!inputHint.isOk()) {
@@ -184,7 +187,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void importShopDetailActionPerformed() {
+    private void importShopDetailActionPerformed(ActionEvent e) {
         try {
             File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
             if (srcFile == null) return;
@@ -195,11 +198,11 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void queryShopDetailActionPerformed() {
+    private void queryShopDetailActionPerformed(ActionEvent e) {
         new QueryFrame<ShopDetail>(getShopService().queryAllDetails(), new ShopDetailQueryObject());
     }
 
-    private void exportShopDetailActionPerformed() {
+    private void exportShopDetailActionPerformed(ActionEvent e) {
         try {
             InputHint inputHint = new InputHint(this, new String[]{"导出认定年份"});
             if (!inputHint.isOk()) {
@@ -213,13 +216,13 @@ public class MainFrame extends JFrame {
             } else {
                 getShopService().exportShopDetails(targetFile, numberOfYear);
             }
-            new OperationHint(this, "导入成功");
+            new OperationHint(this, "导出成功");
         } catch (Exception ex) {
             handleEx(ex, this);
         }
     }
 
-    private void importShopRTSActionPerformed() {
+    private void importShopRTSActionPerformed(ActionEvent e) {
         try {
             File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
             if (srcFile == null) return;
@@ -230,11 +233,11 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void queryShopRTSActionPerformed() {
+    private void queryShopRTSActionPerformed(ActionEvent e) {
         new QueryFrame<ShopRTS>(getShopService().queryAllRTSs(), new ShopRTSQueryObject());
     }
 
-    private void exportShopRTSActionPerformed() {
+    private void exportShopRTSActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("excel文件", "xlsx");
             if (targetFile == null) return;
@@ -245,7 +248,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void importShopPayActionPerformed() {
+    private void importShopPayActionPerformed(ActionEvent e) {
         try {
             File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
             if (srcFile == null) return;
@@ -256,11 +259,11 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void queryShopPayActionPerformed() {
+    private void queryShopPayActionPerformed(ActionEvent e) {
         new QueryFrame<ShopPay>(getShopService().queryAllPays(), new ShopPayQueryObject());
     }
 
-    private void exportShopPayActionPerformed() {
+    private void exportShopPayActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("excel文件", "xlsx");
             if (targetFile == null) return;
@@ -271,11 +274,61 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void exportAllActionPerformed() {
+    private void exportAllActionPerformed(ActionEvent e) {
         try {
             File targetFile = chooseExportFile("excel文件", "xlsx");
             if (targetFile == null) return;
             getShopService().exportAll(targetFile);
+            new OperationHint(this, "导出成功");
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
+    }
+
+    private void genCardMenuActionPerformed(ActionEvent e) {
+        try {
+            getCardService().generateCards();
+            new OperationHint(this, "生成成功");
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
+    }
+
+    private void thisMouseClicked(MouseEvent e) {
+        // TODO add your code here
+    }
+
+    private void importCardApplicationRecordActionPerformed(ActionEvent e) {
+        try {
+            File srcFile = chooseImportFile("excel文件", "xls", "xlsx");
+            if (srcFile == null) return;
+            getCardService().importCardApplicationRecords(srcFile);
+            new OperationHint(this, "导入成功");
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
+    }
+
+    private void queryCardApplicationRecordActionPerformed(ActionEvent e) {
+        new QueryFrame<CardApplicationRecord>(getCardService().queryCardApplicationRecords(), new CardApplicationRecordQueryObject());
+    }
+
+    private void exportCardApplicationRecordActionPerformed(ActionEvent e) {
+        try {
+            File targetFile = chooseExportFile("excel文件", "xlsx");
+            if (targetFile == null) return;
+            getCardService().exportCardApplicationRecords(targetFile);
+            new OperationHint(this, "导出成功");
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
+    }
+
+    private void countShopEquipmentActionPerformed(ActionEvent e) {
+        try {
+            File targetFile = chooseExportFile("excel文件", "xlsx");
+            if (targetFile == null) return;
+            getShopService().countShopEquipment(targetFile);
             new OperationHint(this, "导出成功");
         } catch (Exception ex) {
             handleEx(ex, this);
@@ -303,6 +356,7 @@ public class MainFrame extends JFrame {
         queryShopPay = new JMenuItem();
         exportShopPay = new JMenuItem();
         exportAll = new JMenuItem();
+        countShopEquipment = new JMenuItem();
         engineerMenu = new JMenu();
         engineerBasicMenu = new JMenu();
         importEngineerBasic = new JMenuItem();
@@ -314,6 +368,12 @@ public class MainFrame extends JFrame {
         exportEngineerTraining = new JMenuItem();
         countEngineerByProductLine = new JMenuItem();
         countEngineerByShop = new JMenuItem();
+        cardMenu = new JMenu();
+        genCardMenu = new JMenuItem();
+        cardApplicationRecordMenu = new JMenu();
+        importCardApplicationRecord = new JMenuItem();
+        queryCardApplicationRecord = new JMenuItem();
+        exportCardApplicationRecord = new JMenuItem();
         helpMenu = new JMenu();
         aboutItem = new JMenuItem();
         backupDB = new JMenuItem();
@@ -321,6 +381,12 @@ public class MainFrame extends JFrame {
 
         //======== this ========
         setTitle("PPP-ERP\u4e3b\u754c\u9762");
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                thisMouseClicked(e);
+            }
+        });
         Container contentPane = getContentPane();
         contentPane.setLayout(null);
 
@@ -340,7 +406,7 @@ public class MainFrame extends JFrame {
                     importShopBasic.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            importShopBasicActionPerformed();
+                            importShopBasicActionPerformed(e);
                         }
                     });
                     shopBasicMenu.add(importShopBasic);
@@ -350,7 +416,7 @@ public class MainFrame extends JFrame {
                     queryShopBasic.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            queryShopBasicActionPerformed();
+                            queryShopBasicActionPerformed(e);
                         }
                     });
                     shopBasicMenu.add(queryShopBasic);
@@ -360,7 +426,7 @@ public class MainFrame extends JFrame {
                     exportShopBasic.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            exportShopBasicActionPerformed();
+                            exportShopBasicActionPerformed(e);
                         }
                     });
                     shopBasicMenu.add(exportShopBasic);
@@ -376,7 +442,7 @@ public class MainFrame extends JFrame {
                     importShopDetail.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            importShopDetailActionPerformed();
+                            importShopDetailActionPerformed(e);
                         }
                     });
                     shopDetailMenu.add(importShopDetail);
@@ -386,7 +452,7 @@ public class MainFrame extends JFrame {
                     queryShopDetail.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            queryShopDetailActionPerformed();
+                            queryShopDetailActionPerformed(e);
                         }
                     });
                     shopDetailMenu.add(queryShopDetail);
@@ -396,7 +462,7 @@ public class MainFrame extends JFrame {
                     exportShopDetail.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            exportShopDetailActionPerformed();
+                            exportShopDetailActionPerformed(e);
                         }
                     });
                     shopDetailMenu.add(exportShopDetail);
@@ -412,7 +478,7 @@ public class MainFrame extends JFrame {
                     importShopRTS.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            importShopRTSActionPerformed();
+                            importShopRTSActionPerformed(e);
                         }
                     });
                     rtsMenu.add(importShopRTS);
@@ -422,7 +488,7 @@ public class MainFrame extends JFrame {
                     queryShopRTS.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            queryShopRTSActionPerformed();
+                            queryShopRTSActionPerformed(e);
                         }
                     });
                     rtsMenu.add(queryShopRTS);
@@ -432,7 +498,7 @@ public class MainFrame extends JFrame {
                     exportShopRTS.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            exportShopRTSActionPerformed();
+                            exportShopRTSActionPerformed(e);
                         }
                     });
                     rtsMenu.add(exportShopRTS);
@@ -448,7 +514,7 @@ public class MainFrame extends JFrame {
                     importShopPay.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            importShopPayActionPerformed();
+                            importShopPayActionPerformed(e);
                         }
                     });
                     shopPayMenu.add(importShopPay);
@@ -458,7 +524,7 @@ public class MainFrame extends JFrame {
                     queryShopPay.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            queryShopPayActionPerformed();
+                            queryShopPayActionPerformed(e);
                         }
                     });
                     shopPayMenu.add(queryShopPay);
@@ -468,7 +534,7 @@ public class MainFrame extends JFrame {
                     exportShopPay.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            exportShopPayActionPerformed();
+                            exportShopPayActionPerformed(e);
                         }
                     });
                     shopPayMenu.add(exportShopPay);
@@ -480,10 +546,20 @@ public class MainFrame extends JFrame {
                 exportAll.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        exportAllActionPerformed();
+                        exportAllActionPerformed(e);
                     }
                 });
                 shopMenu.add(exportAll);
+
+                //---- countShopEquipment ----
+                countShopEquipment.setText("\u8ba4\u5b9a\u5e97\u8bbe\u5907\u6570\u5bfc\u51fa");
+                countShopEquipment.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        countShopEquipmentActionPerformed(e);
+                    }
+                });
+                shopMenu.add(countShopEquipment);
             }
             managerMenuBar.add(shopMenu);
 
@@ -500,7 +576,7 @@ public class MainFrame extends JFrame {
                     importEngineerBasic.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            importEngineerBasicActionPerformed();
+                            importEngineerBasicActionPerformed(e);
                         }
                     });
                     engineerBasicMenu.add(importEngineerBasic);
@@ -510,7 +586,7 @@ public class MainFrame extends JFrame {
                     queryEngineerBasic.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            queryEngineerBasicActionPerformed();
+                            queryEngineerBasicActionPerformed(e);
                         }
                     });
                     engineerBasicMenu.add(queryEngineerBasic);
@@ -520,7 +596,7 @@ public class MainFrame extends JFrame {
                     exportEngineerBasic.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            exportEngineerBasicActionPerformed();
+                            exportEngineerBasicActionPerformed(e);
                         }
                     });
                     engineerBasicMenu.add(exportEngineerBasic);
@@ -536,7 +612,7 @@ public class MainFrame extends JFrame {
                     importEngineerTraining.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            importEngineerTrainingActionPerformed();
+                            importEngineerTrainingActionPerformed(e);
                         }
                     });
                     engineerTrainingMenu.add(importEngineerTraining);
@@ -546,7 +622,7 @@ public class MainFrame extends JFrame {
                     queryEngineerTraining.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            queryEngineerTrainingActionPerformed();
+                            queryEngineerTrainingActionPerformed(e);
                         }
                     });
                     engineerTrainingMenu.add(queryEngineerTraining);
@@ -556,7 +632,7 @@ public class MainFrame extends JFrame {
                     exportEngineerTraining.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            exportEngineerTrainingActionPerformed();
+                            exportEngineerTrainingActionPerformed(e);
                         }
                     });
                     engineerTrainingMenu.add(exportEngineerTraining);
@@ -568,7 +644,7 @@ public class MainFrame extends JFrame {
                 countEngineerByProductLine.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        countEngineerByProductLineActionPerformed();
+                        countEngineerByProductLineActionPerformed(e);
                     }
                 });
                 engineerMenu.add(countEngineerByProductLine);
@@ -578,12 +654,64 @@ public class MainFrame extends JFrame {
                 countEngineerByShop.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        countEngineerByShopActionPerformed();
+                        countEngineerByShopActionPerformed(e);
                     }
                 });
                 engineerMenu.add(countEngineerByShop);
             }
             managerMenuBar.add(engineerMenu);
+
+            //======== cardMenu ========
+            {
+                cardMenu.setText("\u4fdd\u4fee\u5361\u7ba1\u7406");
+
+                //---- genCardMenu ----
+                genCardMenu.setText("\u751f\u6210\u4fdd\u4fee\u5361");
+                genCardMenu.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        genCardMenuActionPerformed(e);
+                    }
+                });
+                cardMenu.add(genCardMenu);
+
+                //======== cardApplicationRecordMenu ========
+                {
+                    cardApplicationRecordMenu.setText("\u4fdd\u4fee\u5361\u751f\u6210\u8bb0\u5f55");
+
+                    //---- importCardApplicationRecord ----
+                    importCardApplicationRecord.setText("\u5bfc\u5165");
+                    importCardApplicationRecord.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            importCardApplicationRecordActionPerformed(e);
+                        }
+                    });
+                    cardApplicationRecordMenu.add(importCardApplicationRecord);
+
+                    //---- queryCardApplicationRecord ----
+                    queryCardApplicationRecord.setText("\u67e5\u8be2");
+                    queryCardApplicationRecord.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            queryCardApplicationRecordActionPerformed(e);
+                        }
+                    });
+                    cardApplicationRecordMenu.add(queryCardApplicationRecord);
+
+                    //---- exportCardApplicationRecord ----
+                    exportCardApplicationRecord.setText("\u5bfc\u51fa");
+                    exportCardApplicationRecord.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            exportCardApplicationRecordActionPerformed(e);
+                        }
+                    });
+                    cardApplicationRecordMenu.add(exportCardApplicationRecord);
+                }
+                cardMenu.add(cardApplicationRecordMenu);
+            }
+            managerMenuBar.add(cardMenu);
 
             //======== helpMenu ========
             {
@@ -594,7 +722,7 @@ public class MainFrame extends JFrame {
                 aboutItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        aboutItemActionPerformed();
+                        aboutItemActionPerformed(e);
                     }
                 });
                 helpMenu.add(aboutItem);
@@ -604,7 +732,7 @@ public class MainFrame extends JFrame {
                 backupDB.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        backupDBActionPerformed();
+                        backupDBActionPerformed(e);
                     }
                 });
                 helpMenu.add(backupDB);
@@ -614,7 +742,7 @@ public class MainFrame extends JFrame {
                 recoveryDB.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        recoveryDBActionPerformed();
+                        recoveryDBActionPerformed(e);
                     }
                 });
                 helpMenu.add(recoveryDB);
@@ -649,6 +777,7 @@ public class MainFrame extends JFrame {
     private JMenuItem queryShopPay;
     private JMenuItem exportShopPay;
     private JMenuItem exportAll;
+    private JMenuItem countShopEquipment;
     private JMenu engineerMenu;
     private JMenu engineerBasicMenu;
     private JMenuItem importEngineerBasic;
@@ -660,6 +789,12 @@ public class MainFrame extends JFrame {
     private JMenuItem exportEngineerTraining;
     private JMenuItem countEngineerByProductLine;
     private JMenuItem countEngineerByShop;
+    private JMenu cardMenu;
+    private JMenuItem genCardMenu;
+    private JMenu cardApplicationRecordMenu;
+    private JMenuItem importCardApplicationRecord;
+    private JMenuItem queryCardApplicationRecord;
+    private JMenuItem exportCardApplicationRecord;
     private JMenu helpMenu;
     private JMenuItem aboutItem;
     private JMenuItem backupDB;

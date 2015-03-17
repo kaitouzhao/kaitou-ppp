@@ -69,9 +69,7 @@ public class ShopDetail extends BaseDomain {
 
     @Override
     public String dbFileName() {
-        StringBuilder dbFileName = new StringBuilder();
-        dbFileName.append(SysCode.SaleRegion.convert2Code(saleRegion)).append(dbFileSuffix());
-        return dbFileName.toString();
+        return SysCode.SaleRegion.convert2Code(saleRegion) + dbFileSuffix();
     }
 
     @Override
@@ -89,9 +87,8 @@ public class ShopDetail extends BaseDomain {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (model != null ? !model.equals(that.model) : that.model != null) return false;
         if (numberOfYear != null ? !numberOfYear.equals(that.numberOfYear) : that.numberOfYear != null) return false;
-        if (productLine != null ? !productLine.equals(that.productLine) : that.productLine != null) return false;
+        return !(productLine != null ? !productLine.equals(that.productLine) : that.productLine != null);
 
-        return true;
     }
 
     @Override

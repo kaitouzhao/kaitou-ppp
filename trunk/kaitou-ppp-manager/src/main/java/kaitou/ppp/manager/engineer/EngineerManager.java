@@ -24,7 +24,7 @@ public interface EngineerManager {
      * @param engineers 工程师列表
      * @return 成功执行个数
      */
-    public int importEngineers(List<Engineer> engineers);
+    public int save(List<Engineer> engineers);
 
     /**
      * 获取认定店工程师

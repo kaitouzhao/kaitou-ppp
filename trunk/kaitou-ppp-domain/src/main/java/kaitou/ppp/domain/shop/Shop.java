@@ -55,9 +55,8 @@ public class Shop extends BaseDomain {
 
         Shop shop = (Shop) o;
 
-        if (id != null ? !id.equals(shop.id) : shop.id != null) return false;
+        return !(id != null ? !id.equals(shop.id) : shop.id != null);
 
-        return true;
     }
 
     @Override
@@ -91,9 +90,7 @@ public class Shop extends BaseDomain {
 
     @Override
     public String dbFileName() {
-        StringBuilder dbFileName = new StringBuilder();
-        dbFileName.append(SysCode.SaleRegion.convert2Code(saleRegion)).append(dbFileSuffix());
-        return dbFileName.toString();
+        return SysCode.SaleRegion.convert2Code(saleRegion) + dbFileSuffix();
     }
 
     @Override

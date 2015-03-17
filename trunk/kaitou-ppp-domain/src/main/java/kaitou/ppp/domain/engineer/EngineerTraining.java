@@ -85,9 +85,7 @@ public class EngineerTraining extends BaseDomain {
 
     @Override
     public String dbFileName() {
-        StringBuilder dbFileName = new StringBuilder();
-        dbFileName.append(SysCode.SaleRegion.convert2Code(saleRegion)).append(dbFileSuffix());
-        return dbFileName.toString();
+        return SysCode.SaleRegion.convert2Code(saleRegion) + dbFileSuffix();
     }
 
     @Override
@@ -161,10 +159,8 @@ public class EngineerTraining extends BaseDomain {
         if (trainer != null ? !trainer.equals(training.trainer) : training.trainer != null) return false;
         if (trainingModel != null ? !trainingModel.equals(training.trainingModel) : training.trainingModel != null)
             return false;
-        if (trainingType != null ? !trainingType.equals(training.trainingType) : training.trainingType != null)
-            return false;
+        return !(trainingType != null ? !trainingType.equals(training.trainingType) : training.trainingType != null);
 
-        return true;
     }
 
     @Override

@@ -7,7 +7,7 @@ import kaitou.ppp.domain.shop.CachedShop;
 import kaitou.ppp.domain.shop.CachedShopDetail;
 import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.shop.ShopDetail;
-import kaitou.ppp.manager.FileDaoManager;
+import kaitou.ppp.manager.BaseFileDaoManager;
 import kaitou.ppp.manager.listener.ShopUpdateListener;
 import kaitou.ppp.manager.shop.ShopManager;
 
@@ -21,7 +21,7 @@ import java.util.List;
  * Date: 2015/1/25
  * Time: 12:22
  */
-public class ShopManagerImpl extends FileDaoManager implements ShopManager, ShopUpdateListener {
+public class ShopManagerImpl extends BaseFileDaoManager<Shop> implements ShopManager, ShopUpdateListener {
 
     protected ShopDao shopDao;
     private CachedShopDao cachedShopDao;
@@ -35,18 +35,18 @@ public class ShopManagerImpl extends FileDaoManager implements ShopManager, Shop
     }
 
     @Override
-    public String getEntityName() {
-        return Shop.class.getSimpleName();
+    public Class<Shop> domainClass() {
+        return Shop.class;
     }
 
     @Override
-    public int importShops(List<Shop> shops) {
-        return shopDao.save(CollectionUtil.toArray(shops, Shop.class));
+    public String getEntityName() {
+        return domainClass().getSimpleName();
     }
 
     @Override
     public List<Shop> query() {
-        List<Shop> shops = shopDao.query();
+        List<Shop> shops = super.query();
         Collections.sort(shops, new Comparator<Shop>() {
             @Override
             public int compare(Shop o1, Shop o2) {
@@ -58,11 +58,6 @@ public class ShopManagerImpl extends FileDaoManager implements ShopManager, Shop
             }
         });
         return shops;
-    }
-
-    @Override
-    public int delete(Object... shops) {
-        return shopDao.delete(shops);
     }
 
     @Override

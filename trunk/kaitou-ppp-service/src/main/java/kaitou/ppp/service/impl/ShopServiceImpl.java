@@ -2,7 +2,9 @@ package kaitou.ppp.service.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.dao.cache.CacheManager;
+import kaitou.ppp.domain.card.CardApplicationRecord;
 import kaitou.ppp.domain.shop.*;
+import kaitou.ppp.manager.card.CardApplicationRecordManager;
 import kaitou.ppp.manager.listener.ShopUpdateListener;
 import kaitou.ppp.manager.shop.ShopDetailManager;
 import kaitou.ppp.manager.shop.ShopManager;
@@ -26,32 +28,16 @@ import static com.womai.bsp.tool.utils.BeanCopyUtil.copyBean;
  */
 public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
-    private static final String[] IMPORT_SHOP_HEADER = {"区域", "认定店编号", "认定店名称", "合同联系人", "联系电话", "邮寄地址", "联系邮箱"};
-    private static final String[] IMPORT_SHOP_COLUMN = {"saleRegion", "id", "name", "linkMan", "phone", "address", "email"};
-
-    private static final String[] EXPORT_SHOP_HEADER = {"状态", "区域", "认定店编号", "认定店名称", "合同联系人", "联系电话", "邮寄地址", "联系邮箱"};
-    private static final String[] EXPORT_SHOP_COLUMN = {"status", "saleRegion", "id", "name", "linkMan", "phone", "address", "email"};
-
-    private static final String[] IMPORT_SHOP_DETAIL_HEADER = {"认定店编号", "认定店名称", "认定年份", "产品线", "认定级别", "认定机型"};
-    private static final String[] IMPORT_SHOP_DETAIL_COLUMN = {"id", "name", "numberOfYear", "productLine", "level", "model"};
-
-    private static final String[] EXPORT_SHOP_DETAIL_HEADER = {"区域", "认定店编号", "认定店名称", "认定年份", "产品线", "认定级别", "认定机型"};
-    private static final String[] EXPORT_SHOP_DETAIL_COLUMN = {"saleRegion", "id", "name", "numberOfYear", "productLine", "level", "model"};
-
-    private static final String[] EXCEL_SHOP_RTS_HEADER = {"认定店编号", "认定店名称", "产品线", "RTS"};
-    private static final String[] SHOP_RTS_COLUMN = {"id", "name", "productLine", "rts"};
-
-    private static final String[] EXCEL_SHOP_PAY_HEADER = {"认定店编号", "认定店名称", "付款代码", "付款名称", "开户行", "帐号"};
-    private static final String[] SHOP_PAY_COLUMN = {"id", "name", "payCode", "payName", "accountBank", "accountNo"};
-
-    private static final String[] EXCEL_SHOP_ALL_HEADER = {"区域", "认定店编号", "认定店名称", "合同联系人", "联系电话", "邮寄地址", "联系邮箱", "认定年份", "产品线", "认定级别"};
-    private static final String[] SHOP_ALL_COLUMN = {"saleRegion", "id", "name", "linkMan", "phone", "address", "email", "numberOfYear", "productLine", "level"};
-
     private ShopManager shopManager;
     private ShopRTSManager shopRTSManager;
     private ShopPayManager shopPayManager;
     private ShopDetailManager shopDetailManager;
     private List<ShopUpdateListener> shopUpdateListeners;
+    private CardApplicationRecordManager cardApplicationRecordManager;
+
+    public void setCardApplicationRecordManager(CardApplicationRecordManager cardApplicationRecordManager) {
+        this.cardApplicationRecordManager = cardApplicationRecordManager;
+    }
 
     public void setShopUpdateListeners(List<ShopUpdateListener> shopUpdateListeners) {
         this.shopUpdateListeners = shopUpdateListeners;
@@ -75,7 +61,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     @Override
     public void importShops(File srcFile) {
-        List<Shop> shops = readFromExcel(srcFile, "基础", IMPORT_SHOP_HEADER, IMPORT_SHOP_COLUMN, Shop.class);
+        List<Shop> shops = readFromExcel(srcFile, Shop.class);
         importShops(shops);
     }
 
@@ -85,7 +71,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
      * @param shops 认定店列表
      */
     private void importShops(List<Shop> shops) {
-        int successCount = shopManager.importShops(shops);
+        int successCount = shopManager.save(shops);
         logOperation("成功导入/更新认定店数：" + successCount);
         if (successCount <= 0) {
             return;
@@ -100,12 +86,12 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     @Override
     public void exportShops(File targetFile) {
-        export2Excel(shopManager.query(), "基础", EXPORT_SHOP_HEADER, EXPORT_SHOP_COLUMN, targetFile);
+        export2Excel(shopManager.query(), targetFile, Shop.class);
     }
 
     @Override
     public void importShopDetails(File srcFile) {
-        List<ShopDetail> shopDetails = readFromExcel(srcFile, "发展", IMPORT_SHOP_DETAIL_HEADER, IMPORT_SHOP_DETAIL_COLUMN, ShopDetail.class);
+        List<ShopDetail> shopDetails = readFromExcel(srcFile, ShopDetail.class);
         importShopDetails(shopDetails);
     }
 
@@ -124,7 +110,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
             CachedShop cachedShop = shopManager.getCachedShop(shopDetail.getId());
             shopDetail.setSaleRegion(cachedShop.getSaleRegion());
         }
-        successCount = shopDetailManager.importShopDetails(shopDetails);
+        successCount = shopDetailManager.save(shopDetails);
         logOperation("成功导入/更新认定店认定级别数：" + successCount);
         if (successCount <= 0) {
             return;
@@ -139,7 +125,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     @Override
     public void exportShopDetails(File targetFile, String... numberOfYear) {
-        export2Excel(shopDetailManager.query(numberOfYear), "发展", EXPORT_SHOP_DETAIL_HEADER, EXPORT_SHOP_DETAIL_COLUMN, targetFile);
+        export2Excel(shopDetailManager.query(numberOfYear), targetFile, ShopDetail.class);
     }
 
     @Override
@@ -210,7 +196,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     @Override
     public void importRTSs(File srcFile) {
-        List<ShopRTS> shopRTSes = readFromExcel(srcFile, "RTS", EXCEL_SHOP_RTS_HEADER, SHOP_RTS_COLUMN, ShopRTS.class);
+        List<ShopRTS> shopRTSes = readFromExcel(srcFile, ShopRTS.class);
         importShopRTSs(shopRTSes);
     }
 
@@ -220,17 +206,17 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
      * @param shopRTSes rts列表
      */
     private void importShopRTSs(List<ShopRTS> shopRTSes) {
-        logOperation("成功导入/更新RTS数：" + shopRTSManager.importShops(shopRTSes));
+        logOperation("成功导入/更新RTS数：" + shopRTSManager.save(shopRTSes));
     }
 
     @Override
     public void exportRTSs(File targetFile) {
-        export2Excel(shopRTSManager.query(), "RTS", EXCEL_SHOP_RTS_HEADER, SHOP_RTS_COLUMN, targetFile);
+        export2Excel(shopRTSManager.query(), targetFile, ShopRTS.class);
     }
 
     @Override
     public void importPays(File srcFile) {
-        List<ShopPay> shopPays = readFromExcel(srcFile, "付款信息", EXCEL_SHOP_PAY_HEADER, SHOP_PAY_COLUMN, ShopPay.class);
+        List<ShopPay> shopPays = readFromExcel(srcFile, ShopPay.class);
         importShopPays(shopPays);
     }
 
@@ -240,12 +226,12 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
      * @param shopPays 帐号信息列表
      */
     private void importShopPays(List<ShopPay> shopPays) {
-        logOperation("成功导入/更新认定店帐号信息数：" + shopPayManager.importShops(shopPays));
+        logOperation("成功导入/更新认定店帐号信息数：" + shopPayManager.save(shopPays));
     }
 
     @Override
     public void exportPays(File targetFile) {
-        export2Excel(shopPayManager.query(), "付款信息", EXCEL_SHOP_PAY_HEADER, SHOP_PAY_COLUMN, targetFile);
+        export2Excel(shopPayManager.query(), targetFile, ShopPay.class);
     }
 
     @Override
@@ -269,7 +255,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
             }
             shopAlls.add(shopAll);
         }
-        export2Excel(shopAlls, "基础信息全导出", EXCEL_SHOP_ALL_HEADER, SHOP_ALL_COLUMN, targetFile);
+        export2Excel(shopAlls, targetFile, ShopAll.class);
     }
 
     @Override
@@ -293,22 +279,63 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void saveOrUpdateShop(Shop shop) {
         importShops(CollectionUtil.newList(shop));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void saveOrUpdateShopDetail(ShopDetail detail) {
         importShopDetails(CollectionUtil.newList(detail));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void saveOrUpdateShopRTS(ShopRTS rts) {
         importShopRTSs(CollectionUtil.newList(rts));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void saveOrUpdateShopPay(ShopPay pay) {
         importShopPays(CollectionUtil.newList(pay));
+    }
+
+    @Override
+    public void countShopEquipment(File targetFile) {
+        List<CardApplicationRecord> cardApplicationRecords = cardApplicationRecordManager.query();
+        List<ShopEquipmentCount> counts = new ArrayList<ShopEquipmentCount>();
+        for (CardApplicationRecord cardApplicationRecord : cardApplicationRecords) {
+            ShopEquipmentCount count = new ShopEquipmentCount();
+            count.setShopId(cardApplicationRecord.getShopId());
+            int index = counts.indexOf(count);
+            if (index < 0) {
+                count.setShopName(cardApplicationRecord.getShopName());
+                counts.add(count);
+            } else {
+                count = counts.get(index);
+            }
+            if ("DGS".equals(cardApplicationRecord.getAllModels())) {
+                count.setDgs(count.getDgs() + 1);
+                continue;
+            }
+            if ("DP".equals(cardApplicationRecord.getAllModels())) {
+                count.setDp(count.getDp() + 1);
+                continue;
+            }
+            if ("PGA".equals(cardApplicationRecord.getAllModels())) {
+                count.setPga(count.getPga() + 1);
+                continue;
+            }
+            if ("TDS".equals(cardApplicationRecord.getAllModels())) {
+                count.setTds(count.getTds() + 1);
+                continue;
+            }
+            if ("IPF".equals(cardApplicationRecord.getAllModels())) {
+                count.setIpf(count.getIpf() + 1);
+            }
+        }
+        export2Excel(counts, targetFile, ShopEquipmentCount.class);
     }
 }

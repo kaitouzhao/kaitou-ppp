@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class MockShopDetailManagerImpl extends ShopDetailManagerImpl {
     @Override
-    public int importShopDetails(List<ShopDetail> shopDetails) {
+    public int save(List<ShopDetail> shopDetails) {
         ShopDetail[] shopDetailsArray = CollectionUtil.toArray(shopDetails, ShopDetail.class);
         int successCount = shopDetailDao.save(shopDetailsArray);
         return successCount;

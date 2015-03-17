@@ -76,11 +76,6 @@ public class SaveDialog<T extends BaseDomain> extends JDialog {
         }
     }
 
-    private SaveDialog(Dialog owner) {
-        super(owner);
-        initComponents();
-    }
-
     private void okButtonActionPerformed(ActionEvent e) {
         ConfirmHint confirmHint = new ConfirmHint(this, "确定添加吗？");
         if (!confirmHint.isOk()) {
@@ -137,8 +132,8 @@ public class SaveDialog<T extends BaseDomain> extends JDialog {
             {
                 buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
                 buttonBar.setLayout(new GridBagLayout());
-                ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
-                ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
+                ((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{0, 85, 80};
+                ((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{1.0, 0.0, 0.0};
 
                 //---- okButton ----
                 okButton.setText("\u4fdd\u5b58");
@@ -149,8 +144,8 @@ public class SaveDialog<T extends BaseDomain> extends JDialog {
                     }
                 });
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- cancelButton ----
                 cancelButton.setText("\u53d6\u6d88");
@@ -161,8 +156,8 @@ public class SaveDialog<T extends BaseDomain> extends JDialog {
                     }
                 });
                 buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }

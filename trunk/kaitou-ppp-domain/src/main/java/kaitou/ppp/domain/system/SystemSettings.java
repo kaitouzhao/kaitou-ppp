@@ -37,9 +37,7 @@ public class SystemSettings extends BaseDomain {
 
     @Override
     public String dbFileName() {
-        StringBuilder dbFileName = new StringBuilder();
-        dbFileName.append(getClass().getSimpleName() + ".kdb");
-        return dbFileName.toString();
+        return (getClass().getSimpleName() + ".kdb");
     }
 
     @Override

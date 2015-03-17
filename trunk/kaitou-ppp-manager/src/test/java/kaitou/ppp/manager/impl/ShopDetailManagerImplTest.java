@@ -37,11 +37,11 @@ public class ShopDetailManagerImplTest extends AbstractManagerTest {
         List<ShopDetail> shopDetails = new ArrayList<ShopDetail>();
         shopDetails.add(new MockShopDetail("华北", "SHOP0001", "认定店1", "2013", "ABA", "金牌", "ABA"));
         shopDetails.add(new MockShopDetail("华北", "SHOP0001", "认定店1", "2014", "ABC", "金牌", "ABC"));
-        mockShopDetailManager.importShopDetails(shopDetails);
+        mockShopDetailManager.save(shopDetails);
         shopDetails.clear();
         shopDetails.add(new MockShopDetail("华北", "SHOP0002", "认定店1", "2014", "DPO", "金牌", "ABC"));
         shopDetails.add(new MockShopDetail("华北", "SHOP0001", "认定店1", "2014", "ABC", "银牌", "ABC"));
-        mockShopDetailManager.importShopDetails(shopDetails);
+        mockShopDetailManager.save(shopDetails);
         testQuery();
     }
 

@@ -1,14 +1,13 @@
 package kaitou.ppp.manager.engineer.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
-import kaitou.ppp.dao.engineer.EngineerDao;
 import kaitou.ppp.dao.shop.CachedShopDao;
 import kaitou.ppp.domain.engineer.Engineer;
 import kaitou.ppp.domain.shop.CachedShopDetail;
 import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.shop.ShopDetail;
 import kaitou.ppp.domain.system.SysCode;
-import kaitou.ppp.manager.FileDaoManager;
+import kaitou.ppp.manager.BaseFileDaoManager;
 import kaitou.ppp.manager.engineer.EngineerManager;
 import kaitou.ppp.manager.listener.ShopUpdateListener;
 
@@ -21,37 +20,22 @@ import java.util.List;
  * Date: 2015/1/17
  * Time: 11:14
  */
-public class EngineerManagerImpl extends FileDaoManager implements EngineerManager, ShopUpdateListener {
+public class EngineerManagerImpl extends BaseFileDaoManager<Engineer> implements EngineerManager, ShopUpdateListener {
 
-    private EngineerDao engineerDao;
     private CachedShopDao cachedShopDao;
 
     public void setCachedShopDao(CachedShopDao cachedShopDao) {
         this.cachedShopDao = cachedShopDao;
     }
 
-    public void setEngineerDao(EngineerDao engineerDao) {
-        this.engineerDao = engineerDao;
+    @Override
+    public Class<Engineer> domainClass() {
+        return Engineer.class;
     }
 
     @Override
     public String getEntityName() {
-        return Engineer.class.getSimpleName();
-    }
-
-    @Override
-    public int importEngineers(List<Engineer> engineers) {
-        return engineerDao.save(CollectionUtil.toArray(engineers, Engineer.class));
-    }
-
-    @Override
-    public List<Engineer> query(String... shopId) {
-        return engineerDao.query(shopId);
-    }
-
-    @Override
-    public int delete(Object... engineers) {
-        return engineerDao.delete(engineers);
+        return domainClass().getSimpleName();
     }
 
     @Override
@@ -77,7 +61,7 @@ public class EngineerManagerImpl extends FileDaoManager implements EngineerManag
             }
             engineers.addAll(list);
         }
-        importEngineers(engineers);
+        save(engineers);
     }
 
     @Override
@@ -99,6 +83,6 @@ public class EngineerManagerImpl extends FileDaoManager implements EngineerManag
             }
             engineers.addAll(list);
         }
-        importEngineers(engineers);
+        save(engineers);
     }
 }

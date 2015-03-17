@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/kaitou-ppp-app/src/main/resources/log4j.dtd" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kaitou-ppp-app/src/main/resources/log4j.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kaitou-ppp-dao/src/main/resources/applicationContext-dao.xml" charset="UTF-8" />
@@ -8,6 +8,7 @@
     <file url="file://$PROJECT_DIR$/kaitou-ppp-manager/src/main/resources/applicationContext-tx.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kaitou-ppp-manager/src/test/resources/applicationContext-manager-test.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kaitou-ppp-service/src/main/resources/applicationContext-service.xml" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
 

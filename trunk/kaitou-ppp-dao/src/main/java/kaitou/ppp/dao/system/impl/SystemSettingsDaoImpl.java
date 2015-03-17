@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -60,7 +61,12 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
      */
     private SystemSettings get(boolean isTransactionOpen) {
         String dbFilePath = isTransactionOpen && isExists(getBackDbFilePath()) ? getBackDbFilePath() : getDbFilePath();
-        List<String> lines = readLines(dbFilePath);
+        List<String> lines;
+        try {
+            lines = readLines(dbFilePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (CollectionUtil.isEmpty(lines)) {
             return new SystemSettings();
         }
@@ -74,8 +80,7 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
      */
     private String getBackDbFilePath() {
         SystemSettings settings = new SystemSettings();
-        StringBuilder dbFilePath = new StringBuilder(dbDir).append(File.separatorChar).append(settings.backDbFileName());
-        return dbFilePath.toString();
+        return dbDir + File.separatorChar + settings.backDbFileName();
     }
 
     /**
@@ -85,8 +90,7 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
      */
     private String getDbFilePath() {
         SystemSettings settings = new SystemSettings();
-        StringBuilder dbFilePath = new StringBuilder(dbDir).append(File.separatorChar).append(settings.dbFileName());
-        return dbFilePath.toString();
+        return dbDir + File.separatorChar + settings.dbFileName();
     }
 
     @Override
@@ -104,7 +108,11 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
         FileUtil.delete(dbFilePath);
         List<String> lines = new ArrayList<String>();
         lines.add(object2Json(settings));
-        writeLines(dbFilePath, lines);
+        try {
+            writeLines(dbFilePath, lines);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -161,10 +169,7 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
             if (field == null) {
                 return "";
             }
-            StringBuilder getterMethod = new StringBuilder("get")
-                    .append(fieldName.substring(0, 1).toUpperCase())
-                    .append(fieldName.substring(1));
-            Method method = systemSettingsClass.getMethod(getterMethod.toString());
+            Method method = systemSettingsClass.getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
             return String.valueOf(method.invoke(systemSettings));
         } catch (Exception e) {
             throw new RuntimeException(e);

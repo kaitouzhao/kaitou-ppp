@@ -61,7 +61,7 @@ public class CardApplication {
 
     private String warrantyCard;
     private String endDate;
-    private String status = "";
+    private String status = "保修中";
     private String allModels;
 
     /**

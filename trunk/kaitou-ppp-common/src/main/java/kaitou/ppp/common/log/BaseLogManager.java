@@ -27,7 +27,7 @@ public abstract class BaseLogManager {
      *
      * @param e 异常
      */
-    protected static final void logSystemEx(Throwable e) {
+    protected static void logSystemEx(Throwable e) {
         if (SYSTEM_LOG.isDebugEnabled()) {
             SYSTEM_LOG.debug("系统调试", e);
             return;
@@ -51,14 +51,13 @@ public abstract class BaseLogManager {
      *
      * @param info 日志
      */
-    protected static final void logSystemInfo(String info) {
+    protected static void logSystemInfo(String info) {
         if (SYSTEM_LOG.isDebugEnabled()) {
             SYSTEM_LOG.debug(info);
             return;
         }
         if (SYSTEM_LOG.isInfoEnabled()) {
             SYSTEM_LOG.info(info);
-            return;
         }
     }
 
@@ -67,7 +66,7 @@ public abstract class BaseLogManager {
      *
      * @param info 日志内容
      */
-    protected static final void logOperation(String info) {
+    protected static void logOperation(String info) {
         OPERATION_LOG.info(info);
     }
 

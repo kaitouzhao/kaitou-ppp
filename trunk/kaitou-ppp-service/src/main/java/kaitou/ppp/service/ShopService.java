@@ -203,4 +203,11 @@ public interface ShopService {
      * @param pay 帐号信息
      */
     public void saveOrUpdateShopPay(ShopPay pay);
+
+    /**
+     * 统计认定店设备
+     *
+     * @param targetFile 目标文件
+     */
+    public void countShopEquipment(File targetFile);
 }

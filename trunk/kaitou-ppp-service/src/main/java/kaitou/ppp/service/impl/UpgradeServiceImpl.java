@@ -2,14 +2,14 @@ package kaitou.ppp.service.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.common.log.BaseLogManager;
-import kaitou.ppp.common.utils.FileUtil;
 import kaitou.ppp.domain.system.SysCode;
 import kaitou.ppp.service.UpgradeService;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
-import static kaitou.ppp.common.utils.FileUtil.*;
+import static kaitou.ppp.common.utils.FileUtil.copy;
+import static kaitou.ppp.common.utils.FileUtil.delete;
 
 /**
  * 版本升级操作实现.

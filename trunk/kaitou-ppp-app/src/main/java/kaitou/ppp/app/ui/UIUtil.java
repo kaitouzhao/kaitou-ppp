@@ -75,6 +75,6 @@ public abstract class UIUtil extends BaseLogManager {
      */
     public static void handleEx(Exception ex, JFrame frame) {//TODO 有没有更好地方式呢？？
         logSystemEx(ex);
-        new OperationHint(frame, "很抱歉！出错了~");
+        new OperationHint(frame, "很抱歉！出错了~出错原因：" + ex.getMessage());
     }
 }

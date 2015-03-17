@@ -2,6 +2,7 @@ package kaitou.ppp.common.utils;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 
+import java.io.IOException;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.List;
@@ -29,7 +30,12 @@ public abstract class JsonValidator {
      * @return true-合法 ，false-非法
      */
     public static boolean validateFile(String path) {
-        List<String> lines = readLines(path);
+        List<String> lines;
+        try {
+            lines = readLines(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (CollectionUtil.isEmpty(lines)) {
             return true;
         }

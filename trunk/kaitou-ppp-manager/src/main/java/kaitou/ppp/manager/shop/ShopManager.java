@@ -26,7 +26,7 @@ public interface ShopManager {
      * @param shops 认定店列表
      * @return 成功执行个数
      */
-    public int importShops(List<Shop> shops);
+    public int save(List<Shop> shops);
 
     /**
      * 获取全部认定店

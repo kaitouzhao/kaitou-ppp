@@ -61,9 +61,7 @@ public abstract class BaseDomain {
      * @return 备份名
      */
     public String backDbFileName() {
-        StringBuilder backDbFileName = new StringBuilder(dbFileName());
-        backDbFileName.append(".back");
-        return backDbFileName.toString();
+        return dbFileName() + ".back";
     }
 
     /**
@@ -96,8 +94,7 @@ public abstract class BaseDomain {
      */
     public Object[] export2Array(String[] arrayOrders) {
         List<Object> result = new ArrayList<Object>();
-        for (int i = 0; i < arrayOrders.length; i++) {
-            String fieldName = arrayOrders[i];
+        for (String fieldName : arrayOrders) {
             StringBuilder getterMethod = new StringBuilder("get")
                     .append(fieldName.substring(0, 1).toUpperCase())
                     .append(fieldName.substring(1));

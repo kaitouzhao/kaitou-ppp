@@ -1,11 +1,10 @@
 package kaitou.ppp.manager.shop.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
-import kaitou.ppp.dao.shop.ShopRTSDao;
 import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.shop.ShopDetail;
 import kaitou.ppp.domain.shop.ShopRTS;
-import kaitou.ppp.manager.FileDaoManager;
+import kaitou.ppp.manager.BaseFileDaoManager;
 import kaitou.ppp.manager.listener.ShopUpdateListener;
 import kaitou.ppp.manager.shop.ShopRTSManager;
 
@@ -17,32 +16,21 @@ import java.util.List;
  * Date: 2015/1/29
  * Time: 21:31
  */
-public class ShopRTSManagerImpl extends FileDaoManager implements ShopRTSManager, ShopUpdateListener {
+public class ShopRTSManagerImpl extends BaseFileDaoManager<ShopRTS> implements ShopRTSManager, ShopUpdateListener {
 
-    private ShopRTSDao shopRTSDao;
-
-    public void setShopRTSDao(ShopRTSDao shopRTSDao) {
-        this.shopRTSDao = shopRTSDao;
+    @Override
+    public Class<ShopRTS> domainClass() {
+        return ShopRTS.class;
     }
 
     @Override
     public String getEntityName() {
-        return ShopRTS.class.getSimpleName();
-    }
-
-    @Override
-    public int importShops(List<ShopRTS> shopRTSs) {
-        return shopRTSDao.save(CollectionUtil.toArray(shopRTSs, ShopRTS.class));
+        return domainClass().getSimpleName();
     }
 
     @Override
     public List<ShopRTS> query() {
-        return shopRTSDao.query();
-    }
-
-    @Override
-    public int delete(Object... shopRTSs) {
-        return shopRTSDao.delete(shopRTSs);
+        return super.query();
     }
 
     @Override
@@ -59,7 +47,7 @@ public class ShopRTSManagerImpl extends FileDaoManager implements ShopRTSManager
                 rts.setName(shop.getName());
             }
         }
-        importShops(shopRTSes);
+        save(shopRTSes);
     }
 
     @Override

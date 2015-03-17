@@ -1,6 +1,7 @@
 package kaitou.ppp.app.ui.op;
 
 import kaitou.ppp.app.SpringContextManager;
+import kaitou.ppp.domain.card.CardApplicationRecord;
 import kaitou.ppp.domain.engineer.Engineer;
 import kaitou.ppp.domain.engineer.EngineerTraining;
 import kaitou.ppp.domain.shop.Shop;
@@ -44,6 +45,10 @@ public abstract class DeleteOp extends SpringContextManager {
         }
         if (EngineerTraining.class.getSimpleName().equals(domainType)) {
             getEngineerService().deleteEngineerTrainings(deleted);
+            return;
+        }
+        if (CardApplicationRecord.class.getSimpleName().equals(domainType)) {
+            getCardService().deleteCardApplicationRecords(deleted);
             return;
         }
         throw new RuntimeException("尚未支持此类型删除：" + domainType);

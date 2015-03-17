@@ -1,6 +1,5 @@
 package kaitou.ppp.app.ui.table.queryobject;
 
-import kaitou.ppp.app.ui.table.IQueryObject;
 import kaitou.ppp.domain.engineer.EngineerTraining;
 
 /**
@@ -9,57 +8,7 @@ import kaitou.ppp.domain.engineer.EngineerTraining;
  * Date: 2015/2/6
  * Time: 15:21
  */
-public class EngineerTrainingQueryObject implements IQueryObject<EngineerTraining> {
-
-    @Override
-    public String title() {
-        return "查询工程师发展信息";
-    }
-
-    @Override
-    public String[] tableTitles() {
-        return new String[]{"区域", "产品线", "在职状态", "认定店编码", "认定店名称", "认定店等级", "认定年限", "工程师编号", "工程师姓名", "ACE等级", "入职时间", "离职时间", "培训师", "培训类型", "培训时间", "培训机型"};
-    }
-
-    @Override
-    public String[] fieldNames() {
-        return new String[]{"saleRegion", "productLine", "status", "shopId", "shopName", "shopLevel", "numberOfYear", "id", "name", "aceLevel", "dateOfEntry", "dateOfDeparture", "trainer", "trainingType", "dateOfTraining", "trainingModel"};
-    }
-
-    @Override
-    public String[] queryFieldNames() {
-        return new String[]{"saleRegion", "productLine", "status", "shopId", "shopName", "shopLevel", "id", "name", "aceLevel", "trainer"};
-    }
-
-    @Override
-    public String domainType() {
-        return EngineerTraining.class.getSimpleName();
-    }
-
-    @Override
-    public String[] opNames() {
-        return null;
-    }
-
-    @Override
-    public String opFieldName() {
-        return null;
-    }
-
-    @Override
-    public int editableColumnStartIndex() {
-        return -1;
-    }
-
-    @Override
-    public String[] saveTitles() {
-        return new String[]{"产品线", "工程师编号", "工程师姓名", "培训师", "培训类型", "培训时间", "培训机型"};
-    }
-
-    @Override
-    public String[] saveFieldNames() {
-        return new String[]{"productLine", "id", "name", "trainer", "trainingType", "dateOfTraining", "trainingModel"};
-    }
+public class EngineerTrainingQueryObject extends BaseQueryObject {
 
     @Override
     public Class<EngineerTraining> domainClass() {

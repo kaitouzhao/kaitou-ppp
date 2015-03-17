@@ -17,6 +17,7 @@ public abstract class SpringContextManager {
     private static ApplicationContext ctx;
 
     private static DbService dbService;
+    private static CardService cardService;
     private static ShopService shopService;
     private static UpgradeService upgradeService;
     private static EngineerService engineerService;
@@ -35,6 +36,13 @@ public abstract class SpringContextManager {
             dbService = ctx.getBean(DbService.class);
         }
         return dbService;
+    }
+
+    public static CardService getCardService() {
+        if (cardService == null) {
+            cardService = ctx.getBean(CardService.class);
+        }
+        return cardService;
     }
 
     public static ShopService getShopService() {

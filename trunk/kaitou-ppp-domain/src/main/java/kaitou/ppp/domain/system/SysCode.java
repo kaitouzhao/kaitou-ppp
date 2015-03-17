@@ -6,7 +6,7 @@ package kaitou.ppp.domain.system;
  * Date: 2015/1/17
  * Time: 10:45
  */
-public class SysCode {
+public abstract class SysCode {
     /**
      * 认定店状态
      */

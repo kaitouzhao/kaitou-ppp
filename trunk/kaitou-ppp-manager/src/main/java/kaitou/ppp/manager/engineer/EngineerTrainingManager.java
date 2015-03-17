@@ -24,7 +24,7 @@ public interface EngineerTrainingManager {
      * @param trainings 培训信息列表
      * @return 成功更新的工程师记录数
      */
-    public int importEngineerTrainings(List<EngineerTraining> trainings);
+    public int save(List<EngineerTraining> trainings);
 
 
     /**

@@ -8,7 +8,6 @@ import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.shop.ShopDetail;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.womai.bsp.tool.utils.BeanCopyUtil.copyBean;
@@ -32,8 +31,8 @@ public class CachedShopDaoImpl implements CachedShopDao {
         Shop shop;
         CachedShop cachedShop;
         String id;
-        for (int i = 0; i < shops.length; i++) {
-            shop = (Shop) shops[i];
+        for (Object shop1 : shops) {
+            shop = (Shop) shop1;
             id = shop.getId();
             if (StringUtils.isEmpty(id)) {
                 continue;
@@ -57,8 +56,8 @@ public class CachedShopDaoImpl implements CachedShopDao {
         CachedShop cachedShop;
         CachedShopDetail cachedShopDetail;
         String id;
-        for (int i = 0; i < shopDetails.length; i++) {
-            shopDetail = (ShopDetail) shopDetails[i];
+        for (Object shopDetail1 : shopDetails) {
+            shopDetail = (ShopDetail) shopDetail1;
             id = shopDetail.getId();
             if (StringUtils.isEmpty(id)) {
                 continue;

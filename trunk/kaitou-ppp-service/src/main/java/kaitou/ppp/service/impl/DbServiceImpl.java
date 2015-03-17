@@ -1,12 +1,13 @@
 package kaitou.ppp.service.impl;
 
-import kaitou.ppp.common.utils.FileUtil;
 import kaitou.ppp.manager.system.SystemSettingsManager;
 import kaitou.ppp.service.DbService;
 
 import java.io.File;
+import java.io.IOException;
 
-import static kaitou.ppp.common.utils.FileUtil.*;
+import static kaitou.ppp.common.utils.FileUtil.delete;
+import static kaitou.ppp.common.utils.FileUtil.isExists;
 import static kaitou.ppp.common.utils.ZipUtil.unzip;
 import static kaitou.ppp.common.utils.ZipUtil.zip;
 
@@ -58,7 +59,11 @@ public class DbServiceImpl implements DbService {
 
     @Override
     public void backupDB(String targetFilePath) {
-        zip(dbDir, targetFilePath);
+        try {
+            zip(dbDir, targetFilePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         systemSettingsManager.updateLastBackupTime();
     }
 

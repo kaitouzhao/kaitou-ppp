@@ -27,6 +27,10 @@
         <property name="dbDir" value="${db.file.dir}"/>
     </bean>
 
+    <bean id="cardApplicationRecordDao" class="kaitou.ppp.dao.card.impl.CardApplicationRecordDaoImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+    </bean>
+
     <bean id="cachedShopDao" class="kaitou.ppp.dao.shop.impl.CachedShopDaoImpl"/>
 
     <bean id="systemSettingsDao" class="kaitou.ppp.dao.system.impl.SystemSettingsDaoImpl">

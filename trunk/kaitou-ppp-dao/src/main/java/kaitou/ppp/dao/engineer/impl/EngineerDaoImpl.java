@@ -4,8 +4,6 @@ import kaitou.ppp.dao.BaseDao;
 import kaitou.ppp.dao.engineer.EngineerDao;
 import kaitou.ppp.domain.engineer.Engineer;
 
-import java.util.List;
-
 /**
  * 工程师DAO实现.
  * User: 赵立伟

@@ -101,9 +101,8 @@ public class ShopAll extends BaseDomain {
             return false;
         if (phone != null ? !phone.equals(shopAll.phone) : shopAll.phone != null) return false;
         if (productLine != null ? !productLine.equals(shopAll.productLine) : shopAll.productLine != null) return false;
-        if (saleRegion != null ? !saleRegion.equals(shopAll.saleRegion) : shopAll.saleRegion != null) return false;
+        return !(saleRegion != null ? !saleRegion.equals(shopAll.saleRegion) : shopAll.saleRegion != null);
 
-        return true;
     }
 
     @Override

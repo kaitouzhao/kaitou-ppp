@@ -3,9 +3,9 @@ package kaitou.ppp.common.utils;
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.common.mock.AMock;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class FileUtilTest {
     private static final String ID = "03";
 
     @Test
-    public void testWriteLines() {
+    public void testWriteLines() throws IOException {
         List<String> lines = new ArrayList<String>();
         lines.add(object2Json(new AMock().setName("测试1").setId("01")));
         lines.add(object2Json(new AMock().setName("测试2").setId("02")));
@@ -40,7 +40,7 @@ public class FileUtilTest {
         testReadLines();
     }
 
-    private void testReadLines() {
+    private void testReadLines() throws IOException {
         List<String> lines = readLines(FILE_PATH);
         assertFalse(CollectionUtil.isEmpty(lines));
         AMock aMock3 = json2Object(lines.get(2), AMock.class);

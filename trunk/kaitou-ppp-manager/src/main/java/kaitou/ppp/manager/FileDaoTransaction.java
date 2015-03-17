@@ -1,7 +1,6 @@
 package kaitou.ppp.manager;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
-import kaitou.ppp.common.utils.JsonValidator;
 import org.aspectj.lang.JoinPoint;
 
 import java.io.File;
@@ -9,7 +8,7 @@ import java.io.FilenameFilter;
 
 import static kaitou.ppp.common.utils.FileUtil.copy;
 import static kaitou.ppp.common.utils.FileUtil.delete;
-import static kaitou.ppp.common.utils.JsonValidator.*;
+import static kaitou.ppp.common.utils.JsonValidator.validateFile;
 
 /**
  * 文件DAO事务管理.

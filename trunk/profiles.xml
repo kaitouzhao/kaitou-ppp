@@ -3,23 +3,38 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://maven.apache.org/PROFILES/1.0.0 http://maven.apache.org/xsd/profiles-1.0.0.xsd">
     <profiles>
+
+        <profile>
+            <id>common</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <db.file.dir>${base.dir}//db</db.file.dir>
+                <db.file.back>${base.dir}//db_back.zip</db.file.back>
+                <ppp.file.dir>${base.dir}</ppp.file.dir>
+                <log.dir>${base.dir}//log</log.dir>
+
+                <card.complete>${base.dir}//complete//</card.complete>
+                <card.logFileName>记录.xlsx</card.logFileName>
+                <card.output>${base.dir}//output//</card.output>
+                <card.template>${base.dir}//template//</card.template>
+                <card.templateName>保修卡.xls</card.templateName>
+                <card.workspace>${base.dir}//workspace//</card.workspace>
+            </properties>
+        </profile>
+
         <profile>
             <id>local</id>
             <properties>
-                <db.file.dir>d://temp//ppp//db</db.file.dir>
-                <db.file.back>d://temp//ppp//db_back.zip</db.file.back>
-                <ppp.file.dir>d://temp//ppp</ppp.file.dir>
-                <log.dir>d://temp//ppp//log</log.dir>
+                <base.dir>d://temp//ppp</base.dir>
             </properties>
         </profile>
 
         <profile>
             <id>pro</id>
             <properties>
-                <db.file.dir>d://ppp//db</db.file.dir>
-                <db.file.back>d://ppp//db_back.zip</db.file.back>
-                <ppp.file.dir>d://ppp</ppp.file.dir>
-                <log.dir>d://ppp//log</log.dir>
+                <base.dir>d://ppp</base.dir>
             </properties>
         </profile>
     </profiles>

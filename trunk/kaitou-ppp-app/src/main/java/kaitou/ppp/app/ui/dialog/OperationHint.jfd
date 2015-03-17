@@ -3,50 +3,24 @@ JFDML JFormDesigner: "5.2.1.0.138" Java: "1.7.0_40" encoding: "UTF-8"
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
-		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) ) {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 			name: "this"
 			"title": "操作提示"
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
-				name: "dialogPane"
-				"border": sfield com.jgoodies.forms.factories.Borders DIALOG
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
-					"autoSize": false
-				} ) {
-					name: "contentPanel"
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "messgeLab"
-						"text": "text"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-						"x": 50
-						"y": 52
-						"width": 225
-					} )
-				}, new FormLayoutConstraints( class java.lang.String ) {
-					"value": "Center"
+			"$sizePolicy": 1
+			"$locationPolicy": 0
+			"modal": true
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "messageLab"
+					"editable": false
 				} )
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
-					"$columnSpecs": "glue, button"
-					"$rowSpecs": "pref"
-				} ) {
-					name: "buttonBar"
-					"border": sfield com.jgoodies.forms.factories.Borders BUTTON_BAR_PAD
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "okButton"
-						"text": "确定"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okButtonActionPerformed", true ) )
-					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-						"gridX": 2
-					} )
-				}, new FormLayoutConstraints( class java.lang.String ) {
-					"value": "South"
-				} )
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-				"width": 350
-				"height": 165
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 385, 215 )
+			"size": new java.awt.Dimension( 265, 185 )
 		} )
 	}
 }

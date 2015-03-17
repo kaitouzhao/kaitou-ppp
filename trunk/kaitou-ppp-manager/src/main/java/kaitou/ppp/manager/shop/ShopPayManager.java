@@ -24,7 +24,7 @@ public interface ShopPayManager {
      * @param shopPays 认定店付款信息列表
      * @return 成功执行个数
      */
-    public int importShops(List<ShopPay> shopPays);
+    public int save(List<ShopPay> shopPays);
 
     /**
      * 获取全部认定店付款信息

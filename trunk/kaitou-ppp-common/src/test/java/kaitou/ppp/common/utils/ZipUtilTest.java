@@ -2,7 +2,8 @@ package kaitou.ppp.common.utils;
 
 import org.junit.Test;
 
-import static kaitou.ppp.common.utils.ZipUtil.readByZipInputStream;
+import java.io.IOException;
+
 import static kaitou.ppp.common.utils.ZipUtil.unzip;
 import static kaitou.ppp.common.utils.ZipUtil.zip;
 
@@ -22,7 +23,7 @@ public class ZipUtilTest {
     private static final String UNZIP_PATH = "D:\\temp\\ppp\\test\\zip\\unzip";
 
     @Test
-    public void testZip() {
+    public void testZip() throws IOException {
         zip(SRC_FILE_PATH, TARGET_FILE_PATH);
         zip(SRC_DIR_PATH, TARGET_DIR_PATH);
         testUnZip();

@@ -96,6 +96,11 @@ new FormModel {
 						"text": "基础信息全导出"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportAllActionPerformed", true ) )
 					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "countShopEquipment"
+						"text": "认定店设备数导出"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "countShopEquipmentActionPerformed", true ) )
+					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
 					name: "engineerMenu"
@@ -147,6 +152,34 @@ new FormModel {
 						name: "countEngineerByShop"
 						"text": "认定店在职人数"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "countEngineerByShopActionPerformed", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "cardMenu"
+					"text": "保修卡管理"
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "genCardMenu"
+						"text": "生成保修卡"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "genCardMenuActionPerformed", true ) )
+					} )
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "cardApplicationRecordMenu"
+						"text": "保修卡生成记录"
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "importCardApplicationRecord"
+							"text": "导入"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "importCardApplicationRecordActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "queryCardApplicationRecord"
+							"text": "查询"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "queryCardApplicationRecordActionPerformed", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "exportCardApplicationRecord"
+							"text": "导出"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "exportCardApplicationRecordActionPerformed", true ) )
+						} )
 					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
