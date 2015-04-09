@@ -49,4 +49,9 @@
         <property name="systemSettingsDao" ref="systemSettingsDao"/>
     </bean>
 
+    <bean id="remoteRegistryManager" class="kaitou.ppp.manager.system.impl.RemoteRegistryManagerImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="remoteRegistryDao" ref="remoteRegistryDao"/>
+    </bean>
+
 </beans>

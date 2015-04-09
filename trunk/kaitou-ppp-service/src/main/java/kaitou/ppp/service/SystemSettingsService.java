@@ -26,4 +26,18 @@ public interface SystemSettingsService {
      * @return 值
      */
     public String getSystemSetting(String fieldName);
+
+    /**
+     * 更新本机ip
+     *
+     * @param localIp 本机ip
+     */
+    public void updateLocalIp(String localIp);
+
+    /**
+     * 获取本机ip
+     *
+     * @return 本机ip
+     */
+    public String getLocalIp();
 }

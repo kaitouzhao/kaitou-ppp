@@ -41,6 +41,11 @@ public class SystemSettingsManagerImpl extends FileDaoManager implements SystemS
     }
 
     @Override
+    public void updateLastRecoveryTime() {
+        systemSettingsDao.updateLastRecoveryTime();
+    }
+
+    @Override
     public void updateLastFileChooserPath(String lastFileChooserPath) {
         systemSettingsDao.updateLastFileChooserPath(lastFileChooserPath);
     }
@@ -48,5 +53,15 @@ public class SystemSettingsManagerImpl extends FileDaoManager implements SystemS
     @Override
     public String getSystemSetting(String fieldName) {
         return systemSettingsDao.getSystemSetting(fieldName);
+    }
+
+    @Override
+    public void updateLocalIp(String localIp) {
+        systemSettingsDao.updateLocalIp(localIp);
+    }
+
+    @Override
+    public String getLocalIp() {
+        return systemSettingsDao.getLocalIp();
     }
 }

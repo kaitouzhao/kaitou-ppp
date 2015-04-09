@@ -54,7 +54,7 @@ public abstract class UIUtil extends BaseLogManager {
      * @param extensions  文件扩展名
      * @return 文件
      */
-    protected static File chooseExportFile(String description, String... extensions) {
+    public static File chooseExportFile(String description, String... extensions) {
         JFileChooser chooser = new JFileChooser(getLastChoosePath());
         chooser.setFileFilter(new FileNameExtensionFilter(description, extensions));
         int returnVal = chooser.showOpenDialog(new JPanel());
@@ -69,12 +69,33 @@ public abstract class UIUtil extends BaseLogManager {
 
     /**
      * 异常处理
+     * <p>
+     * 会弹出提示框
+     * </p>
      *
      * @param ex    异常
      * @param frame 父窗体
      */
-    public static void handleEx(Exception ex, JFrame frame) {//TODO 有没有更好地方式呢？？
+    public static void handleEx(Exception ex, JFrame frame) {
         logSystemEx(ex);
         new OperationHint(frame, "很抱歉！出错了~出错原因：" + ex.getMessage());
+    }
+
+    /**
+     * 异常处理
+     *
+     * @param ex 异常
+     */
+    public static void handleEx(Exception ex) {
+        logSystemEx(ex);
+    }
+
+    /**
+     * 操作日志记录
+     *
+     * @param info 信息
+     */
+    public static void logOp(String info) {
+        logOperation(info);
     }
 }

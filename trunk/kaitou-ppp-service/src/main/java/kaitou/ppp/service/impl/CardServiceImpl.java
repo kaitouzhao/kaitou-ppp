@@ -339,7 +339,7 @@ public class CardServiceImpl extends BaseExcelService implements CardService {
                 }
             }
             if (StringUtils.isEmpty(cardApplicationRecord.getShopId())) {
-                throw new RuntimeException("保修卡记录认定店不存在！行数：" + (i + 1));
+                throw new RuntimeException("第" + (i + 2) + "行保修卡记录销售单位【" + cardApplicationRecord.getShopName() + "】不是认定店！");
             }
         }
         logOperation("成功导入/更新保修卡生成记录数：" + cardApplicationRecordManager.save(cardApplicationRecords));

@@ -27,7 +27,9 @@
         <module name="kaitou-ppp-dao" />
         <module name="kaitou-ppp-domain" />
         <module name="kaitou-ppp-manager" />
+        <module name="kaitou-ppp-rmi" />
         <module name="kaitou-ppp-service" />
+        <module name="kaitou-ppp-tool" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -36,7 +38,9 @@
       <module name="kaitou-ppp-dao" target="1.6" />
       <module name="kaitou-ppp-domain" target="1.6" />
       <module name="kaitou-ppp-manager" target="1.6" />
+      <module name="kaitou-ppp-rmi" target="1.6" />
       <module name="kaitou-ppp-service" target="1.6" />
+      <module name="kaitou-ppp-tool" target="1.6" />
       <module name="trunk" target="1.6" />
     </bytecodeTargetLevel>
   </component>

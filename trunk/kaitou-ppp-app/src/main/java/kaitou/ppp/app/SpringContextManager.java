@@ -1,5 +1,6 @@
 package kaitou.ppp.app;
 
+import kaitou.ppp.rmi.ServiceProvider;
 import kaitou.ppp.service.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -21,7 +22,10 @@ public abstract class SpringContextManager {
     private static ShopService shopService;
     private static UpgradeService upgradeService;
     private static EngineerService engineerService;
+    private static LocalRegistryService localRegistryService;
     private static SystemSettingsService systemSettingsService;
+
+    private static ServiceProvider serviceProvider;
 
     static {
         ctx = new ClassPathXmlApplicationContext(
@@ -66,10 +70,24 @@ public abstract class SpringContextManager {
         return engineerService;
     }
 
+    public static LocalRegistryService getLocalRegistryService() {
+        if (localRegistryService == null) {
+            localRegistryService = ctx.getBean(LocalRegistryService.class);
+        }
+        return localRegistryService;
+    }
+
     public static SystemSettingsService getSystemSettingsService() {
         if (systemSettingsService == null) {
             systemSettingsService = ctx.getBean(SystemSettingsService.class);
         }
         return systemSettingsService;
+    }
+
+    public static ServiceProvider getServiceProvider() {
+        if (serviceProvider == null) {
+            serviceProvider = ctx.getBean(ServiceProvider.class);
+        }
+        return serviceProvider;
     }
 }

@@ -4,6 +4,7 @@
 
 package kaitou.ppp.app.ui;
 
+import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.app.ui.dialog.InputHint;
 import kaitou.ppp.app.ui.dialog.OperationHint;
 import kaitou.ppp.app.ui.table.QueryFrame;
@@ -15,6 +16,8 @@ import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.shop.ShopDetail;
 import kaitou.ppp.domain.shop.ShopPay;
 import kaitou.ppp.domain.shop.ShopRTS;
+import kaitou.ppp.rmi.ServiceClient;
+import kaitou.ppp.rmi.service.RemoteRegistryService;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -24,6 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.rmi.RemoteException;
+import java.util.List;
 
 import static com.womai.bsp.tool.utils.PropertyUtil.getValue;
 import static kaitou.ppp.app.SpringContextManager.*;
@@ -36,24 +41,117 @@ import static kaitou.ppp.app.ui.UIUtil.*;
  */
 public class MainFrame extends JFrame {
 
+    private static final String FRAME_TITLE = "PPP-ERP主界面";
+    private static boolean isOnline = false;
+
+    /**
+     * 联机状态
+     */
+    private static enum OnlineStatus {
+        ONLINE_PREPARING_FLAG(0, "（联机中......）"), ONLINE_FLAG(1, "（已联机）"), OFFLINE_FLAG(-1, "（未联机）");
+        private int key;
+        private String displayValue;
+
+        OnlineStatus(int key, String displayValue) {
+            this.key = key;
+            this.displayValue = displayValue;
+        }
+    }
+
     /**
      * 启动入口
      *
      * @param args 参数
      */
     public static void main(String[] args) {
-        getSystemSettingsService().updateSystemSettings();
-        getDbService().backupDB();
-        getShopService().cacheAllShops();
+        asynchronousInit();
 
         new MainFrame();
     }
 
+    /**
+     * 异步初始化
+     * <ul>
+     * <li>更新系统设置</li>
+     * <li>备份DB</li>
+     * <li>缓存认定店</li>
+     * </ul>
+     */
+    private static void asynchronousInit() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getSystemSettingsService().updateSystemSettings();
+                getDbService().backupDB();
+                getShopService().cacheAllShops();
+            }
+        }).start();
+    }
+
+    /**
+     * 异步联机
+     * <ul>
+     * <li>如果本机IP未设置，则不予联机</li>
+     * <li>如果本机是主机，则启动服务，等待注册</li>
+     * <li>如果本机非主机，则启动服务，注册</li>
+     * </ul>
+     */
+    private void asynchronousOnline() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String localIp = getSystemSettingsService().getLocalIp();
+                    List<String> remoteRegistryIps = getLocalRegistryService().queryRegistryIps();
+                    if (StringUtils.isEmpty(localIp) || CollectionUtil.isEmpty(remoteRegistryIps)) {
+                        setTitleByOnlineStatus(OnlineStatus.OFFLINE_FLAG);
+                        return;
+                    }
+                    if (!getServiceProvider().start(localIp)) {
+                        setTitleByOnlineStatus(OnlineStatus.OFFLINE_FLAG);
+                        return;
+                    }
+                    logOp("已启动服务监听");
+                    setTitleByOnlineStatus(OnlineStatus.ONLINE_FLAG);
+                    String hostIp = remoteRegistryIps.get(0);
+                    if (localIp.equals(hostIp)) {
+                        return;
+                    }
+                    RemoteRegistryService remoteRegistryService = ServiceClient.getRemoteService(RemoteRegistryService.class, hostIp);
+                    if (remoteRegistryService == null) {
+                        return;
+                    }
+                    List<String> registryIpsFromHost = remoteRegistryService.register(localIp);
+                    logOp("注册成功，已注册IP列表：" + CollectionUtil.list2Str(registryIpsFromHost, ","));
+                    getLocalRegistryService().updateRegistryIps(registryIpsFromHost);
+                } catch (RemoteException e) {
+                    handleEx(e);
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 根据联机状态变更窗体标题
+     *
+     * @param onlineStatus 联机状态
+     */
+    private void setTitleByOnlineStatus(OnlineStatus onlineStatus) {
+        if (OnlineStatus.ONLINE_FLAG == onlineStatus) {
+            isOnline = true;
+        }
+        setTitle(FRAME_TITLE + onlineStatus.displayValue);
+        setVisible(true);
+    }
+
     public MainFrame() {
+        asynchronousOnline();
+
         initComponents();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setVisible(true);
+
+        setTitleByOnlineStatus(OnlineStatus.ONLINE_PREPARING_FLAG);
     }
 
     private void importShopBasicActionPerformed(ActionEvent e) {
@@ -295,7 +393,6 @@ public class MainFrame extends JFrame {
     }
 
     private void thisMouseClicked(MouseEvent e) {
-        // TODO add your code here
     }
 
     private void importCardApplicationRecordActionPerformed(ActionEvent e) {
@@ -333,6 +430,36 @@ public class MainFrame extends JFrame {
         } catch (Exception ex) {
             handleEx(ex, this);
         }
+    }
+
+    private void onlineSettingActionPerformed(ActionEvent e) {
+        try {
+            InputHint inputHint = new InputHint(this, new String[]{"本机ip", "主机ip"});
+            if (!inputHint.isOk()) {
+                return;
+            }
+            String localIp = inputHint.getInputResult()[0];
+            if (StringUtils.isNotEmpty(localIp)) {
+                getSystemSettingsService().updateLocalIp(localIp);
+            }
+            String hostIp = inputHint.getInputResult()[1];
+            if (StringUtils.isNotEmpty(hostIp)) {
+                getLocalRegistryService().updateRegistryIps(CollectionUtil.newList(hostIp));
+            }
+            new OperationHint(this, "设置成功");
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
+    }
+
+    private void startOnlineActionPerformed(ActionEvent e) {
+        if (isOnline) {
+            new OperationHint(this, "已联机");
+            return;
+        }
+        asynchronousOnline();
+        setTitleByOnlineStatus(OnlineStatus.ONLINE_PREPARING_FLAG);
+        new OperationHint(this, "正在联机中，请稍候......");
     }
 
     private void initComponents() {
@@ -374,6 +501,9 @@ public class MainFrame extends JFrame {
         importCardApplicationRecord = new JMenuItem();
         queryCardApplicationRecord = new JMenuItem();
         exportCardApplicationRecord = new JMenuItem();
+        onlineMenu = new JMenu();
+        onlineSetting = new JMenuItem();
+        startOnline = new JMenuItem();
         helpMenu = new JMenu();
         aboutItem = new JMenuItem();
         backupDB = new JMenuItem();
@@ -713,6 +843,32 @@ public class MainFrame extends JFrame {
             }
             managerMenuBar.add(cardMenu);
 
+            //======== onlineMenu ========
+            {
+                onlineMenu.setText("\u8054\u673a");
+
+                //---- onlineSetting ----
+                onlineSetting.setText("\u8bbe\u7f6e");
+                onlineSetting.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        onlineSettingActionPerformed(e);
+                    }
+                });
+                onlineMenu.add(onlineSetting);
+
+                //---- startOnline ----
+                startOnline.setText("\u542f\u52a8");
+                startOnline.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        startOnlineActionPerformed(e);
+                    }
+                });
+                onlineMenu.add(startOnline);
+            }
+            managerMenuBar.add(onlineMenu);
+
             //======== helpMenu ========
             {
                 helpMenu.setText("\u5e2e\u52a9");
@@ -795,6 +951,9 @@ public class MainFrame extends JFrame {
     private JMenuItem importCardApplicationRecord;
     private JMenuItem queryCardApplicationRecord;
     private JMenuItem exportCardApplicationRecord;
+    private JMenu onlineMenu;
+    private JMenuItem onlineSetting;
+    private JMenuItem startOnline;
     private JMenu helpMenu;
     private JMenuItem aboutItem;
     private JMenuItem backupDB;

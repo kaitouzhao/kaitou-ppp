@@ -14,7 +14,6 @@ public interface SystemSettingsManager {
      */
     public String getDbDir();
 
-
     /**
      * 更新系统设置
      */
@@ -33,6 +32,11 @@ public interface SystemSettingsManager {
     public void updateLastBackupTime();
 
     /**
+     * 更新上次数据恢复时间
+     */
+    public void updateLastRecoveryTime();
+
+    /**
      * 更新上次文件选择路径
      *
      * @param lastFileChooserPath 上次文件选择路径
@@ -46,4 +50,18 @@ public interface SystemSettingsManager {
      * @return 值
      */
     public String getSystemSetting(String fieldName);
+
+    /**
+     * 更新本机ip
+     *
+     * @param localIp 本机ip
+     */
+    public void updateLocalIp(String localIp);
+
+    /**
+     * 获取本机ip
+     *
+     * @return 本机ip
+     */
+    public String getLocalIp();
 }

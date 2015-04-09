@@ -7,7 +7,9 @@
       <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-dao/kaitou-ppp-dao.iml" filepath="$PROJECT_DIR$/kaitou-ppp-dao/kaitou-ppp-dao.iml" />
       <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-domain/kaitou-ppp-domain.iml" filepath="$PROJECT_DIR$/kaitou-ppp-domain/kaitou-ppp-domain.iml" />
       <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-manager/kaitou-ppp-manager.iml" filepath="$PROJECT_DIR$/kaitou-ppp-manager/kaitou-ppp-manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-rmi/kaitou-ppp-rmi.iml" filepath="$PROJECT_DIR$/kaitou-ppp-rmi/kaitou-ppp-rmi.iml" />
       <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-service/kaitou-ppp-service.iml" filepath="$PROJECT_DIR$/kaitou-ppp-service/kaitou-ppp-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaitou-ppp-tool/kaitou-ppp-tool.iml" filepath="$PROJECT_DIR$/kaitou-ppp-tool/kaitou-ppp-tool.iml" />
       <module fileurl="file://$PROJECT_DIR$/trunk.iml" filepath="$PROJECT_DIR$/trunk.iml" />
     </modules>
   </component>

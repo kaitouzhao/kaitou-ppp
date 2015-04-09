@@ -9,6 +9,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * 操作确认对话框
@@ -48,13 +50,26 @@ public class ConfirmHint extends JDialog {
         setVisible(false);
     }
 
+    private void cancelButtonKeyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            setVisible(false);
+        }
+    }
+
+    private void okButtonKeyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            isOk = true;
+            setVisible(false);
+        }
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         dialogPane = new JPanel();
         contentPanel = new JPanel();
         buttonBar = new JPanel();
-        okButton = new JButton();
         cancelButton = new JButton();
+        okButton = new JButton();
 
         //======== this ========
         setModal(true);
@@ -76,20 +91,8 @@ public class ConfirmHint extends JDialog {
             {
                 buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
                 buttonBar.setLayout(new GridBagLayout());
-                ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
-                ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
-
-                //---- okButton ----
-                okButton.setText("\u786e\u8ba4");
-                okButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        okButtonActionPerformed(e);
-                    }
-                });
-                buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                ((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{0, 85, 80};
+                ((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{1.0, 0.0, 0.0};
 
                 //---- cancelButton ----
                 cancelButton.setText("\u53d6\u6d88");
@@ -99,9 +102,33 @@ public class ConfirmHint extends JDialog {
                         cancelButtonActionPerformed(e);
                     }
                 });
-                buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
+                cancelButton.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        cancelButtonKeyPressed(e);
+                    }
+                });
+                buttonBar.add(cancelButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
+
+                //---- okButton ----
+                okButton.setText("\u786e\u8ba4");
+                okButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        okButtonActionPerformed(e);
+                    }
+                });
+                okButton.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        okButtonKeyPressed(e);
+                    }
+                });
+                buttonBar.add(okButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
@@ -115,7 +142,7 @@ public class ConfirmHint extends JDialog {
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JPanel buttonBar;
-    private JButton okButton;
     private JButton cancelButton;
+    private JButton okButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

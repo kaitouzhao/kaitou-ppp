@@ -192,4 +192,15 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
             return true;
         }
     }
+
+    @Override
+    public void updateLocalIp(String localIp) {
+        saveSettings(get(false).setLocalIp(localIp));
+    }
+
+    @Override
+    public String getLocalIp() {
+        SystemSettings settings = get(false);
+        return settings.getLocalIp();
+    }
 }

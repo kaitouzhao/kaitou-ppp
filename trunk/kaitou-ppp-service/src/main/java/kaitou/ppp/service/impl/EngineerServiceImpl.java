@@ -12,11 +12,16 @@ import kaitou.ppp.manager.engineer.EngineerManager;
 import kaitou.ppp.manager.engineer.EngineerTrainingManager;
 import kaitou.ppp.manager.listener.EngineerUpdateListener;
 import kaitou.ppp.manager.shop.ShopManager;
+import kaitou.ppp.manager.system.RemoteRegistryManager;
+import kaitou.ppp.manager.system.SystemSettingsManager;
+import kaitou.ppp.rmi.ServiceClient;
+import kaitou.ppp.rmi.service.RemoteEngineerService;
 import kaitou.ppp.service.BaseExcelService;
 import kaitou.ppp.service.EngineerService;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,12 +35,20 @@ import static com.womai.bsp.tool.utils.BeanCopyUtil.copyBean;
  */
 public class EngineerServiceImpl extends BaseExcelService implements EngineerService {
 
-    private EngineerManager engineerManager;
-    private EngineerTrainingManager engineerTrainingManager;
-
     private ShopManager shopManager;
-
+    private EngineerManager engineerManager;
+    private SystemSettingsManager systemSettingsManager;
+    private RemoteRegistryManager remoteRegistryManager;
+    private EngineerTrainingManager engineerTrainingManager;
     private List<EngineerUpdateListener> engineerUpdateListeners;
+
+    public void setSystemSettingsManager(SystemSettingsManager systemSettingsManager) {
+        this.systemSettingsManager = systemSettingsManager;
+    }
+
+    public void setRemoteRegistryManager(RemoteRegistryManager remoteRegistryManager) {
+        this.remoteRegistryManager = remoteRegistryManager;
+    }
 
     public void setEngineerUpdateListeners(List<EngineerUpdateListener> engineerUpdateListeners) {
         this.engineerUpdateListeners = engineerUpdateListeners;
@@ -64,7 +77,7 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
      *
      * @param engineers 工程师列表
      */
-    private void importEngineers(List<Engineer> engineers) {
+    private void importEngineers(final List<Engineer> engineers) {
         int successCount = 0;
         if (CollectionUtil.isEmpty(engineers)) {
             logOperation("成功导入/更新工程师数：" + successCount);
@@ -85,9 +98,31 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
         if (CollectionUtil.isEmpty(engineerUpdateListeners)) {
             return;
         }
-        for (EngineerUpdateListener listener : engineerUpdateListeners) {
-            listener.updateEngineerEvent(CollectionUtil.toArray(engineers, Engineer.class));
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (EngineerUpdateListener listener : engineerUpdateListeners) {
+                    listener.updateEngineerEvent(CollectionUtil.toArray(engineers, Engineer.class));
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteEngineerService> remoteEngineerServices = ServiceClient.queryServicesOfListener(RemoteEngineerService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteEngineerServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新工程师基本信息");
+                for (RemoteEngineerService remoteEngineerService : remoteEngineerServices) {
+                    try {
+                        remoteEngineerService.saveEngineers(engineers);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -106,7 +141,7 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
      *
      * @param trainings 发展信息列表
      */
-    private void importEngineerTrainings(List<EngineerTraining> trainings) {
+    private void importEngineerTrainings(final List<EngineerTraining> trainings) {
         int successCount = 0;
         if (CollectionUtil.isEmpty(trainings)) {
             logOperation("成功导入/更新培训信息数：" + successCount);
@@ -123,6 +158,23 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
         }
         successCount = engineerTrainingManager.save(trainings);
         logOperation("成功导入/更新工程师培训信息数：" + successCount);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteEngineerService> remoteEngineerServices = ServiceClient.queryServicesOfListener(RemoteEngineerService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteEngineerServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新工程师发展信息");
+                for (RemoteEngineerService remoteEngineerService : remoteEngineerServices) {
+                    try {
+                        remoteEngineerService.saveEngineerTrainings(trainings);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override

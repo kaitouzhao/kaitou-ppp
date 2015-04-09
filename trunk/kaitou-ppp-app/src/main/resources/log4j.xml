@@ -28,12 +28,12 @@
         </layout>
     </appender>
 
-    <logger name="kaitou.ppp">
+    <logger name="kaitou.ppp" additivity="false">
         <level value="ERROR"/>
         <appender-ref ref="SYSTEM-LOG"/>
     </logger>
 
-    <logger name="kaitou.operation">
+    <logger name="kaitou.operation" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="OPERATION-LOG"/>
     </logger>

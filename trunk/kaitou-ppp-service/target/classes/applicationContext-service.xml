@@ -8,12 +8,12 @@
     <import resource="applicationContext-tx.xml"/>
 
     <bean id="cardService" class="kaitou.ppp.service.impl.CardServiceImpl">
-        <property name="complete" value="d://ppp//complete//"/>
+        <property name="complete" value="d://temp//ppp//complete//"/>
         <property name="logFileName" value="记录.xlsx"/>
-        <property name="output" value="d://ppp//output//"/>
-        <property name="template" value="d://ppp//template//"/>
+        <property name="output" value="d://temp//ppp//output//"/>
+        <property name="template" value="d://temp//ppp//template//"/>
         <property name="templateName" value="保修卡.xls"/>
-        <property name="workspace" value="d://ppp//workspace//"/>
+        <property name="workspace" value="d://temp//ppp//workspace//"/>
         <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
         <property name="shopManager" ref="shopManager"/>
     </bean>
@@ -27,6 +27,8 @@
                 <ref bean="engineerTrainingManager"/>
             </list>
         </property>
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
+        <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
     </bean>
 
     <bean id="shopService" class="kaitou.ppp.service.impl.ShopServiceImpl">
@@ -45,6 +47,8 @@
             </list>
         </property>
         <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
+        <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
     <bean id="systemSettingsService" class="kaitou.ppp.service.impl.SystemSettingsServiceImpl">
@@ -52,14 +56,20 @@
     </bean>
 
     <bean id="dbService" class="kaitou.ppp.service.impl.DbServiceImpl">
-        <property name="dbDir" value="d://ppp//db"/>
-        <property name="backDbFile" value="d://ppp//db_back.zip"/>
-        <property name="pppDir" value="d://ppp"/>
+        <property name="dbDir" value="d://temp//ppp//db"/>
+        <property name="backDbFile" value="d://temp//ppp//db_back.zip"/>
+        <property name="pppDir" value="d://temp//ppp"/>
         <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
     <bean id="upgradeService" class="kaitou.ppp.service.impl.UpgradeServiceImpl">
-        <property name="dbDir" value="d://ppp//db"/>
+        <property name="dbDir" value="d://temp//ppp//db"/>
     </bean>
+
+    <bean id="localRegistryService" class="kaitou.ppp.service.impl.LocalRegistryServiceImpl">
+        <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
+    </bean>
+
+    <import resource="applicationContext-remote.xml"/>
 
 </beans>

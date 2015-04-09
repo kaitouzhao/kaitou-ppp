@@ -10,15 +10,20 @@ import kaitou.ppp.manager.shop.ShopDetailManager;
 import kaitou.ppp.manager.shop.ShopManager;
 import kaitou.ppp.manager.shop.ShopPayManager;
 import kaitou.ppp.manager.shop.ShopRTSManager;
+import kaitou.ppp.manager.system.RemoteRegistryManager;
+import kaitou.ppp.manager.system.SystemSettingsManager;
+import kaitou.ppp.rmi.service.RemoteShopService;
 import kaitou.ppp.service.BaseExcelService;
 import kaitou.ppp.service.ShopService;
 import org.joda.time.DateTime;
 
 import java.io.File;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.womai.bsp.tool.utils.BeanCopyUtil.copyBean;
+import static kaitou.ppp.rmi.ServiceClient.queryServicesOfListener;
 
 /**
  * 认定店业务处理层实现.
@@ -32,8 +37,18 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
     private ShopRTSManager shopRTSManager;
     private ShopPayManager shopPayManager;
     private ShopDetailManager shopDetailManager;
+    private SystemSettingsManager systemSettingsManager;
+    private RemoteRegistryManager remoteRegistryManager;
     private List<ShopUpdateListener> shopUpdateListeners;
     private CardApplicationRecordManager cardApplicationRecordManager;
+
+    public void setSystemSettingsManager(SystemSettingsManager systemSettingsManager) {
+        this.systemSettingsManager = systemSettingsManager;
+    }
+
+    public void setRemoteRegistryManager(RemoteRegistryManager remoteRegistryManager) {
+        this.remoteRegistryManager = remoteRegistryManager;
+    }
 
     public void setCardApplicationRecordManager(CardApplicationRecordManager cardApplicationRecordManager) {
         this.cardApplicationRecordManager = cardApplicationRecordManager;
@@ -70,7 +85,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
      *
      * @param shops 认定店列表
      */
-    private void importShops(List<Shop> shops) {
+    private void importShops(final List<Shop> shops) {
         int successCount = shopManager.save(shops);
         logOperation("成功导入/更新认定店数：" + successCount);
         if (successCount <= 0) {
@@ -79,9 +94,32 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
         if (CollectionUtil.isEmpty(shopUpdateListeners)) {
             return;
         }
-        for (ShopUpdateListener listener : shopUpdateListeners) {
-            listener.updateShopEvent(CollectionUtil.toArray(shops, Shop.class));
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                logOperation("联动更新与认定店基本信息相关的数据");
+                for (ShopUpdateListener listener : shopUpdateListeners) {
+                    listener.updateShopEvent(CollectionUtil.toArray(shops, Shop.class));
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新认定店基本信息");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.saveShops(shops);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -100,7 +138,7 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
      *
      * @param shopDetails 认定级别列表
      */
-    private void importShopDetails(List<ShopDetail> shopDetails) {
+    private void importShopDetails(final List<ShopDetail> shopDetails) {
         int successCount = 0;
         if (CollectionUtil.isEmpty(shopDetails)) {
             logOperation("成功导入/更新认定店认定级别数：" + successCount);
@@ -118,9 +156,31 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
         if (CollectionUtil.isEmpty(shopUpdateListeners)) {
             return;
         }
-        for (ShopUpdateListener listener : shopUpdateListeners) {
-            listener.updateShopDetailEvent(CollectionUtil.toArray(shopDetails, ShopDetail.class));
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (ShopUpdateListener listener : shopUpdateListeners) {
+                    listener.updateShopDetailEvent(CollectionUtil.toArray(shopDetails, ShopDetail.class));
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新认定店认定级别");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.saveShopDetails(shopDetails);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -205,8 +265,25 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
      *
      * @param shopRTSes rts列表
      */
-    private void importShopRTSs(List<ShopRTS> shopRTSes) {
+    private void importShopRTSs(final List<ShopRTS> shopRTSes) {
         logOperation("成功导入/更新RTS数：" + shopRTSManager.save(shopRTSes));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新认定店RTS");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.saveShopRTSes(shopRTSes);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -225,8 +302,25 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
      *
      * @param shopPays 帐号信息列表
      */
-    private void importShopPays(List<ShopPay> shopPays) {
+    private void importShopPays(final List<ShopPay> shopPays) {
         logOperation("成功导入/更新认定店帐号信息数：" + shopPayManager.save(shopPays));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新认定店帐号信息");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.saveShopPays(shopPays);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override

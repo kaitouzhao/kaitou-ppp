@@ -6,15 +6,17 @@
 
     <groupId>kaitou.ppp</groupId>
     <artifactId>kaitou-ppp</artifactId>
-    <version>1.6</version>
+    <version>2.0</version>
     <description>PPP ERP</description>
     <modules>
         <module>kaitou-ppp-common</module>
         <module>kaitou-ppp-domain</module>
         <module>kaitou-ppp-dao</module>
         <module>kaitou-ppp-manager</module>
+        <module>kaitou-ppp-rmi</module>
         <module>kaitou-ppp-service</module>
         <module>kaitou-ppp-app</module>
+        <module>kaitou-ppp-tool</module>
     </modules>
     <properties>
         <poi.version>3.9</poi.version>

@@ -85,7 +85,7 @@ public class ShopDetail extends BaseDomain {
         ShopDetail that = (ShopDetail) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (model != null ? !model.equals(that.model) : that.model != null) return false;
+//        if (model != null ? !model.equals(that.model) : that.model != null) return false;
         if (numberOfYear != null ? !numberOfYear.equals(that.numberOfYear) : that.numberOfYear != null) return false;
         return !(productLine != null ? !productLine.equals(that.productLine) : that.productLine != null);
 

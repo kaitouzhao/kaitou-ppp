@@ -87,7 +87,7 @@ public abstract class BaseExcelService extends BaseLogManager {
      * @param domainClass 实体类型
      * @return 实体列表
      */
-    protected <T extends BaseDomain> List<T> readFromExcel(File srcFile, Class<T> domainClass) {
+    public <T extends BaseDomain> List<T> readFromExcel(File srcFile, Class<T> domainClass) {
         String simpleName = domainClass.getSimpleName();
         String sheetName = getValue(SCHEME_PROPERTIES, simpleName + SHEET_NAME_SUFFIX);
         String importPrefix = "IMPORT_";
@@ -156,9 +156,8 @@ public abstract class BaseExcelService extends BaseLogManager {
      * @param domainList  实体列表
      * @param targetFile  目标文件
      * @param domainClass 实体类型
-     * @param <T>         实体类型
      */
-    protected <T extends BaseDomain> void export2Excel(List<T> domainList, File targetFile, Class<T> domainClass) {
+    public <T extends BaseDomain> void export2Excel(List<T> domainList, File targetFile, Class<T> domainClass) {
         String simpleName = domainClass.getSimpleName();
         String sheetName = getValue(SCHEME_PROPERTIES, simpleName + SHEET_NAME_SUFFIX);
         String exportPrefix = "EXPORT_";

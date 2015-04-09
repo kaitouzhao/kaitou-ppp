@@ -2,6 +2,7 @@ package kaitou.ppp.domain;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * Date: 2015/1/17
  * Time: 10:36
  */
-public abstract class BaseDomain {
+public abstract class BaseDomain implements Serializable {
 
     /**
      * 自定义校验是否相等

@@ -27,6 +27,8 @@
                 <ref bean="engineerTrainingManager"/>
             </list>
         </property>
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
+        <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
     </bean>
 
     <bean id="shopService" class="kaitou.ppp.service.impl.ShopServiceImpl">
@@ -45,6 +47,8 @@
             </list>
         </property>
         <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
+        <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
     <bean id="systemSettingsService" class="kaitou.ppp.service.impl.SystemSettingsServiceImpl">
@@ -61,5 +65,11 @@
     <bean id="upgradeService" class="kaitou.ppp.service.impl.UpgradeServiceImpl">
         <property name="dbDir" value="${db.file.dir}"/>
     </bean>
+
+    <bean id="localRegistryService" class="kaitou.ppp.service.impl.LocalRegistryServiceImpl">
+        <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
+    </bean>
+
+    <import resource="applicationContext-remote.xml"/>
 
 </beans>

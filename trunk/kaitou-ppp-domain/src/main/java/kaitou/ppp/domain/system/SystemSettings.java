@@ -29,6 +29,10 @@ public class SystemSettings extends BaseDomain {
      * 上次文件选择路径
      */
     private String lastFileChooserPath;
+    /**
+     * 本机ip
+     */
+    private String localIp = "";
 
     @Override
     public String dbFileSuffix() {
@@ -62,6 +66,7 @@ public class SystemSettings extends BaseDomain {
             return false;
         if (latestVersion != null ? !latestVersion.equals(that.latestVersion) : that.latestVersion != null)
             return false;
+        if (localIp != null ? !localIp.equals(that.localIp) : that.localIp != null) return false;
 
         return true;
     }
@@ -73,6 +78,7 @@ public class SystemSettings extends BaseDomain {
         result = 31 * result + (lastRecoveryTime != null ? lastRecoveryTime.hashCode() : 0);
         result = 31 * result + (latestVersion != null ? latestVersion.hashCode() : 0);
         result = 31 * result + (lastFileChooserPath != null ? lastFileChooserPath.hashCode() : 0);
+        result = 31 * result + (localIp != null ? localIp.hashCode() : 0);
         return result;
     }
 
@@ -84,7 +90,17 @@ public class SystemSettings extends BaseDomain {
                 ", lastRecoveryTime='" + lastRecoveryTime + '\'' +
                 ", latestVersion='" + latestVersion + '\'' +
                 ", lastFileChooserPath='" + lastFileChooserPath + '\'' +
+                ", localIp='" + localIp + '\'' +
                 '}';
+    }
+
+    public String getLocalIp() {
+        return localIp;
+    }
+
+    public SystemSettings setLocalIp(String localIp) {
+        this.localIp = localIp;
+        return this;
     }
 
     public String getLastFileChooserPath() {

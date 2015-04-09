@@ -8,6 +8,7 @@ import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.app.ui.dialog.ConfirmHint;
 import kaitou.ppp.app.ui.dialog.OperationHint;
 import kaitou.ppp.app.ui.dialog.SaveDialog;
+import kaitou.ppp.app.ui.op.ExportOp;
 import kaitou.ppp.domain.BaseDomain;
 import org.apache.commons.lang.StringUtils;
 
@@ -16,11 +17,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kaitou.ppp.app.ui.UIUtil.chooseExportFile;
 import static kaitou.ppp.app.ui.UIUtil.handleEx;
 import static kaitou.ppp.app.ui.op.DeleteOp.delete;
 import static kaitou.ppp.app.ui.op.SaveOrUpdateOp.saveOrUpdate;
@@ -52,7 +57,7 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
     /**
      * 显示的数据
      */
-    private List shownDatas = new ArrayList();
+    private List<T> shownDatas = new ArrayList<T>();
     /**
      * 当前页码
      */
@@ -280,7 +285,17 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
     }
 
     private void dataTableMouseClicked(MouseEvent e) {
-        // DO NOTHING
+        if (e.getButton() != 3) {
+            return;
+        }
+        T t = shownDatas.get(getShownDataIndex(dataTable.getSelectedRow()));
+        Object[] datas = t.export2Array(queryObject.fieldNames());
+        Object data = datas[dataTable.getSelectedColumn()];
+        String copyData = String.valueOf(data == null ? "" : data);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection text = new StringSelection(copyData);
+        clipboard.setContents(text, null);
+        new OperationHint(this, "已复制到剪切板上");
     }
 
     private void deleteBtnActionPerformed(ActionEvent e) {
@@ -447,6 +462,31 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
         return tableRow + (currentPageIndex - 1) * countPerPage;
     }
 
+    private void queryAreaKeyPressed(KeyEvent e) {
+        // TODO add your code here
+    }
+
+    private void exportBtnActionPerformed(ActionEvent e) {
+        try {
+            File targetFile = chooseExportFile("excel文件", "xlsx");
+            if (targetFile == null) return;
+            int[] selectedRows = dataTable.getSelectedRows();
+            List exportList = new ArrayList();
+            if (selectedRows.length <= 0) {
+                exportList.addAll(shownDatas);
+            } else {
+                for (int i = 0; i < selectedRows.length; i++) {
+                    int index = getShownDataIndex(selectedRows[i]);
+                    exportList.add(shownDatas.get(index));
+                }
+            }
+            ExportOp.export(queryObject.domainType(), exportList, targetFile);
+            new OperationHint(this, "导出成功");
+        } catch (Exception ex) {
+            handleEx(ex, this);
+        }
+    }
+
     /**
      * 初始化界面
      */
@@ -465,6 +505,7 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
         resetBtn = new JButton();
         deleteBtn = new JButton();
         saveBtn = new JButton();
+        exportBtn = new JButton();
 
         //======== this ========
         addWindowListener(new WindowAdapter() {
@@ -554,6 +595,12 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
         //======== queryArea ========
         {
             queryArea.setAutoscrolls(true);
+            queryArea.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    queryAreaKeyPressed(e);
+                }
+            });
             queryArea.setLayout(new FlowLayout(FlowLayout.LEFT));
         }
         contentPane.add(queryArea);
@@ -602,6 +649,17 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
         });
         contentPane.add(saveBtn);
         saveBtn.setBounds(new Rectangle(new Point(580, 635), saveBtn.getPreferredSize()));
+
+        //---- exportBtn ----
+        exportBtn.setText("\u5bfc\u51fa");
+        exportBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportBtnActionPerformed(e);
+            }
+        });
+        contentPane.add(exportBtn);
+        exportBtn.setBounds(new Rectangle(new Point(655, 635), exportBtn.getPreferredSize()));
 
         contentPane.setPreferredSize(new Dimension(920, 695));
         setSize(920, 695);
@@ -670,5 +728,6 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
     private JButton resetBtn;
     private JButton deleteBtn;
     private JButton saveBtn;
+    private JButton exportBtn;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

@@ -68,7 +68,7 @@ public abstract class BaseDao<T extends BaseDomain> extends BaseLogManager {
             try {
                 domain.check();
             } catch (RuntimeException e) {
-                logOperation("第" + (i + 1) + "行数据校验不通过。原因：" + e.getMessage());
+                logOperation("第" + (i + 1) + "条数据校验不通过。原因：" + e.getMessage());
                 i++;
                 continue;
             }

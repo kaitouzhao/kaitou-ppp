@@ -52,4 +52,18 @@ public interface SystemSettingsDao {
      * @return 是为真
      */
     public boolean shouldBackup();
+
+    /**
+     * 更新本机ip
+     *
+     * @param localIp 本机ip
+     */
+    public void updateLocalIp(String localIp);
+
+    /**
+     * 获取本机ip
+     *
+     * @return 本机ip
+     */
+    public String getLocalIp();
 }

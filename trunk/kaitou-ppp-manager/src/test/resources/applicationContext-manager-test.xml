@@ -72,4 +72,13 @@
         <property name="systemSettingsDao" ref="mockSystemSettingsDao"/>
     </bean>
 
+    <bean id="mockRemoteRegistryDao" class="kaitou.ppp.manager.mock.dao.MockRemoteRegistryDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test\remote"/>
+    </bean>
+
+    <bean id="mockRemoteRegistryManager" class="kaitou.ppp.manager.mock.manager.MockRemoteRegistryManagerImpl">
+        <property name="dbDir" value="D:\temp\ppp\test\remote"/>
+        <property name="remoteRegistryDao" ref="mockRemoteRegistryDao"/>
+    </bean>
+
 </beans>
