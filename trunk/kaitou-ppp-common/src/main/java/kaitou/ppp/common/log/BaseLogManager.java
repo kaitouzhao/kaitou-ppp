@@ -27,7 +27,7 @@ public abstract class BaseLogManager {
      *
      * @param e 异常
      */
-    protected static void logSystemEx(Throwable e) {
+    public static void logSystemEx(Throwable e) {
         if (SYSTEM_LOG.isDebugEnabled()) {
             SYSTEM_LOG.debug("系统调试", e);
             return;

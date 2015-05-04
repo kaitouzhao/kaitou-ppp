@@ -34,10 +34,18 @@
     <bean id="cachedShopDao" class="kaitou.ppp.dao.shop.impl.CachedShopDaoImpl"/>
 
     <bean id="systemSettingsDao" class="kaitou.ppp.dao.system.impl.SystemSettingsDaoImpl">
-        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="dbDir" value="${conf.file.dir}"/>
     </bean>
 
     <bean id="remoteRegistryDao" class="kaitou.ppp.dao.system.impl.RemoteRegistryDaoImpl">
+        <property name="dbDir" value="${conf.file.dir}"/>
+    </bean>
+
+    <bean id="localDBVersionDao" class="kaitou.ppp.dao.system.impl.LocalDBVersionDaoImpl">
+        <property name="dbDir" value="${conf.file.dir}"/>
+    </bean>
+
+    <bean id="outboxDBVersionDao" class="kaitou.ppp.dao.system.impl.OutboxDBVersionDaoImpl">
         <property name="dbDir" value="${db.file.dir}"/>
     </bean>
 

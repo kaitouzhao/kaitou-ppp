@@ -6,7 +6,7 @@
 
     <groupId>kaitou.ppp</groupId>
     <artifactId>kaitou-ppp</artifactId>
-    <version>2.0</version>
+    <version>2.1</version>
     <description>PPP ERP</description>
     <modules>
         <module>kaitou-ppp-common</module>

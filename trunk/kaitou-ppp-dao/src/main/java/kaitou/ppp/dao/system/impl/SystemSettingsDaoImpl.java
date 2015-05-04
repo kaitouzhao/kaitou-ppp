@@ -7,8 +7,6 @@ import kaitou.ppp.dao.BaseDao;
 import kaitou.ppp.dao.system.SystemSettingsDao;
 import kaitou.ppp.domain.system.SystemSettings;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
 import java.io.File;
@@ -45,8 +43,6 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
      * 版本配置键值
      */
     private static final String VERSION_KEY = "version";
-
-    private final Log log = LogFactory.getLog(getClass());
 
     @Override
     public Class<SystemSettings> getDomainClass() {
@@ -147,7 +143,7 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
                 return;
             }
         } catch (NumberFormatException e) {
-            log.error(e);
+            logSystemEx(e);
         }
         saveSettings(settings.setLatestVersion(latestVersion));
     }
@@ -188,7 +184,7 @@ public class SystemSettingsDaoImpl extends BaseDao<SystemSettings> implements Sy
             DateTime lastBackupDateTime = new DateTime(lastBackupTime.getTime());
             return lastBackupDateTime.plusHours(BACKUP_INTERVAL).isBeforeNow();
         } catch (ParseException e) {
-            log.error(e);
+            logSystemEx(e);
             return true;
         }
     }

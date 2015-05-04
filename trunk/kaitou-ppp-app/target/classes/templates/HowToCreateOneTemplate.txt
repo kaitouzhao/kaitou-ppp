@@ -1,0 +1,4 @@
+1、按照需求定制excel；
+2、用office重新打开excel，另存为XML电子表格2003(*.xml)；
+3、修改xml后缀为ftl，拷贝至templates目录下；
+4、修改ftl，设置变量。

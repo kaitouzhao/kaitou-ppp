@@ -77,7 +77,7 @@ public class ShopPay extends BaseDomain {
 
     @Override
     public String dbFileSuffix() {
-        return getClass().getSimpleName() + ".kdb";
+        return getClass().getSimpleName() + DB_SUFFIX;
     }
 
     public String getId() {

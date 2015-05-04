@@ -6,6 +6,7 @@ package kaitou.ppp.app.ui;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.app.ui.dialog.InputHint;
+import kaitou.ppp.app.ui.dialog.OnlineConfig;
 import kaitou.ppp.app.ui.dialog.OperationHint;
 import kaitou.ppp.app.ui.table.QueryFrame;
 import kaitou.ppp.app.ui.table.queryobject.*;
@@ -16,8 +17,11 @@ import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.shop.ShopDetail;
 import kaitou.ppp.domain.shop.ShopPay;
 import kaitou.ppp.domain.shop.ShopRTS;
+import kaitou.ppp.domain.system.DBVersion;
 import kaitou.ppp.rmi.ServiceClient;
+import kaitou.ppp.rmi.service.RemoteDBVersionService;
 import kaitou.ppp.rmi.service.RemoteRegistryService;
+import kaitou.ppp.service.LocalDBVersionService;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -29,6 +33,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 import static com.womai.bsp.tool.utils.PropertyUtil.getValue;
 import static kaitou.ppp.app.SpringContextManager.*;
@@ -42,7 +47,9 @@ import static kaitou.ppp.app.ui.UIUtil.*;
 public class MainFrame extends JFrame {
 
     private static final String FRAME_TITLE = "PPP-ERP主界面";
+    private static final int UPGRADE_DB_VERSIONS_WAIT_TIME = 3000;
     private static boolean isOnline = false;
+    private static boolean syncOk = false;
 
     /**
      * 联机状态
@@ -56,6 +63,10 @@ public class MainFrame extends JFrame {
             this.key = key;
             this.displayValue = displayValue;
         }
+
+        public int getKey() {
+            return key;
+        }
     }
 
     /**
@@ -64,6 +75,8 @@ public class MainFrame extends JFrame {
      * @param args 参数
      */
     public static void main(String[] args) {
+        getUpgradeService().upgradeTo2Dot1();
+
         asynchronousInit();
 
         new MainFrame();
@@ -152,6 +165,50 @@ public class MainFrame extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         setTitleByOnlineStatus(OnlineStatus.ONLINE_PREPARING_FLAG);
+
+        asynchronousUpgradeDBVersions();
+    }
+
+    /**
+     * 异步同步DB版本库
+     */
+    private void asynchronousUpgradeDBVersions() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(UPGRADE_DB_VERSIONS_WAIT_TIME);
+                } catch (InterruptedException e) {
+                    logSystemEx(e);
+                }
+                LocalDBVersionService localDBVersionService = getLocalDBVersionService();
+                localDBVersionService.cacheDBLatestVersion();
+                logOp("已缓存本地DB版本库");
+                List<RemoteDBVersionService> remoteDBVersionServices = ServiceClient.queryServicesOfListener(RemoteDBVersionService.class, getLocalRegistryService().queryRegistryIps(), getSystemSettingsService().getLocalIp());
+                if (CollectionUtil.isNotEmpty(remoteDBVersionServices)) {
+                    try {
+                        for (RemoteDBVersionService remoteDBVersionService : remoteDBVersionServices) {
+                            List<DBVersion> remoteDBVersions = remoteDBVersionService.queryRemoteDBVersions();
+                            if (CollectionUtil.isEmpty(remoteDBVersions)) {
+                                continue;
+                            }
+                            List<DBVersion> toUpgradeList = localDBVersionService.getToUpgradeList(remoteDBVersions);
+                            if (CollectionUtil.isEmpty(toUpgradeList)) {
+                                continue;
+                            }
+                            Map<DBVersion, List<String>> toUpgradeDBMap = remoteDBVersionService.queryRemoteDBs(toUpgradeList);
+                            if (CollectionUtil.isEmpty(toUpgradeDBMap)) {
+                                continue;
+                            }
+                            localDBVersionService.upgradeByRemoteDBs(toUpgradeDBMap);
+                        }
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+                syncOk = true;
+            }
+        }).start();
     }
 
     private void importShopBasicActionPerformed(ActionEvent e) {
@@ -307,12 +364,12 @@ public class MainFrame extends JFrame {
                 return;
             }
             String numberOfYear = inputHint.getInputResult()[0];
-            File targetFile = chooseExportFile("excel文件", "xlsx");
+            File targetFile = chooseExportFile("excel文件", "xls");
             if (targetFile == null) return;
             if (StringUtils.isEmpty(numberOfYear)) {
-                getShopService().exportShopDetails(targetFile);
+                getExportService().exportShopDetails(targetFile);
             } else {
-                getShopService().exportShopDetails(targetFile, numberOfYear);
+                getExportService().exportShopDetails(targetFile, numberOfYear);
             }
             new OperationHint(this, "导出成功");
         } catch (Exception ex) {
@@ -462,6 +519,10 @@ public class MainFrame extends JFrame {
         new OperationHint(this, "正在联机中，请稍候......");
     }
 
+    private void onlineConfigActionPerformed(ActionEvent e) {
+        new OnlineConfig(this, isOnline, syncOk);
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         managerMenuBar = new JMenuBar();
@@ -504,6 +565,7 @@ public class MainFrame extends JFrame {
         onlineMenu = new JMenu();
         onlineSetting = new JMenuItem();
         startOnline = new JMenuItem();
+        onlineConfig = new JMenuItem();
         helpMenu = new JMenu();
         aboutItem = new JMenuItem();
         backupDB = new JMenuItem();
@@ -866,6 +928,16 @@ public class MainFrame extends JFrame {
                     }
                 });
                 onlineMenu.add(startOnline);
+
+                //---- onlineConfig ----
+                onlineConfig.setText("\u914d\u7f6e");
+                onlineConfig.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        onlineConfigActionPerformed(e);
+                    }
+                });
+                onlineMenu.add(onlineConfig);
             }
             managerMenuBar.add(onlineMenu);
 
@@ -954,6 +1026,7 @@ public class MainFrame extends JFrame {
     private JMenu onlineMenu;
     private JMenuItem onlineSetting;
     private JMenuItem startOnline;
+    private JMenuItem onlineConfig;
     private JMenu helpMenu;
     private JMenuItem aboutItem;
     private JMenuItem backupDB;

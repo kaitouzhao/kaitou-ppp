@@ -21,7 +21,7 @@ public class RemoteRegistryDaoImpl extends BaseDao<RemoteRegistry> implements Re
 
     @Override
     public void register(String ip) {
-        List<RemoteRegistry> registries = query();
+        List<RemoteRegistry> registries = queryRemoteRegistries();
         if (CollectionUtil.isEmpty(registries)) {
             RemoteRegistry registry = new RemoteRegistry().addRegistry(ip);
             registries.add(registry);
@@ -31,9 +31,18 @@ public class RemoteRegistryDaoImpl extends BaseDao<RemoteRegistry> implements Re
         save(CollectionUtil.toArray(registries, RemoteRegistry.class));
     }
 
+    /**
+     * 获取远程注册表
+     *
+     * @return 注册表
+     */
+    private List<RemoteRegistry> queryRemoteRegistries() {
+        return query(new RemoteRegistry().dbFileSuffix());
+    }
+
     @Override
     public List<String> queryRegistryIps() {
-        List<RemoteRegistry> registries = query();
+        List<RemoteRegistry> registries = queryRemoteRegistries();
         if (CollectionUtil.isEmpty(registries)) {
             return new RemoteRegistry().getRemoteIps();
         }

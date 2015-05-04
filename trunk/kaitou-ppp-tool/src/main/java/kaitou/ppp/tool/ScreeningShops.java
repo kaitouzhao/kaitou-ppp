@@ -7,7 +7,6 @@ import kaitou.ppp.domain.shop.ShopDetail;
 import kaitou.ppp.service.BaseExcelService;
 import kaitou.ppp.service.ShopService;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
@@ -24,15 +23,6 @@ public class ScreeningShops {
 
     private static ShopService shopService;
 
-    static {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[]{
-                        "applicationContext-service.xml"
-                }
-        );
-        shopService = ctx.getBean(ShopService.class);
-    }
-
     private static final String DIR = "d://ppp//";
 
     /**
@@ -41,6 +31,12 @@ public class ScreeningShops {
      * @param args 参数
      */
     public static void main(String[] args) {
+        shopService = new ClassPathXmlApplicationContext(
+                new String[]{
+                        "applicationContext-service.xml"
+                }
+        ).getBean(ShopService.class);
+
 //        screenShops();
         screenShopDetails();
     }

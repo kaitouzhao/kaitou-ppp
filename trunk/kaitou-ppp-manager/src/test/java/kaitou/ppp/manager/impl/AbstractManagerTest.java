@@ -17,6 +17,7 @@ import static kaitou.ppp.common.utils.FileUtil.delete;
  */
 public abstract class AbstractManagerTest {
 
+    private static final String TEST_LOCAL_DB_VERSION_FILE = "D:\\temp\\ppp\\test\\db_version\\LocalDBVersion.kdb";
     protected static ApplicationContext ctx;
 
     public abstract String getDbDir();
@@ -40,5 +41,6 @@ public abstract class AbstractManagerTest {
         for (File f : files) {
             delete(f.getPath());
         }
+        delete(TEST_LOCAL_DB_VERSION_FILE);
     }
 }

@@ -20,10 +20,12 @@ public abstract class SpringContextManager {
     private static DbService dbService;
     private static CardService cardService;
     private static ShopService shopService;
+    private static ExportService exportService;
     private static UpgradeService upgradeService;
     private static EngineerService engineerService;
     private static LocalRegistryService localRegistryService;
     private static SystemSettingsService systemSettingsService;
+    private static LocalDBVersionService localDBVersionService;
 
     private static ServiceProvider serviceProvider;
 
@@ -84,10 +86,24 @@ public abstract class SpringContextManager {
         return systemSettingsService;
     }
 
+    public static LocalDBVersionService getLocalDBVersionService() {
+        if (localDBVersionService == null) {
+            localDBVersionService = ctx.getBean(LocalDBVersionService.class);
+        }
+        return localDBVersionService;
+    }
+
     public static ServiceProvider getServiceProvider() {
         if (serviceProvider == null) {
             serviceProvider = ctx.getBean(ServiceProvider.class);
         }
         return serviceProvider;
+    }
+
+    public static ExportService getExportService() {
+        if (exportService == null) {
+            exportService = ctx.getBean(ExportService.class);
+        }
+        return exportService;
     }
 }

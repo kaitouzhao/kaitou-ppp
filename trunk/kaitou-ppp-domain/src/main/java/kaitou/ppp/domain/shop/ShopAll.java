@@ -52,6 +52,10 @@ public class ShopAll extends BaseDomain {
      * 认定级别
      */
     private String level;
+    /**
+     * 机型
+     */
+    private String model;
 
     @Override
     public void check() {
@@ -81,6 +85,7 @@ public class ShopAll extends BaseDomain {
                 ", numberOfYear='" + numberOfYear + '\'' +
                 ", productLine='" + productLine + '\'' +
                 ", level='" + level + '\'' +
+                ", model='" + model + '\'' +
                 '}';
     }
 
@@ -96,13 +101,15 @@ public class ShopAll extends BaseDomain {
         if (id != null ? !id.equals(shopAll.id) : shopAll.id != null) return false;
         if (level != null ? !level.equals(shopAll.level) : shopAll.level != null) return false;
         if (linkMan != null ? !linkMan.equals(shopAll.linkMan) : shopAll.linkMan != null) return false;
+        if (model != null ? !model.equals(shopAll.model) : shopAll.model != null) return false;
         if (name != null ? !name.equals(shopAll.name) : shopAll.name != null) return false;
         if (numberOfYear != null ? !numberOfYear.equals(shopAll.numberOfYear) : shopAll.numberOfYear != null)
             return false;
         if (phone != null ? !phone.equals(shopAll.phone) : shopAll.phone != null) return false;
         if (productLine != null ? !productLine.equals(shopAll.productLine) : shopAll.productLine != null) return false;
-        return !(saleRegion != null ? !saleRegion.equals(shopAll.saleRegion) : shopAll.saleRegion != null);
+        if (saleRegion != null ? !saleRegion.equals(shopAll.saleRegion) : shopAll.saleRegion != null) return false;
 
+        return true;
     }
 
     @Override
@@ -117,7 +124,16 @@ public class ShopAll extends BaseDomain {
         result = 31 * result + (numberOfYear != null ? numberOfYear.hashCode() : 0);
         result = 31 * result + (productLine != null ? productLine.hashCode() : 0);
         result = 31 * result + (level != null ? level.hashCode() : 0);
+        result = 31 * result + (model != null ? model.hashCode() : 0);
         return result;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getSaleRegion() {

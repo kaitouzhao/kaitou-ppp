@@ -1,5 +1,7 @@
 package kaitou.ppp.manager;
 
+import kaitou.ppp.dao.system.LocalDBVersionDao;
+
 /**
  * 文件DAO事务管理父类.
  * User: 赵立伟
@@ -7,6 +9,16 @@ package kaitou.ppp.manager;
  * Time: 19:48
  */
 public abstract class FileDaoManager {
+    private LocalDBVersionDao localDBVersionDao;
+
+    public LocalDBVersionDao getLocalDBVersionDao() {
+        return localDBVersionDao;
+    }
+
+    public void setLocalDBVersionDao(LocalDBVersionDao localDBVersionDao) {
+        this.localDBVersionDao = localDBVersionDao;
+    }
+
     /**
      * DB文件目录
      */

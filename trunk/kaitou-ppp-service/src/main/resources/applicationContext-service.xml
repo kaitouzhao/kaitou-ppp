@@ -16,6 +16,8 @@
         <property name="workspace" value="${card.workspace}"/>
         <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
         <property name="shopManager" ref="shopManager"/>
+        <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
     <bean id="engineerService" class="kaitou.ppp.service.impl.EngineerServiceImpl">
@@ -64,10 +66,22 @@
 
     <bean id="upgradeService" class="kaitou.ppp.service.impl.UpgradeServiceImpl">
         <property name="dbDir" value="${db.file.dir}"/>
+        <property name="confDir" value="${conf.file.dir}"/>
+        <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
+        <property name="systemSettingsManager" ref="systemSettingsManager"/>
     </bean>
 
     <bean id="localRegistryService" class="kaitou.ppp.service.impl.LocalRegistryServiceImpl">
         <property name="remoteRegistryManager" ref="remoteRegistryManager"/>
+    </bean>
+
+    <bean id="localDBVersionService" class="kaitou.ppp.service.impl.LocalDBVersionServiceImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="localDBVersionManager" ref="localDBVersionManager"/>
+    </bean>
+
+    <bean id="exportService" class="kaitou.ppp.service.impl.ExportServiceImpl">
+        <property name="shopDetailManager" ref="shopDetailManager"/>
     </bean>
 
     <import resource="applicationContext-remote.xml"/>

@@ -10,9 +10,11 @@ import kaitou.ppp.app.ui.dialog.OperationHint;
 import kaitou.ppp.app.ui.dialog.SaveDialog;
 import kaitou.ppp.app.ui.op.ExportOp;
 import kaitou.ppp.domain.BaseDomain;
+import kaitou.ppp.domain.BaseDomain4InDoubt;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -177,6 +179,9 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
         String[] tableTitles = queryObject.tableTitles();
         dataTable.setModel(new QueryTable(objects,
                 tableTitles));
+        for (int index = 0; index < queryObject.fieldNames().length; index++) {
+            dataTable.getColumnModel().getColumn(index).setCellRenderer(new QueryTableColorRenderer());
+        }
         if (opColumnIndex < 0) {
             return;
         }
@@ -375,6 +380,26 @@ public class QueryFrame<T extends BaseDomain> extends JFrame {
             saveOrUpdate(queryObject.domainType(), dataObj);
             new OperationHint(self, "更新成功");
             select();
+        }
+    }
+
+    /**
+     * 自定义table行色渲染
+     */
+    private class QueryTableColorRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            T t = shownDatas.get(getShownDataIndex(row));
+            if (t instanceof BaseDomain4InDoubt) {
+                if (((BaseDomain4InDoubt) t).isInDoubt()) {
+                    component.setBackground(Color.yellow);
+                } else {
+                    component.setBackground(null);
+                }
+            }
+            return component;
         }
     }
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="localDBVersionDao" class="kaitou.ppp.dao.system.impl.LocalDBVersionDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test\local_db_version"/>
+    </bean>
+
+    <bean id="outboxDBVersionDao" class="kaitou.ppp.dao.system.impl.OutboxDBVersionDaoImpl">
+        <property name="dbDir" value="D:\temp\ppp\test\outbox"/>
+    </bean>
+
+</beans>

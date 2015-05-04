@@ -5,10 +5,13 @@ import org.aspectj.lang.JoinPoint;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static kaitou.ppp.common.utils.FileUtil.copy;
 import static kaitou.ppp.common.utils.FileUtil.delete;
 import static kaitou.ppp.common.utils.JsonValidator.validateFile;
+import static kaitou.ppp.domain.BaseDomain.*;
 
 /**
  * 文件DAO事务管理.
@@ -72,13 +75,19 @@ public class FileDaoTransaction {
                 throw new RuntimeException("back文件：" + backFilePath + "损坏！已执行回滚！");
             }
         }
+        List<String> toUpgradeDBList = new ArrayList<String>();
         for (File backFile : backFiles) {
             String backFileName = backFile.getName();
-            String dbFileName = backFileName.substring(0, backFileName.indexOf('.')) + ".kdb";
+            String dbFileName = backFileName.substring(0, backFileName.lastIndexOf('.'));
             String backFilePath = backFile.getPath();
             copy(backFilePath, dbDir + '\\' + dbFileName);
             delete(backFilePath);
+            if (dbFileName.endsWith(CONFIG_SUFFIX)) {
+                continue;
+            }
+            toUpgradeDBList.add(dbFileName);
         }
+        daoManager.getLocalDBVersionDao().upgrade(toUpgradeDBList);
         daoManager.closeTransaction();
     }
 
@@ -94,8 +103,7 @@ public class FileDaoTransaction {
         return dirFile.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                String suffix = ".kdb.back";
-                return name.endsWith("_" + entityName + suffix) || name.endsWith(entityName + suffix);
+                return name.endsWith("_" + entityName + DB_SUFFIX + BACK_SUFFIX) || name.endsWith(entityName + DB_SUFFIX + BACK_SUFFIX) || name.endsWith(entityName + CONFIG_SUFFIX + BACK_SUFFIX);
             }
         });
     }

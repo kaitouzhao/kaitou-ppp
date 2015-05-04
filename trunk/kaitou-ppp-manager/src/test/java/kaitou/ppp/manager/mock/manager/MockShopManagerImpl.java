@@ -13,10 +13,10 @@ import java.util.List;
  * Time: 12:38
  */
 public class MockShopManagerImpl extends ShopManagerImpl {
+
     @Override
     public int save(List<Shop> shops) {
         Shop[] shopArray = CollectionUtil.toArray(shops, Shop.class);
-        int successCount = shopDao.save(shopArray);
-        return successCount;
+        return shopDao.save(shopArray);
     }
 }

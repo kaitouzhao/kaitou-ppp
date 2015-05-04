@@ -1,6 +1,8 @@
 package kaitou.ppp.domain.card;
 
-import kaitou.ppp.domain.BaseDomain;
+import kaitou.ppp.domain.BaseDomain4InDoubt;
+import kaitou.ppp.domain.annotation.PKField;
+import kaitou.ppp.domain.system.SysCode;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -9,13 +11,14 @@ import org.apache.commons.lang.StringUtils;
  * Date: 2015/3/7
  * Time: 21:22
  */
-public class CardApplicationRecord extends BaseDomain {
+public class CardApplicationRecord extends BaseDomain4InDoubt {
     private String applyDate;
     private String status;
     private String isBack;
     private String warrantyCard;
     private String allModels;
     private String models;
+    @PKField(PKViolationType = SysCode.PKViolationType.IN_DOUBT)
     private String fuselage;
     private String shopId;
     private String shopName;
@@ -29,14 +32,8 @@ public class CardApplicationRecord extends BaseDomain {
 
     @Override
     public void check() {
-        if (StringUtils.isEmpty(warrantyCard)) {
-            throw new RuntimeException("保修卡号为空");
-        }
-        if (StringUtils.isEmpty(shopId)) {
-            throw new RuntimeException("认定店编码为空");
-        }
-        if (StringUtils.isEmpty(shopName)) {
-            throw new RuntimeException("认定店名称为空");
+        if (StringUtils.isEmpty(fuselage)) {
+            doInDoubt();
         }
     }
 
@@ -47,7 +44,7 @@ public class CardApplicationRecord extends BaseDomain {
 
     @Override
     public String dbFileSuffix() {
-        return getClass().getSimpleName() + ".kdb";
+        return getClass().getSimpleName() + DB_SUFFIX;
     }
 
     @Override
@@ -57,6 +54,28 @@ public class CardApplicationRecord extends BaseDomain {
 
         CardApplicationRecord that = (CardApplicationRecord) o;
 
+        if (serialNo > 0) {
+            return super.equals(o);
+        }
+
+        if (allModels != null ? !allModels.equals(that.allModels) : that.allModels != null) return false;
+        if (applyDate != null ? !applyDate.equals(that.applyDate) : that.applyDate != null) return false;
+        if (endDate != null ? !endDate.equals(that.endDate) : that.endDate != null) return false;
+        if (fuselage != null ? !fuselage.equals(that.fuselage) : that.fuselage != null) return false;
+        if (initData != null ? !initData.equals(that.initData) : that.initData != null) return false;
+        if (installedAddress != null ? !installedAddress.equals(that.installedAddress) : that.installedAddress != null)
+            return false;
+        if (installedDate != null ? !installedDate.equals(that.installedDate) : that.installedDate != null)
+            return false;
+        if (isBack != null ? !isBack.equals(that.isBack) : that.isBack != null) return false;
+        if (models != null ? !models.equals(that.models) : that.models != null) return false;
+        if (shopId != null ? !shopId.equals(that.shopId) : that.shopId != null) return false;
+        if (shopName != null ? !shopName.equals(that.shopName) : that.shopName != null) return false;
+        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (userCompanyName != null ? !userCompanyName.equals(that.userCompanyName) : that.userCompanyName != null)
+            return false;
+        if (userContact != null ? !userContact.equals(that.userContact) : that.userContact != null) return false;
+        if (userLinkMan != null ? !userLinkMan.equals(that.userLinkMan) : that.userLinkMan != null) return false;
         if (warrantyCard != null ? !warrantyCard.equals(that.warrantyCard) : that.warrantyCard != null) return false;
 
         return true;
@@ -64,7 +83,27 @@ public class CardApplicationRecord extends BaseDomain {
 
     @Override
     public int hashCode() {
-        return warrantyCard != null ? warrantyCard.hashCode() : 0;
+        if (serialNo > 0) {
+            return super.hashCode();
+        }
+        
+        int result = applyDate != null ? applyDate.hashCode() : 0;
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (isBack != null ? isBack.hashCode() : 0);
+        result = 31 * result + (warrantyCard != null ? warrantyCard.hashCode() : 0);
+        result = 31 * result + (allModels != null ? allModels.hashCode() : 0);
+        result = 31 * result + (models != null ? models.hashCode() : 0);
+        result = 31 * result + (fuselage != null ? fuselage.hashCode() : 0);
+        result = 31 * result + (shopId != null ? shopId.hashCode() : 0);
+        result = 31 * result + (shopName != null ? shopName.hashCode() : 0);
+        result = 31 * result + (installedDate != null ? installedDate.hashCode() : 0);
+        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        result = 31 * result + (initData != null ? initData.hashCode() : 0);
+        result = 31 * result + (userCompanyName != null ? userCompanyName.hashCode() : 0);
+        result = 31 * result + (userLinkMan != null ? userLinkMan.hashCode() : 0);
+        result = 31 * result + (userContact != null ? userContact.hashCode() : 0);
+        result = 31 * result + (installedAddress != null ? installedAddress.hashCode() : 0);
+        return result;
     }
 
     @Override

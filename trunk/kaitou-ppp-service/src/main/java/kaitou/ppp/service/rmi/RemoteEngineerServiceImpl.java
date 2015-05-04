@@ -57,7 +57,17 @@ public class RemoteEngineerServiceImpl extends UnicastRemoteObject implements Re
     }
 
     @Override
+    public void deleteEngineer(Object... engineer) throws RemoteException {
+        engineerManager.delete(engineer);
+    }
+
+    @Override
     public void saveEngineerTrainings(List<EngineerTraining> engineerTrainings) throws RemoteException {
         engineerTrainingManager.save(engineerTrainings);
+    }
+
+    @Override
+    public void deleteEngineerTrainings(Object... engineerTraining) throws RemoteException {
+        engineerTrainingManager.delete(engineerTraining);
     }
 }

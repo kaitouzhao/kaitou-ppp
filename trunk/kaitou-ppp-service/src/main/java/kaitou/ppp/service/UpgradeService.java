@@ -13,4 +13,13 @@ public interface UpgradeService {
      */
     @Deprecated
     public void upgradeTo1Dot4();
+
+    /**
+     * 升级至2.1操作
+     * <ul>
+     * <li>将系统设置、远程注册表移到conf目录</li>
+     * <li>重新导入已有保修卡记录</li>
+     * </ul>
+     */
+    public void upgradeTo2Dot1();
 }

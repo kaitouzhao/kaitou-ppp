@@ -74,7 +74,7 @@ public class ShopDetail extends BaseDomain {
 
     @Override
     public String dbFileSuffix() {
-        return '_' + numberOfYear + '_' + getClass().getSimpleName() + ".kdb";
+        return '_' + numberOfYear + '_' + getClass().getSimpleName() + DB_SUFFIX;
     }
 
     @Override

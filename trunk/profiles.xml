@@ -14,6 +14,7 @@
                 <db.file.back>${base.dir}//db_back.zip</db.file.back>
                 <ppp.file.dir>${base.dir}</ppp.file.dir>
                 <log.dir>${base.dir}//log</log.dir>
+                <conf.file.dir>${base.dir}//conf</conf.file.dir>
 
                 <card.complete>${base.dir}//complete//</card.complete>
                 <card.logFileName>记录.xlsx</card.logFileName>

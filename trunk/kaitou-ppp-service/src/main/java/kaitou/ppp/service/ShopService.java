@@ -42,16 +42,8 @@ public interface ShopService {
      * @param targetFile   目标文件
      * @param numberOfYear 查询年份，可以是单年，也可以是多年
      */
-    public void exportShopDetails(File targetFile, String... numberOfYear);
-
-    /**
-     * 删除认定店基本信息
-     *
-     * @param saleRegion 指定区域
-     * @param id         指定编码
-     */
     @Deprecated
-    public void deleteShop(String saleRegion, String id);
+    public void exportShopDetails(File targetFile, String... numberOfYear);
 
     /**
      * 删除认定店基本信息
@@ -61,16 +53,6 @@ public interface ShopService {
     public void deleteShops(Object... shops);
 
     /**
-     * 删除认定店认定信息
-     *
-     * @param id           指定编码
-     * @param productLine  产品线
-     * @param numberOfYear 认定年份
-     */
-    @Deprecated
-    public void deleteShopDetail(String id, String productLine, String numberOfYear);
-
-    /**
      * 删除认定店认定级别
      *
      * @param details 认定级别集合
@@ -78,28 +60,11 @@ public interface ShopService {
     public void deleteShopDetails(Object... details);
 
     /**
-     * 删除认定店账户
-     *
-     * @param id 指定编码
-     */
-    @Deprecated
-    public void deleteShopPay(String id);
-
-    /**
      * 删除认定店帐号信息
      *
      * @param pays 帐号信息集合
      */
     public void deleteShopPays(Object... pays);
-
-    /**
-     * 删除认定店RTS
-     *
-     * @param id          指定编码
-     * @param productLine 产品线
-     */
-    @Deprecated
-    public void deleteShopRTS(String id, String productLine);
 
     /**
      * 删除认定店RTS

@@ -7,6 +7,10 @@ import kaitou.ppp.domain.shop.Shop;
 import kaitou.ppp.domain.system.SysCode;
 import kaitou.ppp.manager.card.CardApplicationRecordManager;
 import kaitou.ppp.manager.shop.ShopManager;
+import kaitou.ppp.manager.system.RemoteRegistryManager;
+import kaitou.ppp.manager.system.SystemSettingsManager;
+import kaitou.ppp.rmi.ServiceClient;
+import kaitou.ppp.rmi.service.RemoteCardService;
 import kaitou.ppp.service.BaseExcelService;
 import kaitou.ppp.service.CardService;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -24,6 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.DateTime;
 
 import java.io.*;
+import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +54,16 @@ public class CardServiceImpl extends BaseExcelService implements CardService {
 
     private CardApplicationRecordManager cardApplicationRecordManager;
     private ShopManager shopManager;
+    private SystemSettingsManager systemSettingsManager;
+    private RemoteRegistryManager remoteRegistryManager;
+
+    public void setSystemSettingsManager(SystemSettingsManager systemSettingsManager) {
+        this.systemSettingsManager = systemSettingsManager;
+    }
+
+    public void setRemoteRegistryManager(RemoteRegistryManager remoteRegistryManager) {
+        this.remoteRegistryManager = remoteRegistryManager;
+    }
 
     public void setShopManager(ShopManager shopManager) {
         this.shopManager = shopManager;
@@ -328,7 +343,16 @@ public class CardServiceImpl extends BaseExcelService implements CardService {
 
     @Override
     public void importCardApplicationRecords(File srcFile) {
-        List<CardApplicationRecord> cardApplicationRecords = readFromExcel(srcFile, CardApplicationRecord.class);
+        final List<CardApplicationRecord> cardApplicationRecords = readFromExcel(srcFile, CardApplicationRecord.class);
+        importCardApplicationRecords(cardApplicationRecords);
+    }
+
+    /**
+     * 导入保修卡记录
+     *
+     * @param cardApplicationRecords 记录列表
+     */
+    private void importCardApplicationRecords(final List<CardApplicationRecord> cardApplicationRecords) {
         List<Shop> shops = shopManager.query();
         for (int i = 0, cardApplicationRecordsSize = cardApplicationRecords.size(); i < cardApplicationRecordsSize; i++) {
             CardApplicationRecord cardApplicationRecord = cardApplicationRecords.get(i);
@@ -339,10 +363,28 @@ public class CardServiceImpl extends BaseExcelService implements CardService {
                 }
             }
             if (StringUtils.isEmpty(cardApplicationRecord.getShopId())) {
-                throw new RuntimeException("第" + (i + 2) + "行保修卡记录销售单位【" + cardApplicationRecord.getShopName() + "】不是认定店！");
+                logSystemInfo("第" + (i + 2) + "行保修卡记录销售单位【" + cardApplicationRecord.getShopName() + "】不是认定店！");
+                cardApplicationRecord.doInDoubt();
             }
         }
         logOperation("成功导入/更新保修卡生成记录数：" + cardApplicationRecordManager.save(cardApplicationRecords));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteCardService> remoteCardServices = ServiceClient.queryServicesOfListener(RemoteCardService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteCardServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新保修卡记录");
+                for (RemoteCardService remoteCardService : remoteCardServices) {
+                    try {
+                        remoteCardService.saveCardApplicationRecord(cardApplicationRecords);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -358,21 +400,29 @@ public class CardServiceImpl extends BaseExcelService implements CardService {
     @Override
     @SuppressWarnings("unchecked")
     public void saveOrUpdateCardApplicationRecord(CardApplicationRecord cardApplicationRecord) {
-        List<Shop> shops = shopManager.query();
-        for (Shop shop : shops) {
-            if (shop.getName().equals(cardApplicationRecord.getShopName())) {
-                cardApplicationRecord.setShopId(shop.getId());
-                break;
-            }
-        }
-        if (StringUtils.isEmpty(cardApplicationRecord.getShopId())) {
-            throw new RuntimeException("认定店：" + cardApplicationRecord.getShopName() + "不存在！请检查");
-        }
-        logOperation("成功导入/更新保修卡生成记录数：" + cardApplicationRecordManager.save(CollectionUtil.newList(cardApplicationRecord)));
+        cardApplicationRecord.noDoubt();
+        importCardApplicationRecords(CollectionUtil.newList(cardApplicationRecord));
     }
 
     @Override
-    public void deleteCardApplicationRecords(Object... cardApplicationRecords) {
+    public void deleteCardApplicationRecords(final Object... cardApplicationRecords) {
         logOperation("成功删除保修卡生成记录个数：" + cardApplicationRecordManager.delete(cardApplicationRecords));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteCardService> remoteCardServices = ServiceClient.queryServicesOfListener(RemoteCardService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteCardServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务更新删除保修卡记录");
+                for (RemoteCardService remoteCardService : remoteCardServices) {
+                    try {
+                        remoteCardService.deleteCardApplicationRecord(cardApplicationRecords);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 }

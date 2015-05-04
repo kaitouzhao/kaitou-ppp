@@ -41,7 +41,7 @@ public class SystemSettings extends BaseDomain {
 
     @Override
     public String dbFileName() {
-        return (getClass().getSimpleName() + ".kdb");
+        return getClass().getSimpleName() + CONFIG_SUFFIX;
     }
 
     @Override

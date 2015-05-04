@@ -7,12 +7,14 @@
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="dao" ref="engineerDao"/>
         <property name="cachedShopDao" ref="cachedShopDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="engineerTrainingManager" class="kaitou.ppp.manager.engineer.impl.EngineerTrainingManagerImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="dao" ref="engineerTrainingDao"/>
         <property name="cachedShopDao" ref="cachedShopDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="shopManager" class="kaitou.ppp.manager.shop.impl.ShopManagerImpl">
@@ -20,6 +22,7 @@
         <property name="dao" ref="shopDao"/>
         <property name="shopDao" ref="shopDao"/>
         <property name="cachedShopDao" ref="cachedShopDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="shopDetailManager" class="kaitou.ppp.manager.shop.impl.ShopDetailManagerImpl">
@@ -27,31 +30,48 @@
         <property name="dao" ref="shopDetailDao"/>
         <property name="shopDetailDao" ref="shopDetailDao"/>
         <property name="cachedShopDao" ref="cachedShopDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="shopRTSManager" class="kaitou.ppp.manager.shop.impl.ShopRTSManagerImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="dao" ref="shopRTSDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="shopPayManager" class="kaitou.ppp.manager.shop.impl.ShopPayManagerImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="dao" ref="shopPayDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="cardApplicationRecordManager" class="kaitou.ppp.manager.card.impl.CardApplicationRecordManagerImpl">
         <property name="dbDir" value="${db.file.dir}"/>
         <property name="dao" ref="cardApplicationRecordDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="systemSettingsManager" class="kaitou.ppp.manager.system.impl.SystemSettingsManagerImpl">
-        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="dbDir" value="${conf.file.dir}"/>
         <property name="systemSettingsDao" ref="systemSettingsDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
     <bean id="remoteRegistryManager" class="kaitou.ppp.manager.system.impl.RemoteRegistryManagerImpl">
-        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="dbDir" value="${conf.file.dir}"/>
         <property name="remoteRegistryDao" ref="remoteRegistryDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
+    </bean>
+
+    <bean id="localDBVersionManager" class="kaitou.ppp.manager.system.impl.LocalDBVersionManagerImpl">
+        <property name="dbDir" value="${conf.file.dir}"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
+    </bean>
+
+    <bean id="outboxDBVersionManager" class="kaitou.ppp.manager.system.impl.OutboxDBVersionManagerImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="outboxDBVersionDao" ref="outboxDBVersionDao"/>
+        <property name="localDBVersionDao" ref="localDBVersionDao"/>
     </bean>
 
 </beans>

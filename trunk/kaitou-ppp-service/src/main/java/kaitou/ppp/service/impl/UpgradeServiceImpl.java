@@ -2,11 +2,15 @@ package kaitou.ppp.service.impl;
 
 import com.womai.bsp.tool.utils.CollectionUtil;
 import kaitou.ppp.common.log.BaseLogManager;
+import kaitou.ppp.domain.card.CardApplicationRecord;
 import kaitou.ppp.domain.system.SysCode;
+import kaitou.ppp.manager.card.CardApplicationRecordManager;
+import kaitou.ppp.manager.system.SystemSettingsManager;
 import kaitou.ppp.service.UpgradeService;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.List;
 
 import static kaitou.ppp.common.utils.FileUtil.copy;
 import static kaitou.ppp.common.utils.FileUtil.delete;
@@ -22,6 +26,24 @@ public class UpgradeServiceImpl extends BaseLogManager implements UpgradeService
      * DB文件目录
      */
     private String dbDir;
+    /**
+     * 配置文件目录
+     */
+    private String confDir;
+    private CardApplicationRecordManager cardApplicationRecordManager;
+    private SystemSettingsManager systemSettingsManager;
+
+    public void setSystemSettingsManager(SystemSettingsManager systemSettingsManager) {
+        this.systemSettingsManager = systemSettingsManager;
+    }
+
+    public void setCardApplicationRecordManager(CardApplicationRecordManager cardApplicationRecordManager) {
+        this.cardApplicationRecordManager = cardApplicationRecordManager;
+    }
+
+    public void setConfDir(String confDir) {
+        this.confDir = confDir;
+    }
 
     public void setDbDir(String dbDir) {
         this.dbDir = dbDir;
@@ -49,5 +71,25 @@ public class UpgradeServiceImpl extends BaseLogManager implements UpgradeService
             copy(dbFilePath, newDbFile);
             delete(dbFilePath);
         }
+    }
+
+    @Override
+    public void upgradeTo2Dot1() {
+        if ("2.1".equals(systemSettingsManager.getSystemSetting(SysCode.LATEST_VERSION_KEY))) {
+            return;
+        }
+        String systemSettingsDB = dbDir + File.separatorChar + "SystemSettings.kdb";
+        if (new File(systemSettingsDB).exists()) {
+            copy(systemSettingsDB, confDir + File.separatorChar + "SystemSettings.conf");
+            delete(systemSettingsDB);
+        }
+        String remoteRegistryDB = dbDir + File.separatorChar + "RemoteRegistry.kdb";
+        if (new File(remoteRegistryDB).exists()) {
+            copy(remoteRegistryDB, confDir + File.separatorChar + "RemoteRegistry.conf");
+            delete(remoteRegistryDB);
+        }
+        List<CardApplicationRecord> cardApplicationRecords = cardApplicationRecordManager.query();
+        cardApplicationRecordManager.delete(CollectionUtil.toArray(cardApplicationRecords, CardApplicationRecord.class));
+        cardApplicationRecordManager.save(cardApplicationRecords);
     }
 }

@@ -19,6 +19,10 @@ public class CachedShopDetail {
      * 认定级别
      */
     private String level;
+    /**
+     * 机型
+     */
+    private String model;
 
     /**
      * 校验是否晚于当前
@@ -61,7 +65,17 @@ public class CachedShopDetail {
                 "productLine='" + productLine + '\'' +
                 ", numberOfYear='" + numberOfYear + '\'' +
                 ", level='" + level + '\'' +
+                ", model='" + model + '\'' +
                 '}';
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public CachedShopDetail setModel(String model) {
+        this.model = model;
+        return this;
     }
 
     public String getProductLine() {

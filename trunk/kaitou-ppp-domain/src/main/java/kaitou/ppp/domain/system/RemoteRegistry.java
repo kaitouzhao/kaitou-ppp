@@ -32,7 +32,7 @@ public class RemoteRegistry extends BaseDomain {
 
     @Override
     public String dbFileSuffix() {
-        return getClass().getSimpleName() + ".kdb";
+        return getClass().getSimpleName() + CONFIG_SUFFIX;
     }
 
     @Override

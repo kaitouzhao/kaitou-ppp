@@ -95,4 +95,24 @@ public class RemoteShopServiceImpl extends UnicastRemoteObject implements Remote
     public void saveShopRTSes(List<ShopRTS> shopRTSes) throws RemoteException {
         shopRTSManager.save(shopRTSes);
     }
+
+    @Override
+    public void deleteShop(Object... shop) throws RemoteException {
+        shopManager.delete(shop);
+    }
+
+    @Override
+    public void deleteShopDetail(Object... shopDetail) throws RemoteException {
+        shopDetailManager.delete(shopDetail);
+    }
+
+    @Override
+    public void deleteShopPay(Object... shopPay) throws RemoteException {
+        shopPayManager.delete(shopPay);
+    }
+
+    @Override
+    public void deleteShopRTS(Object... shopRTS) throws RemoteException {
+        shopRTSManager.delete(shopRTS);
+    }
 }

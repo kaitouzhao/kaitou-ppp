@@ -95,7 +95,7 @@ public class Shop extends BaseDomain {
 
     @Override
     public String dbFileSuffix() {
-        return '_' + getClass().getSimpleName() + ".kdb";
+        return '_' + getClass().getSimpleName() + DB_SUFFIX;
     }
 
     public String getSaleRegion() {

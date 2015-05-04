@@ -15,6 +15,10 @@ import java.util.List;
  */
 public abstract class BaseDomain implements Serializable {
 
+    public static final String DB_SUFFIX = ".kdb";
+    public static final String CONFIG_SUFFIX = ".conf";
+    public static final String BACK_SUFFIX = ".back";
+
     /**
      * 自定义校验是否相等
      *
@@ -62,7 +66,7 @@ public abstract class BaseDomain implements Serializable {
      * @return 备份名
      */
     public String backDbFileName() {
-        return dbFileName() + ".back";
+        return dbFileName() + BACK_SUFFIX;
     }
 
     /**

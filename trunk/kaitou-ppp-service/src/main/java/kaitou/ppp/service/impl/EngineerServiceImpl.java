@@ -183,39 +183,47 @@ public class EngineerServiceImpl extends BaseExcelService implements EngineerSer
     }
 
     @Override
-    public void deleteEngineer(String saleRegion, String shopId, String id, String productLine) {
-        Engineer deleted = new Engineer();
-        deleted.setSaleRegion(saleRegion);
-        deleted.setShopId(shopId);
-        deleted.setId(id);
-        deleted.setProductLine(productLine);
-        logOperation("已删除工程师个数：" + engineerManager.delete(deleted));
-    }
-
-    @Override
-    public void deleteEngineers(Object... engineers) {
+    public void deleteEngineers(final Object... engineers) {
         logOperation("已删除工程师个数：" + engineerManager.delete(engineers));
-    }
-
-    @Override
-    public void deleteEngineerTraining(String saleRegion, String shopId, String id, String productLine, String trainingModel) {
-        List<EngineerTraining> trainings = engineerTrainingManager.query(shopId);
-        if (CollectionUtil.isEmpty(trainings)) {
-            logOperation("已删除工程师发展信息个数：0");
-            return;
-        }
-        List<EngineerTraining> deleted = new ArrayList<EngineerTraining>();
-        for (EngineerTraining training : trainings) {
-            if (training.getId().equals(id) && training.getProductLine().equals(productLine) && training.getTrainingModel().equals(trainingModel)) {
-                deleted.add(training);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteEngineerService> remoteEngineerServices = ServiceClient.queryServicesOfListener(RemoteEngineerService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteEngineerServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务删除工程师基本信息");
+                for (RemoteEngineerService remoteEngineerService : remoteEngineerServices) {
+                    try {
+                        remoteEngineerService.deleteEngineer(engineers);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
             }
-        }
-        logOperation("已删除工程师发展信息个数：" + engineerTrainingManager.delete(CollectionUtil.toArray(deleted, EngineerTraining.class)));
+        }).start();
     }
 
     @Override
-    public void deleteEngineerTrainings(Object... trainings) {
+    public void deleteEngineerTrainings(final Object... trainings) {
         logOperation("已删除工程师发展信息个数：" + engineerTrainingManager.delete(trainings));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteEngineerService> remoteEngineerServices = ServiceClient.queryServicesOfListener(RemoteEngineerService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteEngineerServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务删除工程师发展信息");
+                for (RemoteEngineerService remoteEngineerService : remoteEngineerServices) {
+                    try {
+                        remoteEngineerService.deleteEngineerTrainings(trainings);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override

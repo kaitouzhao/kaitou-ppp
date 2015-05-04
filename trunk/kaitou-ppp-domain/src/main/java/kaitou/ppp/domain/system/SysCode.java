@@ -176,4 +176,27 @@ public abstract class SysCode {
             return P;
         }
     }
+
+    /**
+     * 主键约束违反处理类型
+     */
+    public enum PKViolationType {
+        COVERED(1, "覆盖"), IN_DOUBT(2, "存疑");
+        private int type;
+        private String name;
+
+        PKViolationType(int type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        public int getType() {
+            return type;
+        }
+    }
+
+    /**
+     * 最新版本号键值
+     */
+    public static final String LATEST_VERSION_KEY = "latestVersion";
 }

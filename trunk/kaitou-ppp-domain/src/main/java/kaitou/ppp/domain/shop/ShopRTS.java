@@ -44,7 +44,7 @@ public class ShopRTS extends BaseDomain {
 
     @Override
     public String dbFileSuffix() {
-        return getClass().getSimpleName() + ".kdb";
+        return getClass().getSimpleName() + DB_SUFFIX;
     }
 
     @Override

@@ -35,6 +35,20 @@
             </list>
         </property>
     </bean>
+    <!--远程待发箱服务-->
+    <bean id="remoteOutboxService" class="kaitou.ppp.service.rmi.RemoteOutboxServiceImpl">
+        <property name="outboxDBVersionManager" ref="outboxDBVersionManager"/>
+        <property name="dbDir" value="${db.file.dir}"/>
+    </bean>
+    <!--远程DB版本库服务-->
+    <bean id="remoteDBVersionService" class="kaitou.ppp.service.rmi.RemoteDBVersionServiceImpl">
+        <property name="dbDir" value="${db.file.dir}"/>
+        <property name="localDBVersionManager" ref="localDBVersionManager"/>
+    </bean>
+    <!--远程保修卡服务-->
+    <bean id="remoteCardService" class="kaitou.ppp.service.rmi.RemoteCardServiceImpl">
+        <property name="cardApplicationRecordManager" ref="cardApplicationRecordManager"/>
+    </bean>
     <!--远程服务提供容器-->
     <bean id="serviceProvider" class="kaitou.ppp.rmi.ServiceProvider">
         <property name="remoteServices">
@@ -42,6 +56,8 @@
                 <entry key="RemoteRegistryService" value-ref="remoteRegistryService"/>
                 <entry key="RemoteShopService" value-ref="remoteShopService"/>
                 <entry key="RemoteEngineerService" value-ref="remoteEngineerService"/>
+                <entry key="RemoteDBVersionService" value-ref="remoteDBVersionService"/>
+                <entry key="RemoteCardService" value-ref="remoteCardService"/>
             </map>
         </property>
     </bean>

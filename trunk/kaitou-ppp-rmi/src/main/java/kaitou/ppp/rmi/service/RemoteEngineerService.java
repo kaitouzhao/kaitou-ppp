@@ -22,9 +22,23 @@ public interface RemoteEngineerService extends Remote {
     public void saveEngineers(List<Engineer> engineers) throws RemoteException;
 
     /**
+     * 删除工程师基本信息
+     *
+     * @param engineer 工程师基本信息
+     */
+    public void deleteEngineer(Object... engineer) throws RemoteException;
+
+    /**
      * 保存工程师发展信息
      *
      * @param engineerTrainings 工程师发展信息列表
      */
     public void saveEngineerTrainings(List<EngineerTraining> engineerTrainings) throws RemoteException;
+
+    /**
+     * 删除工程师发展信息
+     *
+     * @param engineerTraining 工程师发展信息
+     */
+    public void deleteEngineerTrainings(Object... engineerTraining) throws RemoteException;
 }

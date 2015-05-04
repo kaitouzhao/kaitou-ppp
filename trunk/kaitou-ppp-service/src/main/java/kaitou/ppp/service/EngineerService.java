@@ -44,32 +44,9 @@ public interface EngineerService {
     /**
      * 删除指定的工程师
      *
-     * @param saleRegion  指定销售区域
-     * @param shopId      指定认定店编码
-     * @param id          指定工程师编码
-     * @param productLine 指定工程师产品线
-     */
-    @Deprecated
-    public void deleteEngineer(String saleRegion, String shopId, String id, String productLine);
-
-    /**
-     * 删除指定的工程师
-     *
      * @param engineers 工程师集合
      */
     public void deleteEngineers(Object... engineers);
-
-    /**
-     * 删除指定的工程师发展信息
-     *
-     * @param saleRegion    指定销售区域
-     * @param shopId        指定认定店编码
-     * @param id            指定工程师编码
-     * @param productLine   指定工程师产品线
-     * @param trainingModel 培训机型
-     */
-    @Deprecated
-    public void deleteEngineerTraining(String saleRegion, String shopId, String id, String productLine, String trainingModel);
 
     /**
      * 删除指定的工程师发展信息

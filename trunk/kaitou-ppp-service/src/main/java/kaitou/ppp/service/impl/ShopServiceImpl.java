@@ -185,66 +185,96 @@ public class ShopServiceImpl extends BaseExcelService implements ShopService {
 
     @Override
     public void exportShopDetails(File targetFile, String... numberOfYear) {
-        export2Excel(shopDetailManager.query(numberOfYear), targetFile, ShopDetail.class);
+        List<ShopDetail> shopDetails = shopDetailManager.query(numberOfYear);
+        export2Excel(shopDetails, targetFile, ShopDetail.class);
     }
 
     @Override
-    public void deleteShop(String saleRegion, String id) {
-        Shop shop = new Shop();
-        shop.setSaleRegion(saleRegion);
-        shop.setId(id);
-        logOperation("成功删除认定店个数：" + shopManager.delete(shop));
-    }
-
-    @Override
-    public void deleteShops(Object... shops) {
+    public void deleteShops(final Object... shops) {
         logOperation("成功删除认定店个数：" + shopManager.delete(shops));
-    }
-
-    @Override
-    public void deleteShopDetail(String id, String productLine, String numberOfYear) {
-        List<ShopDetail> details = shopDetailManager.query(numberOfYear);
-        if (CollectionUtil.isEmpty(details)) {
-            logOperation("成功删除认定店认定信息个数：0");
-            return;
-        }
-        List<ShopDetail> deleted = new ArrayList<ShopDetail>();
-        for (ShopDetail detail : details) {
-            if (detail.getId().equals(id) && detail.getProductLine().equals(productLine)) {
-                deleted.add(detail);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务删除认定店基本信息");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.deleteShop(shops);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
             }
-        }
-        logOperation("成功删除认定店认定信息个数：" + shopDetailManager.delete(CollectionUtil.toArray(deleted, ShopDetail.class)));
+        }).start();
     }
 
     @Override
-    public void deleteShopDetails(Object... details) {
-        logOperation("成功删除认定店认定信息个数：" + shopDetailManager.delete(details));
+    public void deleteShopDetails(final Object... details) {
+        logOperation("成功删除认定店认定级别个数：" + shopDetailManager.delete(details));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务删除认定店认定级别");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.deleteShopDetail(details);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
-    public void deleteShopPay(String id) {
-        ShopPay pay = new ShopPay();
-        pay.setId(id);
-        logOperation("成功删除认定店账户个数：" + shopPayManager.delete(pay));
-    }
-
-    @Override
-    public void deleteShopPays(Object... pays) {
+    public void deleteShopPays(final Object... pays) {
         logOperation("成功删除认定店账户个数：" + shopPayManager.delete(pays));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务删除认定店账户");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.deleteShopPay(pays);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
-    public void deleteShopRTS(String id, String productLine) {
-        ShopRTS rts = new ShopRTS();
-        rts.setId(id);
-        rts.setProductLine(productLine);
+    public void deleteShopRTSs(final Object... rts) {
         logOperation("成功删除认定店RTS个数：" + shopRTSManager.delete(rts));
-    }
-
-    @Override
-    public void deleteShopRTSs(Object... rts) {
-        logOperation("成功删除认定店RTS个数：" + shopRTSManager.delete(rts));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RemoteShopService> remoteShopServices = queryServicesOfListener(RemoteShopService.class, remoteRegistryManager.queryRegistryIps(), systemSettingsManager.getLocalIp());
+                if (CollectionUtil.isEmpty(remoteShopServices)) {
+                    return;
+                }
+                logOperation("通知已注册的远程服务删除认定店RTS");
+                for (RemoteShopService remoteShopService : remoteShopServices) {
+                    try {
+                        remoteShopService.deleteShopRTS(rts);
+                    } catch (RemoteException e) {
+                        logSystemEx(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override

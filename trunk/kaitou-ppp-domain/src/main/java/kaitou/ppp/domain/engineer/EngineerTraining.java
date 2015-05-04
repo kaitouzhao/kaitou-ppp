@@ -80,7 +80,7 @@ public class EngineerTraining extends BaseDomain {
 
     @Override
     public String dbFileSuffix() {
-        return '_' + shopId + '_' + getClass().getSimpleName() + ".kdb";
+        return '_' + shopId + '_' + getClass().getSimpleName() + DB_SUFFIX;
     }
 
     @Override

@@ -24,7 +24,7 @@
         <param name="file" value="${log.dir}/kaitou-ppp-operation.log"/>
         <param name="maxBackupIndex" value="7"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%p] %c.%M(%L) | %m%n"/>
+            <param name="ConversionPattern" value="%d | %m%n"/>
         </layout>
     </appender>
 
@@ -40,7 +40,8 @@
 
     <root>
         <level value="ERROR"/>
-        <appender-ref ref="CONSOLE"/>
+        <!--<appender-ref ref="CONSOLE"/>-->
+        <appender-ref ref="SYSTEM-LOG"/>
     </root>
 
 </log4j:configuration>
